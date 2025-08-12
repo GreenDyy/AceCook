@@ -28,13 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
+            btnTest = new Button();
             SuspendLayout();
+            // 
+            // btnTest
+            // 
+            btnTest.ForeColor = SystemColors.ActiveCaption;
+            btnTest.Location = new Point(300, 355);
+            btnTest.Name = "btnTest";
+            btnTest.Size = new Size(131, 40);
+            btnTest.TabIndex = 0;
+            btnTest.Text = "Test";
+            btnTest.UseVisualStyleBackColor = true;
+            btnTest.Click += btnTest_Click;
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(12F, 30F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1371, 900);
+            Controls.Add(btnTest);
+            Margin = new Padding(5, 6, 5, 6);
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
@@ -42,5 +56,7 @@
         }
 
         #endregion
+
+        private Button btnTest;
     }
 }

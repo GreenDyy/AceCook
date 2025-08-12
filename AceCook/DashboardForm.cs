@@ -256,21 +256,6 @@ namespace AceCook
                 case "inventory":
                     LoadInventoryManagement();
                     break;
-                case "suppliers":
-                    LoadSupplierManagement();
-                    break;
-                case "revenue_report":
-                    LoadRevenueReport();
-                    break;
-                case "inventory_report":
-                    LoadInventoryReport();
-                    break;
-                case "order_report":
-                    LoadOrderReport();
-                    break;
-                case "settings":
-                    LoadSettings();
-                    break;
             }
         }
 
@@ -319,56 +304,6 @@ namespace AceCook
             inventoryForm.Dock = DockStyle.Fill;
             contentPanel.Controls.Add(inventoryForm);
             inventoryForm.Show();
-        }
-
-        private void LoadSupplierManagement()
-        {
-            var supplierForm = new SupplierManagementForm(_context);
-            supplierForm.TopLevel = false;
-            supplierForm.FormBorderStyle = FormBorderStyle.None;
-            supplierForm.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(supplierForm);
-            supplierForm.Show();
-        }
-
-        private void LoadRevenueReport()
-        {
-            var revenueForm = new RevenueReportForm(_context);
-            revenueForm.TopLevel = false;
-            revenueForm.FormBorderStyle = FormBorderStyle.None;
-            revenueForm.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(revenueForm);
-            revenueForm.Show();
-        }
-
-        private void LoadInventoryReport()
-        {
-            var inventoryReportForm = new InventoryReportForm(_context);
-            inventoryReportForm.TopLevel = false;
-            inventoryReportForm.FormBorderStyle = FormBorderStyle.None;
-            inventoryReportForm.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(inventoryReportForm);
-            inventoryReportForm.Show();
-        }
-
-        private void LoadOrderReport()
-        {
-            var orderReportForm = new OrderReportForm(_context);
-            orderReportForm.TopLevel = false;
-            orderReportForm.FormBorderStyle = FormBorderStyle.None;
-            orderReportForm.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(orderReportForm);
-            orderReportForm.Show();
-        }
-
-        private void LoadSettings()
-        {
-            var settingsForm = new SettingsForm(_currentAccount, _context);
-            settingsForm.TopLevel = false;
-            settingsForm.FormBorderStyle = FormBorderStyle.None;
-            settingsForm.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(settingsForm);
-            settingsForm.Show();
         }
     }
 } 
