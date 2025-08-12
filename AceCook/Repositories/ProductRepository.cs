@@ -87,10 +87,10 @@ namespace AceCook.Repositories
 
         public async Task<List<string>> GetProductCategoriesAsync()
         {
-            return await _context.Sanphams
+            return await _context.Sanphams?
                 .Select(p => p.Loai)
-                .Distinct()
-                .ToListAsync();
+                ?.Distinct()
+                ?.ToListAsync();
         }
     }
 } 

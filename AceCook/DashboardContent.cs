@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AceCook.Models;
+using AceCook.Helpers;
 
 namespace AceCook
 {
@@ -63,30 +64,44 @@ namespace AceCook
 
         private void CreateSummaryCards()
         {
+            // Tạo FlowLayoutPanel để sắp xếp các cards tự động
+            var flowPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = false,
+                AutoScroll = true,
+                Padding = new Padding(20, 10, 20, 10),
+                BackColor = Color.FromArgb(248, 249, 250)
+            };
+
             // Total Revenue Card
-            var revenueCard = CreateSummaryCard("Tổng doanh thu", "960,000 ₫", Color.FromArgb(155, 89, 182), 0);
+            var revenueCard = CreateSummaryCard("Tổng doanh thu", "960,000 ₫", Color.FromArgb(155, 89, 182));
             
             // Total Invoices Card
-            var invoiceCard = CreateSummaryCard("Tổng hóa đơn", "1", Color.FromArgb(46, 204, 113), 1);
+            var invoiceCard = CreateSummaryCard("Tổng hóa đơn", "1", Color.FromArgb(46, 204, 113));
             
             // Average per Invoice Card
-            var avgCard = CreateSummaryCard("Trung bình/hóa đơn", "960,000 ₫", Color.FromArgb(52, 152, 219), 2);
+            var avgCard = CreateSummaryCard("Trung bình/hóa đơn", "960,000 ₫", Color.FromArgb(52, 152, 219));
             
             // Days with Transactions Card
-            var daysCard = CreateSummaryCard("Ngày có giao dịch", "1", Color.FromArgb(231, 76, 60), 3);
+            var daysCard = CreateSummaryCard("Ngày có giao dịch", "1", Color.FromArgb(231, 76, 60));
 
-            summaryPanel.Controls.Add(revenueCard);
-            summaryPanel.Controls.Add(invoiceCard);
-            summaryPanel.Controls.Add(avgCard);
-            summaryPanel.Controls.Add(daysCard);
+            // Thêm các cards vào FlowLayoutPanel
+            flowPanel.Controls.Add(revenueCard);
+            flowPanel.Controls.Add(invoiceCard);
+            flowPanel.Controls.Add(avgCard);
+            flowPanel.Controls.Add(daysCard);
+
+            summaryPanel.Controls.Add(flowPanel);
         }
 
-        private Panel CreateSummaryCard(string title, string value, Color color, int index)
+        private Panel CreateSummaryCard(string title, string value, Color color)
         {
             var card = new Panel
             {
                 Size = new Size(280, 100),
-                Location = new Point(20 + index * 290, 10),
+                Margin = new Padding(10, 5, 10, 5),
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.None
             };
@@ -143,11 +158,25 @@ namespace AceCook
 
         private void CreateChartPanels()
         {
+            // Tạo TableLayoutPanel để sắp xếp 2 charts cạnh nhau
+            var tableLayout = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                ColumnCount = 2,
+                RowCount = 1,
+                BackColor = Color.FromArgb(248, 249, 250),
+                Padding = new Padding(20, 10, 20, 10)
+            };
+
+            // Cấu hình columns
+            tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+
             // Daily Revenue Chart
             var dailyChartPanel = new Panel
             {
-                Size = new Size(580, 380),
-                Location = new Point(20, 10),
+                Dock = DockStyle.Fill,
+                Margin = new Padding(5, 5, 5, 5),
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.None
             };
@@ -216,8 +245,8 @@ namespace AceCook
             // Monthly Revenue Chart
             var monthlyChartPanel = new Panel
             {
-                Size = new Size(580, 380),
-                Location = new Point(620, 10),
+                Dock = DockStyle.Fill,
+                Margin = new Padding(5, 5, 5, 5),
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.None
             };
@@ -276,8 +305,12 @@ namespace AceCook
             monthlyChartPanel.Controls.Add(monthlyChartSubtitle);
             monthlyChartPanel.Controls.Add(barChartArea);
 
-            chartPanel.Controls.Add(dailyChartPanel);
-            chartPanel.Controls.Add(monthlyChartPanel);
+            // Thêm charts vào TableLayoutPanel
+            tableLayout.Controls.Add(dailyChartPanel, 0, 0);
+            tableLayout.Controls.Add(monthlyChartPanel, 1, 0);
+
+            // Thêm TableLayoutPanel vào chartPanel
+            chartPanel.Controls.Add(tableLayout);
 
             // Add shadow effects
             dailyChartPanel.Paint += (sender, e) =>
@@ -301,13 +334,22 @@ namespace AceCook
 
         private void CreateDetailPanel()
         {
+            // Tạo Panel chính cho detail
+            var detailMainPanel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                Padding = new Padding(20, 20, 20, 20),
+                BackColor = Color.FromArgb(248, 249, 250)
+            };
+
             var detailTitle = new Label
             {
                 Text = "Chi tiết doanh thu theo ngày",
                 Font = new Font("Segoe UI", 14, FontStyle.Bold),
                 ForeColor = Color.FromArgb(52, 73, 94),
                 Size = new Size(300, 30),
-                Location = new Point(20, 20)
+                Location = new Point(0, 0),
+                AutoSize = true
             };
 
             var detailSubtitle = new Label
@@ -316,14 +358,15 @@ namespace AceCook
                 Font = new Font("Segoe UI", 10),
                 ForeColor = Color.FromArgb(127, 140, 141),
                 Size = new Size(400, 20),
-                Location = new Point(20, 50)
+                Location = new Point(0, 40),
+                AutoSize = true
             };
 
             // DataGridView for daily revenue details
             var dataGridView = new DataGridView
             {
-                Size = new Size(1160, 200),
-                Location = new Point(20, 80),
+                Dock = DockStyle.Bottom,
+                Height = 300,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -343,9 +386,13 @@ namespace AceCook
 
             dataGridView.Rows.Add("05/08/2025", "1", "960,000 ₫", "960,000 ₫");
 
-            detailPanel.Controls.Add(detailTitle);
-            detailPanel.Controls.Add(detailSubtitle);
-            detailPanel.Controls.Add(dataGridView);
+            // Thêm controls vào detailMainPanel
+            detailMainPanel.Controls.Add(detailTitle);
+            detailMainPanel.Controls.Add(detailSubtitle);
+            detailMainPanel.Controls.Add(dataGridView);
+
+            // Thêm detailMainPanel vào detailPanel
+            detailPanel.Controls.Add(detailMainPanel);
         }
 
         private async void LoadDashboardData()
@@ -366,68 +413,109 @@ namespace AceCook
 
         private async Task LoadSummaryData()
         {
-            // Load total revenue
-            var totalRevenue = await _context.Hoadonbans
-                .Where(h => h.NgayLap.HasValue && h.NgayLap.Value.ToDateTime(TimeOnly.MinValue) >= DateTime.Today.AddDays(-30))
-                .SumAsync(h => h.TongTien ?? 0);
+            try
+            {
+                // Load total revenue - Using DateHelper for safe DateOnly operations
+                var (startDate, endDate) = DateHelper.GetLast30Days();
+                var totalRevenue = await _context.Hoadonbans
+                    .Where(h => h.NgayLap.HasValue && h.NgayLap.Value >= startDate)
+                    .SumAsync(h => h.TongTien ?? 0);
 
-            // Load total invoices
-            var totalInvoices = await _context.Hoadonbans
-                                .Where(h => h.NgayLap.HasValue && h.NgayLap.Value.ToDateTime(TimeOnly.MinValue) >= DateTime.Today.AddDays(-30))
-                .CountAsync();
+                // Load total invoices
+                var totalInvoices = await _context.Hoadonbans
+                    .Where(h => h.NgayLap.HasValue && h.NgayLap.Value >= startDate)
+                    .CountAsync();
 
-            // Update summary cards
-            UpdateSummaryCard(0, $"{totalRevenue:N0} ₫");
-            UpdateSummaryCard(1, totalInvoices.ToString());
-            UpdateSummaryCard(2, totalInvoices > 0 ? $"{totalRevenue / totalInvoices:N0} ₫" : "0 ₫");
+                // Update summary cards
+                UpdateSummaryCard(0, $"{totalRevenue:N0} ₫");
+                UpdateSummaryCard(1, totalInvoices.ToString());
+                UpdateSummaryCard(2, totalInvoices > 0 ? $"{totalRevenue / totalInvoices:N0} ₫" : "0 ₫");
+            }
+            catch (Exception ex)
+            {
+                // Fallback to default values if database query fails
+                UpdateSummaryCard(0, "0 ₫");
+                UpdateSummaryCard(1, "0");
+                UpdateSummaryCard(2, "0 ₫");
+                
+                // Log error for debugging
+                System.Diagnostics.Debug.WriteLine($"LoadSummaryData error: {ex.Message}");
+            }
         }
 
         private async Task LoadChartData()
         {
-            // Load daily revenue data for the last 30 days
-            var dailyRevenue = await _context.Hoadonbans
-                .Where(h => h.NgayLap.HasValue && h.NgayLap.Value.ToDateTime(TimeOnly.MinValue) >= DateTime.Today.AddDays(-30))
-                .GroupBy(h => h.NgayLap.Value)
-                .Select(g => new { Date = g.Key, Revenue = g.Sum(h => h.TongTien ?? 0) })
-                .ToListAsync();
+            try
+            {
+                // Load daily revenue data for the last 30 days - Using DateHelper
+                var (startDate, endDate) = DateHelper.GetLast30Days();
+                var dailyRevenue = await _context.Hoadonbans
+                    .Where(h => h.NgayLap.HasValue && h.NgayLap.Value >= startDate)
+                    .GroupBy(h => h.NgayLap.Value)
+                    .Select(g => new { Date = g.Key, Revenue = g.Sum(h => h.TongTien ?? 0) })
+                    .ToListAsync();
 
-            // Update chart data
-            UpdateChartData(dailyRevenue);
+                // Update chart data
+                UpdateChartData(dailyRevenue);
+            }
+            catch (Exception ex)
+            {
+                // Log error for debugging
+                System.Diagnostics.Debug.WriteLine($"LoadChartData error: {ex.Message}");
+            }
         }
 
         private async Task LoadDetailData()
         {
-            // Load detailed daily revenue
-            var dailyDetails = await _context.Hoadonbans
-                .Where(h => h.NgayLap.HasValue && h.NgayLap.Value.ToDateTime(TimeOnly.MinValue) >= DateTime.Today.AddDays(-30))
-                .GroupBy(h => h.NgayLap.Value)
-                .Select(g => new 
-                { 
-                    Date = g.Key, 
-                    InvoiceCount = g.Count(),
-                    TotalRevenue = g.Sum(h => h.TongTien ?? 0),
-                    AverageRevenue = g.Average(h => h.TongTien ?? 0)
-                })
-                .OrderByDescending(x => x.Date)
-                .ToListAsync();
+            try
+            {
+                // Load detailed daily revenue - Using DateHelper
+                var (startDate, endDate) = DateHelper.GetLast30Days();
+                var dailyDetails = await _context.Hoadonbans
+                    .Where(h => h.NgayLap.HasValue && h.NgayLap.Value >= startDate)
+                    .GroupBy(h => h.NgayLap.Value)
+                    .Select(g => new 
+                    { 
+                        Date = g.Key, 
+                        InvoiceCount = g.Count(),
+                        TotalRevenue = g.Sum(h => h.TongTien ?? 0),
+                        AverageRevenue = g.Average(h => h.TongTien ?? 0)
+                    })
+                    .OrderByDescending(x => x.Date)
+                    .ToListAsync();
 
-            // Update detail grid
-            UpdateDetailGrid(dailyDetails);
+                // Update detail grid
+                UpdateDetailGrid(dailyDetails);
+            }
+            catch (Exception ex)
+            {
+                // Log error for debugging
+                System.Diagnostics.Debug.WriteLine($"LoadDetailData error: {ex.Message}");
+            }
         }
 
         private void UpdateSummaryCard(int index, string value)
         {
-            if (summaryPanel.Controls.Count > index)
+            try
             {
-                var card = summaryPanel.Controls[index] as Panel;
-                if (card?.Controls.Count > 1)
+                // Tìm FlowLayoutPanel trong summaryPanel
+                var flowPanel = summaryPanel.Controls.OfType<FlowLayoutPanel>().FirstOrDefault();
+                if (flowPanel != null && flowPanel.Controls.Count > index)
                 {
-                    var valueLabel = card.Controls[1] as Label;
-                    if (valueLabel != null)
+                    var card = flowPanel.Controls[index] as Panel;
+                    if (card?.Controls.Count > 1)
                     {
-                        valueLabel.Text = value;
+                        var valueLabel = card.Controls.OfType<Label>().Skip(1).FirstOrDefault();
+                        if (valueLabel != null)
+                        {
+                            valueLabel.Text = value;
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateSummaryCard error: {ex.Message}");
             }
         }
 
