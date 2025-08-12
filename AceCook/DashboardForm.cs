@@ -16,22 +16,15 @@ namespace AceCook
         private Quyentruycap _currentPermission;
         private AppDbContext _context;
 
-        // UI Controls
-        private Panel sidebarPanel;
-        private Panel mainContentPanel;
-        private Panel headerPanel;
-        private TreeView menuTreeView;
-        private Label lblUserInfo;
-        private Label lblSystemTitle;
-        private Panel contentPanel;
-
         public DashboardForm(Taikhoan account, Nhanvien employee, Quyentruycap permission)
         {
             _currentAccount = account;
             _currentEmployee = employee;
             _currentPermission = permission;
+            InitializeComponent();
             InitializeDatabase();
-            SetupUI();
+            SetupForm();
+            SetupMenuItems();
             LoadDashboard();
         }
 
@@ -55,178 +48,123 @@ namespace AceCook
             }
         }
 
-        private void SetupUI()
+        private void SetupForm()
         {
-            // Form settings
-            this.Text = "ACECOOK Sales Management System";
-            this.Size = new Size(1200, 800);
-            this.StartPosition = FormStartPosition.CenterScreen;
+            // Cập nhật thông tin người dùng
+            lblUserName.Text = _currentEmployee?.HoTenNv ?? _currentAccount?.TenDangNhap ?? "Người dùng";
+            lblUserRole.Text = _currentPermission?.QuyenTruyCap ?? "Nhân viên";
+            lblUserStatus.Text = "Đang hoạt động";
+
+            // Cấu hình form
+            this.FormBorderStyle = FormBorderStyle.None;
             this.WindowState = FormWindowState.Maximized;
-            this.BackColor = Color.FromArgb(240, 240, 240);
+            this.StartPosition = FormStartPosition.CenterScreen;
 
-            // Header Panel
-            headerPanel = new Panel
-            {
-                Dock = DockStyle.Top,
-                Height = 80,
-                BackColor = Color.FromArgb(52, 73, 94)
-            };
+            // Cấu hình TreeView
+            treeViewMenu.BackColor = Color.FromArgb(44, 62, 80);
+            treeViewMenu.ForeColor = Color.White;
+            treeViewMenu.Font = new Font("Segoe UI", 10);
+            treeViewMenu.BorderStyle = BorderStyle.None;
+            treeViewMenu.ShowLines = false;
+            treeViewMenu.ShowPlusMinus = false;
+            treeViewMenu.FullRowSelect = true;
+            treeViewMenu.HideSelection = false;
 
-            lblSystemTitle = new Label
-            {
-                Text = "ACECOOK SALES MANAGEMENT",
-                Font = new Font("Segoe UI", 18, FontStyle.Bold),
-                ForeColor = Color.White,
-                TextAlign = ContentAlignment.MiddleLeft,
-                Size = new Size(400, 40),
-                Location = new Point(20, 20)
-            };
+            // Cấu hình header buttons
+            SetupHeaderButtons();
+        }
 
-            headerPanel.Controls.Add(lblSystemTitle);
+        private void SetupHeaderButtons()
+        {
+            // Nút Minimize
+            btnMinimize.FlatAppearance.BorderSize = 0;
+            btnMinimize.FlatStyle = FlatStyle.Flat;
+            btnMinimize.BackColor = Color.FromArgb(52, 73, 94);
+            btnMinimize.ForeColor = Color.White;
+            btnMinimize.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+            btnMinimize.Cursor = Cursors.Hand;
 
-            // Sidebar Panel
-            sidebarPanel = new Panel
-            {
-                Dock = DockStyle.Left,
-                Width = 280,
-                BackColor = Color.FromArgb(44, 62, 80)
-            };
+            // Nút Maximize
+            btnMaximize.FlatAppearance.BorderSize = 0;
+            btnMaximize.FlatStyle = FlatStyle.Flat;
+            btnMaximize.BackColor = Color.FromArgb(52, 73, 94);
+            btnMaximize.ForeColor = Color.White;
+            btnMaximize.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+            btnMaximize.Cursor = Cursors.Hand;
 
-            // User Info Panel
-            var userInfoPanel = new Panel
-            {
-                Size = new Size(280, 100),
-                Location = new Point(0, 0),
-                BackColor = Color.FromArgb(52, 73, 94)
-            };
+            // Nút Close
+            btnClose.FlatAppearance.BorderSize = 0;
+            btnClose.FlatStyle = FlatStyle.Flat;
+            btnClose.BackColor = Color.FromArgb(52, 73, 94);
+            btnClose.ForeColor = Color.White;
+            btnClose.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+            btnClose.Cursor = Cursors.Hand;
 
-            lblUserInfo = new Label
-            {
-                Text = $"{_currentEmployee?.HoTenNv}\n{_currentPermission?.QuyenTruyCap}\nĐang hoạt động",
-                Font = new Font("Segoe UI", 10, FontStyle.Regular),
-                ForeColor = Color.White,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Size = new Size(280, 80),
-                Location = new Point(0, 10)
-            };
-
-            userInfoPanel.Controls.Add(lblUserInfo);
-
-            // Menu TreeView
-            menuTreeView = new TreeView
-            {
-                Size = new Size(280, 600),
-                Location = new Point(0, 100),
-                BackColor = Color.FromArgb(44, 62, 80),
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 10),
-                BorderStyle = BorderStyle.None,
-                ShowLines = false,
-                ShowPlusMinus = false,
-                FullRowSelect = true,
-                HideSelection = false
-            };
-
-            // Setup menu items
-            SetupMenuItems();
-
-            sidebarPanel.Controls.Add(userInfoPanel);
-            sidebarPanel.Controls.Add(menuTreeView);
-
-            // Main Content Panel
-            mainContentPanel = new Panel
-            {
-                Dock = DockStyle.Fill,
-                BackColor = Color.FromArgb(248, 249, 250)
-            };
-
-            contentPanel = new Panel
-            {
-                Dock = DockStyle.Fill,
-                BackColor = Color.FromArgb(248, 249, 250)
-            };
-
-            mainContentPanel.Controls.Add(contentPanel);
-
-            // Add panels to form
-            this.Controls.Add(mainContentPanel);
-            this.Controls.Add(sidebarPanel);
-            this.Controls.Add(headerPanel);
-
-            // Event handlers
-            menuTreeView.AfterSelect += MenuTreeView_AfterSelect;
+            // Hover effects
+            btnMinimize.MouseEnter += (s, e) => btnMinimize.BackColor = Color.FromArgb(70, 90, 110);
+            btnMinimize.MouseLeave += (s, e) => btnMinimize.BackColor = Color.FromArgb(52, 73, 94);
+            btnMaximize.MouseEnter += (s, e) => btnMaximize.BackColor = Color.FromArgb(70, 90, 110);
+            btnMaximize.MouseLeave += (s, e) => btnMaximize.BackColor = Color.FromArgb(52, 73, 94);
+            btnClose.MouseEnter += (s, e) => btnClose.BackColor = Color.FromArgb(220, 53, 69);
+            btnClose.MouseLeave += (s, e) => btnClose.BackColor = Color.FromArgb(52, 73, 94);
         }
 
         private void SetupMenuItems()
         {
+            treeViewMenu.Nodes.Clear();
+
             // Dashboard
-            var dashboardNode = new TreeNode("Dashboard")
-            {
-                Tag = "dashboard",
-                ImageIndex = 0,
-                SelectedImageIndex = 0
-            };
+            var dashboardNode = CreateMenuNode("📊 Dashboard", "dashboard", Color.FromArgb(52, 152, 219));
 
             // Kinh doanh
-            var businessNode = new TreeNode("Kinh doanh")
-            {
-                Tag = "business",
-                ImageIndex = 1,
-                SelectedImageIndex = 1
-            };
-            businessNode.Nodes.Add(new TreeNode("Quản lý khách hàng") { Tag = "customers" });
-            businessNode.Nodes.Add(new TreeNode("Quản lý đơn hàng") { Tag = "orders" });
+            var businessNode = CreateMenuNode("💼 Kinh doanh", "business", Color.FromArgb(46, 204, 113));
+            businessNode.Nodes.Add(CreateMenuNode("👥 Quản lý khách hàng", "customers", Color.FromArgb(46, 204, 113)));
+            businessNode.Nodes.Add(CreateMenuNode("📋 Quản lý đơn hàng", "orders", Color.FromArgb(46, 204, 113)));
 
             // Kho hàng
-            var warehouseNode = new TreeNode("Kho hàng")
-            {
-                Tag = "warehouse",
-                ImageIndex = 2,
-                SelectedImageIndex = 2
-            };
-            warehouseNode.Nodes.Add(new TreeNode("Quản lý sản phẩm") { Tag = "products" });
-            warehouseNode.Nodes.Add(new TreeNode("Quản lý tồn kho") { Tag = "inventory" });
+            var warehouseNode = CreateMenuNode("🏪 Kho hàng", "warehouse", Color.FromArgb(155, 89, 182));
+            warehouseNode.Nodes.Add(CreateMenuNode("📦 Quản lý sản phẩm", "products", Color.FromArgb(155, 89, 182)));
+            warehouseNode.Nodes.Add(CreateMenuNode("📊 Quản lý tồn kho", "inventory", Color.FromArgb(155, 89, 182)));
 
             // Nhà cung cấp
-            var supplierNode = new TreeNode("Nhà cung cấp")
-            {
-                Tag = "suppliers",
-                ImageIndex = 3,
-                SelectedImageIndex = 3
-            };
+            var supplierNode = CreateMenuNode("🚚 Nhà cung cấp", "suppliers", Color.FromArgb(230, 126, 34));
 
             // Báo cáo
-            var reportNode = new TreeNode("Báo cáo")
-            {
-                Tag = "reports",
-                ImageIndex = 4,
-                SelectedImageIndex = 4
-            };
-            reportNode.Nodes.Add(new TreeNode("Báo cáo doanh thu") { Tag = "revenue_report" });
-            reportNode.Nodes.Add(new TreeNode("Báo cáo tồn kho") { Tag = "inventory_report" });
-            reportNode.Nodes.Add(new TreeNode("Báo cáo đơn hàng") { Tag = "order_report" });
+            var reportNode = CreateMenuNode("📈 Báo cáo", "reports", Color.FromArgb(231, 76, 60));
+            reportNode.Nodes.Add(CreateMenuNode("💰 Báo cáo doanh thu", "revenue_report", Color.FromArgb(231, 76, 60)));
+            reportNode.Nodes.Add(CreateMenuNode("📊 Báo cáo tồn kho", "inventory_report", Color.FromArgb(231, 76, 60)));
+            reportNode.Nodes.Add(CreateMenuNode("📋 Báo cáo đơn hàng", "order_report", Color.FromArgb(231, 76, 60)));
 
             // Cài đặt
-            var settingsNode = new TreeNode("Cài đặt")
-            {
-                Tag = "settings",
-                ImageIndex = 5,
-                SelectedImageIndex = 5
-            };
+            var settingsNode = CreateMenuNode("⚙️ Cài đặt", "settings", Color.FromArgb(149, 165, 166));
 
-            // Add nodes to treeview
-            menuTreeView.Nodes.Add(dashboardNode);
-            menuTreeView.Nodes.Add(businessNode);
-            menuTreeView.Nodes.Add(warehouseNode);
-            menuTreeView.Nodes.Add(supplierNode);
-            menuTreeView.Nodes.Add(reportNode);
-            menuTreeView.Nodes.Add(settingsNode);
+            // Thêm nodes vào TreeView
+            treeViewMenu.Nodes.Add(dashboardNode);
+            treeViewMenu.Nodes.Add(businessNode);
+            treeViewMenu.Nodes.Add(warehouseNode);
+            treeViewMenu.Nodes.Add(supplierNode);
+            treeViewMenu.Nodes.Add(reportNode);
+            treeViewMenu.Nodes.Add(settingsNode);
 
-            // Expand all nodes
-            menuTreeView.ExpandAll();
+            // Mở rộng tất cả nodes
+            treeViewMenu.ExpandAll();
+
+            // Chọn Dashboard mặc định
+            treeViewMenu.SelectedNode = dashboardNode;
         }
 
-        private void MenuTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+        private TreeNode CreateMenuNode(string text, string tag, Color color)
+        {
+            var node = new TreeNode(text)
+            {
+                Tag = tag,
+                ForeColor = color,
+                Font = new Font("Segoe UI", 10, FontStyle.Regular)
+            };
+            return node;
+        }
+
+        private void treeViewMenu_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (e.Node?.Tag != null)
             {
@@ -237,7 +175,7 @@ namespace AceCook
 
         private void LoadContent(string contentType)
         {
-            contentPanel.Controls.Clear();
+            panelContent.Controls.Clear();
 
             switch (contentType)
             {
@@ -256,6 +194,21 @@ namespace AceCook
                 case "inventory":
                     LoadInventoryManagement();
                     break;
+                case "suppliers":
+                    LoadSupplierManagement();
+                    break;
+                case "revenue_report":
+                    LoadRevenueReport();
+                    break;
+                case "inventory_report":
+                    LoadInventoryReport();
+                    break;
+                case "order_report":
+                    LoadOrderReport();
+                    break;
+                case "settings":
+                    LoadSettings();
+                    break;
                 case "revenue_report":
                     LoadRevenueReport();
                     break;
@@ -270,49 +223,186 @@ namespace AceCook
 
         private void LoadDashboard()
         {
-            var dashboardContent = new DashboardContent(_context);
-            dashboardContent.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(dashboardContent);
+            try
+            {
+                var dashboardContent = new DashboardContent(_context);
+                dashboardContent.Dock = DockStyle.Fill;
+                panelContent.Controls.Add(dashboardContent);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorContent("Dashboard", ex.Message);
+            }
         }
 
         private void LoadCustomerManagement()
         {
-            var customerForm = new CustomerManagementForm(_context);
-            customerForm.TopLevel = false;
-            customerForm.FormBorderStyle = FormBorderStyle.None;
-            customerForm.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(customerForm);
-            customerForm.Show();
+            try
+            {
+                var customerForm = new CustomerManagementForm(_context);
+                customerForm.TopLevel = false;
+                customerForm.FormBorderStyle = FormBorderStyle.None;
+                customerForm.Dock = DockStyle.Fill;
+                panelContent.Controls.Add(customerForm);
+                customerForm.Show();
+            }
+            catch (Exception ex)
+            {
+                ShowErrorContent("Quản lý khách hàng", ex.Message);
+            }
         }
 
         private void LoadOrderManagement()
         {
-            var orderForm = new OrderManagementForm(_context);
-            orderForm.TopLevel = false;
-            orderForm.FormBorderStyle = FormBorderStyle.None;
-            orderForm.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(orderForm);
-            orderForm.Show();
+            try
+            {
+                var orderForm = new OrderManagementForm(_context);
+                orderForm.TopLevel = false;
+                orderForm.FormBorderStyle = FormBorderStyle.None;
+                orderForm.Dock = DockStyle.Fill;
+                panelContent.Controls.Add(orderForm);
+                orderForm.Show();
+            }
+            catch (Exception ex)
+            {
+                ShowErrorContent("Quản lý đơn hàng", ex.Message);
+            }
         }
 
         private void LoadProductManagement()
         {
-            var productForm = new ProductManagementForm(_context);
-            productForm.TopLevel = false;
-            productForm.FormBorderStyle = FormBorderStyle.None;
-            productForm.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(productForm);
-            productForm.Show();
+            try
+            {
+                var productForm = new ProductManagementForm(_context);
+                productForm.TopLevel = false;
+                productForm.FormBorderStyle = FormBorderStyle.None;
+                productForm.Dock = DockStyle.Fill;
+                panelContent.Controls.Add(productForm);
+                productForm.Show();
+            }
+            catch (Exception ex)
+            {
+                ShowErrorContent("Quản lý sản phẩm", ex.Message);
+            }
         }
 
         private void LoadInventoryManagement()
         {
-            var inventoryForm = new InventoryManagementForm(_context);
-            inventoryForm.TopLevel = false;
-            inventoryForm.FormBorderStyle = FormBorderStyle.None;
-            inventoryForm.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(inventoryForm);
-            inventoryForm.Show();
+            try
+            {
+                var inventoryForm = new InventoryManagementForm(_context);
+                inventoryForm.TopLevel = false;
+                inventoryForm.FormBorderStyle = FormBorderStyle.None;
+                inventoryForm.Dock = DockStyle.Fill;
+                panelContent.Controls.Add(inventoryForm);
+                inventoryForm.Show();
+            }
+            catch (Exception ex)
+            {
+                ShowErrorContent("Quản lý tồn kho", ex.Message);
+            }
+        }
+
+        private void LoadSupplierManagement()
+        {
+            ShowComingSoonContent("Quản lý nhà cung cấp");
+        }
+
+        private void LoadRevenueReport()
+        {
+            ShowComingSoonContent("Báo cáo doanh thu");
+        }
+
+        private void LoadInventoryReport()
+        {
+            ShowComingSoonContent("Báo cáo tồn kho");
+        }
+
+        private void LoadOrderReport()
+        {
+            ShowComingSoonContent("Báo cáo đơn hàng");
+        }
+
+        private void LoadSettings()
+        {
+            ShowComingSoonContent("Cài đặt hệ thống");
+        }
+
+        private void ShowComingSoonContent(string title)
+        {
+            panelContent.Controls.Clear();
+            
+            var panel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.FromArgb(248, 249, 250)
+            };
+
+            var label = new Label
+            {
+                Text = $"🚧 {title}\n\nTính năng này đang được phát triển...",
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                ForeColor = Color.FromArgb(108, 117, 125),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Dock = DockStyle.Fill
+            };
+
+            panel.Controls.Add(label);
+            panelContent.Controls.Add(panel);
+        }
+
+        private void ShowErrorContent(string title, string errorMessage)
+        {
+            panelContent.Controls.Clear();
+            
+            var panel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.FromArgb(248, 249, 250)
+            };
+
+            var label = new Label
+            {
+                Text = $"❌ Lỗi: {title}\n\n{errorMessage}",
+                Font = new Font("Segoe UI", 12, FontStyle.Regular),
+                ForeColor = Color.FromArgb(220, 53, 69),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Dock = DockStyle.Fill
+            };
+
+            panel.Controls.Add(label);
+            panelContent.Controls.Add(panel);
+        }
+
+        // Header button events
+        private void btnMinimize_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void btnMaximize_Click(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Maximized)
+            {
+                this.WindowState = FormWindowState.Normal;
+                btnMaximize.Text = "□";
+            }
+            else
+            {
+                this.WindowState = FormWindowState.Maximized;
+                btnMaximize.Text = "❐";
+            }
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Bạn có chắc chắn muốn thoát?", "Xác nhận thoát", 
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            
+            if (result == DialogResult.Yes)
+            {
+                Application.Exit();
+            }
         }
 
         private void LoadRevenueReport()
