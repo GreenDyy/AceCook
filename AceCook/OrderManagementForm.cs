@@ -182,7 +182,7 @@ namespace AceCook
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu đơn hàng: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tải dữ liệu đơn hàng: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -236,7 +236,7 @@ namespace AceCook
 
         private void BtnAdd_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Chức năng thêm đơn hàng sẽ được phát triển sau!", "Thông báo", 
+            MessageBox.Show("Chức năng thêm đơn hàng sẽ được phát triển sau!", "Thông báo",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -247,15 +247,20 @@ namespace AceCook
                 var selectedOrder = dataGridViewOrders.SelectedRows[0].DataBoundItem as Dondathang;
                 if (selectedOrder != null)
                 {
-                    MessageBox.Show($"Chỉnh sửa đơn hàng: {selectedOrder.MaDdh}", "Thông báo", 
+                    MessageBox.Show($"Chỉnh sửa đơn hàng: {selectedOrder.MaDdh}", "Thông báo",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn một đơn hàng để chỉnh sửa", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn một đơn hàng để chỉnh sửa", "Thông báo",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private void InitializeComponent()
+        {
+
         }
 
         private void BtnDelete_Click(object sender, EventArgs e)
@@ -265,22 +270,22 @@ namespace AceCook
                 var selectedOrder = dataGridViewOrders.SelectedRows[0].DataBoundItem as Dondathang;
                 if (selectedOrder != null)
                 {
-                    var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa đơn hàng '{selectedOrder.MaDdh}'?", 
+                    var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa đơn hàng '{selectedOrder.MaDdh}'?",
                         "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    
+
                     if (result == DialogResult.Yes)
                     {
                         try
                         {
                             _context.Dondathangs.Remove(selectedOrder);
                             _context.SaveChanges();
-                            MessageBox.Show("Xóa đơn hàng thành công!", "Thông báo", 
+                            MessageBox.Show("Xóa đơn hàng thành công!", "Thông báo",
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
                             LoadOrders();
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show($"Lỗi khi xóa đơn hàng: {ex.Message}", "Lỗi", 
+                            MessageBox.Show($"Lỗi khi xóa đơn hàng: {ex.Message}", "Lỗi",
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
@@ -288,7 +293,7 @@ namespace AceCook
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn một đơn hàng để xóa", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn một đơn hàng để xóa", "Thông báo",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }

@@ -1,119 +1,101 @@
-# AceCook - Ứng dụng Quản lý Sản phẩm
+# AceCook - Hệ thống quản lý nhà hàng
 
 ## Mô tả
-AceCook là một ứng dụng Windows Forms được viết bằng C# để quản lý danh sách sản phẩm. Ứng dụng sử dụng Entity Framework Core để kết nối với cơ sở dữ liệu SQL Server.
+AceCook là một ứng dụng WinForm được xây dựng bằng C# và .NET 8, sử dụng Entity Framework Core để quản lý cơ sở dữ liệu SQL Server.
 
 ## Tính năng chính
+- **Quản lý tài khoản**: Đăng nhập, phân quyền người dùng
+- **Quản lý nhân viên**: Thông tin nhân viên, phòng ban
+- **Quản lý khách hàng**: Thông tin khách hàng, đơn đặt hàng
+- **Quản lý sản phẩm**: Danh sách sản phẩm, nguyên liệu
+- **Quản lý kho**: Nhập/xuất kho, tồn kho
+- **Quản lý đơn hàng**: Đơn đặt hàng, hóa đơn bán
 
-### 1. Hiển thị danh sách sản phẩm
-- Hiển thị tất cả sản phẩm trong DataGridView
-- Thông tin hiển thị: Mã SP, Tên SP, Mô tả, Giá, Đơn vị, Loại
-
-### 2. Tìm kiếm và lọc
-- Tìm kiếm theo tên sản phẩm, mã sản phẩm hoặc loại
-- Lọc theo loại sản phẩm (Mì tô, Mì gói, Mỳ ly, Miến, Bún, Phở, Hủ tiếu)
-- Nút "Xóa lọc" để reset về danh sách ban đầu
-
-### 3. Quản lý sản phẩm
-- **Thêm sản phẩm mới**: Mở form nhập thông tin sản phẩm
-- **Sửa sản phẩm**: Chọn sản phẩm và chỉnh sửa (chưa implement)
-- **Xóa sản phẩm**: Xóa sản phẩm với xác nhận
-- **Làm mới**: Tải lại danh sách từ database
-
-## Cấu trúc Database
-
-### Bảng SANPHAM
-```sql
-CREATE TABLE SANPHAM 
-(
-    MaSP CHAR(10) NOT NULL,
-    TenSP NVARCHAR(50),
-    MoTa NVARCHAR(100),
-    Gia DECIMAL CHECK (Gia >= 0),
-    DVTSP NVARCHAR(20),
-    Loai NVARCHAR(20),
-    CONSTRAINT pk_SANPHAM PRIMARY KEY (MaSP),
-    CONSTRAINT chk_SANPHAM_Loai CHECK (Loai IN (N'Mì tô', N'Mì gói', N'Mỳ ly', N'Miến', N'Bún', N'Phở', N'Hủ tiếu'))
-);
-```
-
-## Cấu trúc Project
-
+## Cấu trúc dự án
 ```
 AceCook/
-├── Models/
-│   └── SANPHAM.cs              # Model cho bảng SANPHAM
-├── Data/
-│   └── AppContext.cs           # DbContext cho Entity Framework
-├── Repositories/
-│   └── ProductRepository.cs    # Repository pattern cho thao tác CRUD
-├── Form1.cs                    # Form chính hiển thị danh sách
-├── Form1.Designer.cs           # Designer cho Form1
-├── AddProductForm.cs           # Form thêm sản phẩm
-├── AddProductForm.Designer.cs  # Designer cho AddProductForm
-├── appsettings.json            # Cấu hình connection string
-└── Program.cs                  # Entry point của ứng dụng
+├── Models/           # Entity models
+├── Repositories/     # Data access layer
+├── Forms/            # Windows Forms
+├── Assets/           # Resources, images
+└── appsettings.json  # Cấu hình database
 ```
 
-## Cài đặt và Chạy
+## Yêu cầu hệ thống
+- Windows 10/11
+- .NET 8.0 Runtime
+- SQL Server 2019+
+- Visual Studio 2022 (để phát triển)
 
-### Yêu cầu hệ thống
-- .NET 8.0 hoặc cao hơn
-- SQL Server (có thể là LocalDB hoặc SQL Server Express)
-- Visual Studio 2022 hoặc VS Code
+## Cài đặt và chạy
 
-### Các bước cài đặt
+### 1. Clone repository
+```bash
+git clone [repository-url]
+cd AceCook
+```
 
-1. **Clone hoặc download project**
-2. **Cập nhật connection string** trong file `appsettings.json`:
-   ```json
-   {
-     "ConnectionStrings": {
-       "Default": "Server=your_server;Database=your_database;User Id=your_user;Password=your_password;TrustServerCertificate=true;"
-     }
-   }
-   ```
+### 2. Cấu hình database
+Chỉnh sửa file `appsettings.json`:
+```json
+{
+  "ConnectionStrings": {
+    "Default": "Server=your-server;Database=your-database;User Id=your-user;Password=your-password;TrustServerCertificate=true"
+  }
+}
+```
 
-3. **Tạo database và bảng**:
-   - Tạo database mới
-   - Chạy script SQL để tạo bảng SANPHAM
+### 3. Build và chạy
+```bash
+dotnet build
+dotnet run
+```
 
-4. **Build và chạy project**:
-   ```bash
-   dotnet build
-   dotnet run
-   ```
+Hoặc mở solution trong Visual Studio và nhấn F5.
 
-## Sử dụng
+## Đăng nhập
+- **Form đăng nhập**: `LoginForm.cs`
+- **Xác thực**: Sử dụng `AuthRepository` với Entity Framework
+- **Phân quyền**: Dựa trên bảng `Quyentruycap` và `Taikhoan`
 
-### Giao diện chính
-- **DataGridView**: Hiển thị danh sách sản phẩm
-- **Ô tìm kiếm**: Nhập từ khóa để tìm kiếm
-- **ComboBox Loại**: Chọn loại sản phẩm để lọc
-- **Nút Xóa lọc**: Reset về danh sách ban đầu
+## Tính năng LoginForm
+- ✅ Giao diện đẹp, responsive
+- ✅ Validation input
+- ✅ Xử lý lỗi database
+- ✅ Hiển thị/ẩn mật khẩu
+- ✅ Navigation bằng Enter key
+- ✅ Loading state khi đăng nhập
+- ✅ Chuyển hướng đến Dashboard sau khi đăng nhập thành công
 
-### Các nút chức năng
-- **Làm mới**: Tải lại dữ liệu từ database
-- **Thêm**: Mở form thêm sản phẩm mới
-- **Sửa**: Chỉnh sửa sản phẩm đã chọn (chưa implement)
-- **Xóa**: Xóa sản phẩm đã chọn với xác nhận
+## Tính năng DashboardForm
+- ✅ Giao diện hiện đại, chuyên nghiệp
+- ✅ Sidebar navigation với TreeView đẹp mắt
+- ✅ Icons emoji cho menu items
+- ✅ Màu sắc phân biệt cho từng nhóm chức năng
+- ✅ Header với custom window controls
+- ✅ User info panel hiển thị thông tin người dùng
+- ✅ Content area responsive
+- ✅ Error handling và coming soon messages
+- ✅ Hover effects và visual feedback
+- ✅ Form state management (minimize, maximize, close)
 
-### Form thêm sản phẩm
-- Nhập đầy đủ thông tin: Mã SP, Tên SP, Mô tả, Giá, Đơn vị, Loại
-- Validation tự động kiểm tra dữ liệu nhập
-- Nút Lưu để thêm sản phẩm, Hủy để đóng form
+## Database Schema
+- **TAIKHOAN**: Quản lý tài khoản người dùng
+- **NHANVIEN**: Thông tin nhân viên
+- **QUYENTRUYCAP**: Phân quyền hệ thống
+- **KHACHHANG**: Thông tin khách hàng
+- **SANPHAM**: Danh sách sản phẩm
+- **NGUYENLIEU**: Nguyên liệu sản xuất
+- **KHO**: Quản lý kho hàng
 
-## Lưu ý
-- Mã sản phẩm phải là duy nhất (Primary Key)
-- Giá sản phẩm phải >= 0
-- Loại sản phẩm phải thuộc danh sách cho phép
-- Ứng dụng sử dụng async/await để không block UI khi thao tác database
+## Phát triển
+- Sử dụng Repository pattern
+- Entity Framework Core với SQL Server
+- Windows Forms với .NET 8
+- Dependency Injection với Microsoft.Extensions.Configuration
 
-## Phát triển tiếp theo
-- Form chỉnh sửa sản phẩm
-- Export dữ liệu ra Excel/PDF
-- Thêm hình ảnh sản phẩm
-- Quản lý nhà cung cấp
-- Báo cáo thống kê 
+## Tác giả
+AceCook Development Team
 
-## Scaffold
+## License
+[Thêm thông tin license nếu cần]
