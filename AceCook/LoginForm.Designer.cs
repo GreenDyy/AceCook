@@ -39,70 +39,78 @@
             // 
             // txtUsername
             // 
-            txtUsername.Location = new Point(543, 392);
+            txtUsername.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            txtUsername.Location = new Point(200, 200);
             txtUsername.Name = "txtUsername";
-            txtUsername.Size = new Size(431, 35);
+            txtUsername.Size = new Size(300, 35);
             txtUsername.TabIndex = 0;
             // 
             // txtPassword
             // 
-            txtPassword.Location = new Point(543, 478);
+            txtPassword.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            txtPassword.Location = new Point(200, 280);
             txtPassword.Name = "txtPassword";
-            txtPassword.Size = new Size(431, 35);
+            txtPassword.Size = new Size(300, 35);
             txtPassword.TabIndex = 1;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(467, 395);
+            label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label1.Location = new Point(100, 210);
             label1.Name = "label1";
-            label1.Size = new Size(68, 30);
+            label1.Size = new Size(90, 21);
             label1.TabIndex = 2;
-            label1.Text = "label1";
+            label1.Text = "Tên đăng nhập:";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(467, 518);
+            label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label2.Location = new Point(100, 290);
             label2.Name = "label2";
-            label2.Size = new Size(68, 30);
+            label2.Size = new Size(70, 21);
             label2.TabIndex = 3;
-            label2.Text = "label2";
+            label2.Text = "Mật khẩu:";
             // 
             // btnLogin
             // 
-            btnLogin.Location = new Point(543, 596);
+            btnLogin.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            btnLogin.Location = new Point(200, 350);
             btnLogin.Name = "btnLogin";
-            btnLogin.Size = new Size(131, 40);
+            btnLogin.Size = new Size(300, 45);
             btnLogin.TabIndex = 4;
-            btnLogin.Text = "Đăng nhập";
+            btnLogin.Text = "ĐĂNG NHẬP";
             btnLogin.UseVisualStyleBackColor = true;
             btnLogin.Click += btnLogin_Click;
             // 
             // checkBox1
             // 
             checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(732, 596);
+            checkBox1.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            checkBox1.Location = new Point(200, 410);
             checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(137, 34);
+            checkBox1.Size = new Size(130, 23);
             checkBox1.TabIndex = 5;
-            checkBox1.Text = "checkBox1";
+            checkBox1.Text = "Hiển thị mật khẩu";
             checkBox1.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(543, 230);
+            label3.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            label3.Location = new Point(100, 100);
             label3.Name = "label3";
-            label3.Size = new Size(68, 30);
+            label3.Size = new Size(400, 32);
             label3.TabIndex = 6;
-            label3.Text = "label3";
+            label3.Text = "HỆ THỐNG QUẢN LÝ NHÀ HÀNG ACECOOK";
+            label3.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // LoginForm
             // 
-            AutoScaleDimensions = new SizeF(12F, 30F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1843, 972);
+            ClientSize = new Size(600, 500);
             Controls.Add(label3);
             Controls.Add(checkBox1);
             Controls.Add(btnLogin);
@@ -111,7 +119,7 @@
             Controls.Add(txtPassword);
             Controls.Add(txtUsername);
             Name = "LoginForm";
-            Text = "LoginForm";
+            Text = "Đăng nhập - AceCook";
             ResumeLayout(false);
             PerformLayout();
         }
