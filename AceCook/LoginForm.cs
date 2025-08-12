@@ -46,8 +46,8 @@ namespace AceCook
             label3.ForeColor = Color.FromArgb(64, 64, 64);
 
             // Cập nhật checkbox
-            checkBox1.Text = "Hiển thị mật khẩu";
-            checkBox1.CheckedChanged += CheckBox1_CheckedChanged;
+            checkBoxShowPass.Text = "Hiển thị mật khẩu";
+            checkBoxShowPass.CheckedChanged += CheckBox1_CheckedChanged;
 
             // Cấu hình button
             btnLogin.Text = "ĐĂNG NHẬP";
@@ -65,7 +65,7 @@ namespace AceCook
 
         private void CheckBox1_CheckedChanged(object sender, EventArgs e)
         {
-            txtPassword.UseSystemPasswordChar = !checkBox1.Checked;
+            txtPassword.UseSystemPasswordChar = !checkBoxShowPass.Checked;
         }
 
         private void TxtUsername_KeyPress(object sender, KeyPressEventArgs e)
@@ -139,13 +139,13 @@ namespace AceCook
                 btnLogin.Text = "ĐANG XỬ LÝ...";
 
                 var (success, account, employee, permission) = await _authRepository.AuthenticateAsync(
-                    txtUsername.Text.Trim(), 
+                    txtUsername.Text.Trim(),
                     txtPassword.Text.Trim()
                 );
 
                 if (success && account != null)
                 {
-                    MessageBox.Show($"Đăng nhập thành công!\nChào mừng {employee?.HoTenNv ?? account.TenDangNhap}", 
+                    MessageBox.Show($"Đăng nhập thành công!\nChào mừng {employee?.HoTenNv ?? account.TenDangNhap}",
                         "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     // Mở Dashboard hoặc form chính
@@ -153,7 +153,7 @@ namespace AceCook
                 }
                 else
                 {
-                    MessageBox.Show("Tên đăng nhập hoặc mật khẩu không đúng!\nVui lòng kiểm tra lại.", 
+                    MessageBox.Show("Tên đăng nhập hoặc mật khẩu không đúng!\nVui lòng kiểm tra lại.",
                         "Đăng nhập thất bại", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     txtPassword.SelectAll();
                     txtPassword.Focus();
@@ -178,13 +178,25 @@ namespace AceCook
                 // Tạo và hiển thị form chính (Dashboard)
                 var dashboardForm = new DashboardForm(account, employee, permission);
                 dashboardForm.Show();
-                
+
                 // Ẩn form đăng nhập
                 this.Hide();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi mở form chính: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void checkBoxShowPass_CheckedChanged(object sender, EventArgs e)
+        {
+           if( checkBoxShowPass.Checked)
+            {
+                txtPassword.UseSystemPasswordChar = false;
+            }
+            else
+            {
+                txtPassword.UseSystemPasswordChar = true;
             }
         }
     }

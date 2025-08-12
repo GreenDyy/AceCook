@@ -67,6 +67,18 @@ Hoặc mở solution trong Visual Studio và nhấn F5.
 - ✅ Loading state khi đăng nhập
 - ✅ Chuyển hướng đến Dashboard sau khi đăng nhập thành công
 
+## Tính năng DashboardForm
+- ✅ Giao diện hiện đại, chuyên nghiệp
+- ✅ Sidebar navigation với TreeView đẹp mắt
+- ✅ Icons emoji cho menu items
+- ✅ Màu sắc phân biệt cho từng nhóm chức năng
+- ✅ Header với custom window controls
+- ✅ User info panel hiển thị thông tin người dùng
+- ✅ Content area responsive
+- ✅ Error handling và coming soon messages
+- ✅ Hover effects và visual feedback
+- ✅ Form state management (minimize, maximize, close)
+
 ## Database Schema
 - **TAIKHOAN**: Quản lý tài khoản người dùng
 - **NHANVIEN**: Thông tin nhân viên
