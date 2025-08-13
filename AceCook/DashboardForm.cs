@@ -159,7 +159,7 @@ namespace AceCook
             {
                 Tag = tag,
                 ForeColor = color,
-                Font = new Font("Segoe UI", 10, FontStyle.Regular)
+                NodeFont = new Font("Segoe UI", 10, FontStyle.Regular)
             };
             return node;
         }
