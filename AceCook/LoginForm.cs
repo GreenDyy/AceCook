@@ -23,6 +23,8 @@ namespace AceCook
             InitializeComponent();
             InitializeRepository();
             SetupForm();
+            txtUsername.Text = "kd1";
+            txtPassword.Text = "123456";
         }
 
         private void SetupForm()
@@ -145,9 +147,10 @@ namespace AceCook
 
                 if (success && account != null)
                 {
+
                     MessageBox.Show($"Đăng nhập thành công!\nChào mừng {employee?.HoTenNv ?? account.TenDangNhap}",
                         "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                    
                     // Mở Dashboard hoặc form chính
                     OpenMainForm(account, employee, permission);
                 }
@@ -175,6 +178,24 @@ namespace AceCook
         {
             try
             {
+                // Log thông tin trước khi tạo DashboardForm
+                Console.WriteLine("=== MỞ DASHBOARD FORM ===");
+                Console.WriteLine($"ACCOUNT INFO:");
+                Console.WriteLine($"  - MaTk: {account?.MaTk ?? "NULL"}");
+                Console.WriteLine($"  - TenDangNhap: {account?.TenDangNhap ?? "NULL"}");
+                Console.WriteLine($"  - MaNv: {account?.MaNv ?? "NULL"}");
+                Console.WriteLine($"  - MaPq: {account?.MaPq ?? "NULL"}");
+                
+                Console.WriteLine($"EMPLOYEE INFO:");
+                Console.WriteLine($"  - MaNv: {employee?.MaNv ?? "NULL"}");
+                Console.WriteLine($"  - HoTenNv: {employee?.HoTenNv ?? "NULL"}");
+                Console.WriteLine($"  - MaPb: {employee?.MaPb ?? "NULL"}");
+                
+                Console.WriteLine($"PERMISSION INFO:");
+                Console.WriteLine($"  - MaPq: {permission?.MaPq ?? "NULL"}");
+                Console.WriteLine($"  - QuyenTruyCap: {permission?.QuyenTruyCap ?? "NULL"}");
+                Console.WriteLine("==========================");
+
                 // Tạo và hiển thị form chính (Dashboard)
                 var dashboardForm = new DashboardForm(account, employee, permission);
                 dashboardForm.Show();

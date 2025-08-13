@@ -197,9 +197,9 @@ namespace AceCook
             {
                 dataGridViewOrders.Columns["MaDdh"].HeaderText = "Mã ĐH";
                 dataGridViewOrders.Columns["NgayDat"].HeaderText = "Ngày Đặt";
-                dataGridViewOrders.Columns["TrangThaiDh"].HeaderText = "Trạng Thái";
-                dataGridViewOrders.Columns["MaKhNavigation.TenKh"].HeaderText = "Khách Hàng";
-                dataGridViewOrders.Columns["MaNvNavigation.HoTenNv"].HeaderText = "Nhân Viên";
+                dataGridViewOrders.Columns["TrangThai"].HeaderText = "Trạng Thái";
+                //dataGridViewOrders.Columns["MaKhNavigation.TenKh"].HeaderText = "Khách Hàng";
+                //dataGridViewOrders.Columns["MaNvNavigation.HoTenNv"].HeaderText = "Nhân Viên";
 
                 // Format date and money columns
                 if (dataGridViewOrders.Columns["NgayDat"] != null)
