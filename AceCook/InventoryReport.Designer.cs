@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panel2 = new Panel();
             button3 = new Button();
             button2 = new Button();
@@ -60,6 +62,16 @@
             panel3 = new Panel();
             pictureBox4 = new PictureBox();
             label13 = new Label();
+            label14 = new Label();
+            dataGridView1 = new DataGridView();
+            colMaSP = new DataGridViewTextBoxColumn();
+            colTenSp = new DataGridViewTextBoxColumn();
+            colLoai = new DataGridViewTextBoxColumn();
+            colGia = new DataGridViewTextBoxColumn();
+            colTonKho = new DataGridViewTextBoxColumn();
+            colGiaTri = new DataGridViewTextBoxColumn();
+            colChiTiet = new DataGridViewTextBoxColumn();
+            ctTonBindingSource = new BindingSource(components);
             panel2.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox5.SuspendLayout();
@@ -73,6 +85,8 @@
             groupBox6.SuspendLayout();
             panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)ctTonBindingSource).BeginInit();
             SuspendLayout();
             // 
             // panel2
@@ -350,6 +364,7 @@
             // 
             // groupBox6
             // 
+            groupBox6.Controls.Add(dataGridView1);
             groupBox6.Controls.Add(panel3);
             groupBox6.Location = new Point(274, 358);
             groupBox6.Name = "groupBox6";
@@ -359,6 +374,7 @@
             // 
             // panel3
             // 
+            panel3.Controls.Add(label14);
             panel3.Controls.Add(label13);
             panel3.Controls.Add(pictureBox4);
             panel3.Location = new Point(0, 11);
@@ -377,11 +393,97 @@
             // label13
             // 
             label13.AutoSize = true;
+            label13.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label13.Location = new Point(72, 15);
             label13.Name = "label13";
-            label13.Size = new Size(171, 20);
+            label13.Size = new Size(207, 23);
             label13.TabIndex = 1;
             label13.Text = "Tồn kho tất cả sản phẩm";
+            label13.Click += label13_Click;
+            // 
+            // label14
+            // 
+            label14.AutoSize = true;
+            label14.Location = new Point(72, 35);
+            label14.Name = "label14";
+            label14.Size = new Size(316, 20);
+            label14.TabIndex = 2;
+            label14.Text = "Danh sách chi tiết tồn kho của tất cả sản phẩm";
+            // 
+            // dataGridView1
+            // 
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToResizeRows = false;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colMaSP, colTenSp, colLoai, colGia, colTonKho, colGiaTri, colChiTiet });
+            dataGridView1.Location = new Point(0, 70);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.RowHeadersVisible = false;
+            dataGridView1.RowHeadersWidth = 51;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.Size = new Size(1172, 265);
+            dataGridView1.TabIndex = 1;
+            // 
+            // colMaSP
+            // 
+            colMaSP.HeaderText = "Mã Sản Phẩm";
+            colMaSP.MinimumWidth = 6;
+            colMaSP.Name = "colMaSP";
+            colMaSP.Width = 180;
+            // 
+            // colTenSp
+            // 
+            colTenSp.HeaderText = "Tên Sản phẩm";
+            colTenSp.MinimumWidth = 6;
+            colTenSp.Name = "colTenSp";
+            colTenSp.Width = 300;
+            // 
+            // colLoai
+            // 
+            colLoai.HeaderText = "Loại";
+            colLoai.MinimumWidth = 6;
+            colLoai.Name = "colLoai";
+            colLoai.Width = 120;
+            // 
+            // colGia
+            // 
+            colGia.HeaderText = "GIÁ";
+            colGia.MinimumWidth = 6;
+            colGia.Name = "colGia";
+            colGia.Width = 125;
+            // 
+            // colTonKho
+            // 
+            colTonKho.HeaderText = "TỒN KHO";
+            colTonKho.MinimumWidth = 6;
+            colTonKho.Name = "colTonKho";
+            colTonKho.Width = 125;
+            // 
+            // colGiaTri
+            // 
+            colGiaTri.HeaderText = "GIÁ TRỊ";
+            colGiaTri.MinimumWidth = 6;
+            colGiaTri.Name = "colGiaTri";
+            colGiaTri.Width = 120;
+            // 
+            // colChiTiet
+            // 
+            colChiTiet.HeaderText = "CHI TIẾT THEO KHO";
+            colChiTiet.MinimumWidth = 6;
+            colChiTiet.Name = "colChiTiet";
+            colChiTiet.Width = 200;
+            // 
+            // ctTonBindingSource
+            // 
+            ctTonBindingSource.DataSource = typeof(Models.CtTon);
             // 
             // InventoryReport
             // 
@@ -417,6 +519,8 @@
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)ctTonBindingSource).EndInit();
             ResumeLayout(false);
         }
 
@@ -454,5 +558,15 @@
         private Panel panel3;
         private Label label13;
         private PictureBox pictureBox4;
+        private Label label14;
+        private DataGridView dataGridView1;
+        private BindingSource ctTonBindingSource;
+        private DataGridViewTextBoxColumn colMaSP;
+        private DataGridViewTextBoxColumn colTenSp;
+        private DataGridViewTextBoxColumn colLoai;
+        private DataGridViewTextBoxColumn colGia;
+        private DataGridViewTextBoxColumn colTonKho;
+        private DataGridViewTextBoxColumn colGiaTri;
+        private DataGridViewTextBoxColumn colChiTiet;
     }
 }
