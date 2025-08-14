@@ -32,12 +32,12 @@ namespace AceCook
         public InventoryReportForm(AppDbContext context)
         {
             _reportRepository = new ReportRepository(context);
-            InitializeComponent();
+            InitializeFormComponents();
             SetupUserInterface();
             _ = LoadInitialDataAsync();
         }
 
-        private void InitializeComponent()
+        private void InitializeFormComponents()
         {
             this.SuspendLayout();
             
