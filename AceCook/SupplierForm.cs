@@ -227,9 +227,9 @@ namespace AceCook
             btnAdd = new Button
             {
                 Text = "➕ Thêm nhà cung cấp mới",
-                Size = new Size(280, 60),
+                Size = new Size(280, 10),
                 Location = new Point(0, 0),
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(46, 204, 113),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
@@ -242,7 +242,7 @@ namespace AceCook
             {
                 Text = "Chỉnh sửa",
                 Size = new Size(100, 35),
-                Location = new Point(270, 10),
+                Location = new Point(420, 10),
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(241, 196, 15),
                 ForeColor = Color.White,
@@ -255,7 +255,7 @@ namespace AceCook
             {
                 Text = "Xóa",
                 Size = new Size(100, 35),
-                Location = new Point(410, 10),
+                Location = new Point(560, 10),
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(231, 76, 60),
                 ForeColor = Color.White,
