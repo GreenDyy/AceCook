@@ -18,36 +18,106 @@ namespace AceCook.Repositories
 
         public async Task<List<Sanpham>> GetAllProductsAsync()
         {
-            return await _context.Sanphams.ToListAsync();
+            try
+            {
+                return await _context.Sanphams
+                    .OrderBy(p => p.TenSp)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in GetAllProductsAsync: {ex.Message}");
+                return new List<Sanpham>();
+            }
         }
 
         public async Task<Sanpham?> GetProductByIdAsync(string maSP)
         {
-            return await _context.Sanphams.FirstOrDefaultAsync(p => p.MaSp == maSP);
+            try
+            {
+                if (string.IsNullOrWhiteSpace(maSP))
+                {
+                    return null;
+                }
+
+                return await _context.Sanphams.FirstOrDefaultAsync(p => p.MaSp == maSP);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in GetProductByIdAsync: {ex.Message}");
+                return null;
+            }
         }
 
         public async Task<List<Sanpham>> GetProductsByCategoryAsync(string loai)
         {
-            return await _context.Sanphams.Where(p => p.Loai == loai).ToListAsync();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(loai))
+                {
+                    return new List<Sanpham>();
+                }
+
+                return await _context.Sanphams
+                    .Where(p => p.Loai == loai)
+                    .OrderBy(p => p.TenSp)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in GetProductsByCategoryAsync: {ex.Message}");
+                return new List<Sanpham>();
+            }
         }
 
         public async Task<List<Sanpham>> SearchProductsAsync(string searchTerm)
         {
-            return await _context.Sanphams
-                .Where(p => p.TenSp.Contains(searchTerm) || p.MaSp.Contains(searchTerm))
-                .ToListAsync();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    return await GetAllProductsAsync();
+                }
+
+                return await _context.Sanphams
+                    .Where(p => (p.TenSp != null && p.TenSp.Contains(searchTerm)) || 
+                               (p.MaSp != null && p.MaSp.Contains(searchTerm)) ||
+                               (p.MoTa != null && p.MoTa.Contains(searchTerm)) ||
+                               (p.Loai != null && p.Loai.Contains(searchTerm)))
+                    .OrderBy(p => p.TenSp)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in SearchProductsAsync: {ex.Message}");
+                return new List<Sanpham>();
+            }
         }
 
         public async Task<bool> AddProductAsync(Sanpham product)
         {
             try
             {
+                // Validation
+                if (string.IsNullOrWhiteSpace(product.MaSp) || string.IsNullOrWhiteSpace(product.TenSp))
+                {
+                    return false;
+                }
+
+                // Check if product already exists
+                var existingProduct = await _context.Sanphams.FirstOrDefaultAsync(p => p.MaSp == product.MaSp);
+                if (existingProduct != null)
+                {
+                    return false; // Product already exists
+                }
+
                 await _context.Sanphams.AddAsync(product);
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Error in AddProductAsync: {ex.Message}");
                 return false;
             }
         }
@@ -56,12 +126,33 @@ namespace AceCook.Repositories
         {
             try
             {
-                _context.Sanphams.Update(product);
+                // Validation
+                if (string.IsNullOrWhiteSpace(product.MaSp) || string.IsNullOrWhiteSpace(product.TenSp))
+                {
+                    return false;
+                }
+
+                // Check if product exists
+                var existingProduct = await _context.Sanphams.FirstOrDefaultAsync(p => p.MaSp == product.MaSp);
+                if (existingProduct == null)
+                {
+                    return false; // Product not found
+                }
+
+                // Update properties
+                existingProduct.TenSp = product.TenSp;
+                existingProduct.MoTa = product.MoTa;
+                existingProduct.Gia = product.Gia;
+                existingProduct.Dvtsp = product.Dvtsp;
+                existingProduct.Loai = product.Loai;
+
+                _context.Sanphams.Update(existingProduct);
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Error in UpdateProductAsync: {ex.Message}");
                 return false;
             }
         }
@@ -70,6 +161,11 @@ namespace AceCook.Repositories
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(maSP))
+                {
+                    return false;
+                }
+
                 var product = await _context.Sanphams.FirstOrDefaultAsync(p => p.MaSp == maSP);
                 if (product != null)
                 {
@@ -79,18 +175,29 @@ namespace AceCook.Repositories
                 }
                 return false;
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Error in DeleteProductAsync: {ex.Message}");
                 return false;
             }
         }
 
         public async Task<List<string>> GetProductCategoriesAsync()
         {
-            return await _context.Sanphams?
-                .Select(p => p.Loai)
-                ?.Distinct()
-                ?.ToListAsync();
+            try
+            {
+                return await _context.Sanphams
+                    .Where(p => !string.IsNullOrEmpty(p.Loai))
+                    .Select(p => p.Loai)
+                    .Distinct()
+                    .OrderBy(cat => cat)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in GetProductCategoriesAsync: {ex.Message}");
+                return new List<string>();
+            }
         }
     }
 } 

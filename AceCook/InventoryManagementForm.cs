@@ -29,10 +29,15 @@ namespace AceCook
         {
             try
             {
-                // Load data sequentially to avoid DbContext conflicts
-                var inventory = await _inventoryRepository.GetAllInventoryAsync();
-                await LoadWarehouseData();
-                await LoadProductTypeData();
+                // Load data in parallel for better performance
+                var inventoryTask = _inventoryRepository.GetAllInventoryAsync();
+                var warehouseTask = LoadWarehouseData();
+                var productTypeTask = LoadProductTypeData();
+
+                // Wait for all tasks to complete
+                var inventory = await inventoryTask;
+                await warehouseTask;
+                await productTypeTask;
 
                 RefreshDataGridView(inventory);
                 await UpdateSummary(inventory);
@@ -53,7 +58,7 @@ namespace AceCook
                 cboWarehouseFilter.Items.Add("Tất cả kho");
                 foreach (var warehouse in warehouses)
                 {
-                    cboWarehouseFilter.Items.Add(warehouse?.TenKho);
+                    cboWarehouseFilter.Items.Add(warehouse.TenKho);
                 }
                 cboWarehouseFilter.SelectedIndex = 0;
             }
