@@ -62,11 +62,14 @@ namespace AceCook.Repositories
                     return false;
                 }
 
-                // Cập nhật từng trường thông tin
-                existingSupplier.TenNcc = supplier.TenNcc;
-                existingSupplier.Sdtncc = supplier.Sdtncc;
-                existingSupplier.EmailNcc = supplier.EmailNcc;
-                existingSupplier.DiaChiNcc = supplier.DiaChiNcc;
+                // Cập nhật thông tin mà không động đến MaNcc (khóa chính)
+                _context.Entry(existingSupplier).CurrentValues.SetValues(new
+                {
+                    TenNcc = supplier.TenNcc,
+                    Sdtncc = supplier.Sdtncc,
+                    EmailNcc = supplier.EmailNcc,
+                    DiaChiNcc = supplier.DiaChiNcc
+                });
 
                 // Lưu thay đổi
                 await _context.SaveChangesAsync();
@@ -74,10 +77,9 @@ namespace AceCook.Repositories
             }
             catch (Exception ex)
             {
-                // Log lỗi để debug
                 Console.WriteLine($"Error in UpdateSupplierAsync: {ex.Message}");
                 Console.WriteLine($"StackTrace: {ex.StackTrace}");
-                throw; // Ném lại exception để form có thể xử lý
+                throw;
             }
         }
 
