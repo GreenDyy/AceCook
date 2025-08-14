@@ -432,11 +432,25 @@ namespace AceCook
                 try
                 {
                     string maNcc = dataGridViewSuppliers.SelectedRows[0].Cells["MaNcc"].Value.ToString();
-                    var selectedSupplier = _suppliers.FirstOrDefault(s => s.MaNcc == maNcc);
                     
-                    if (selectedSupplier != null)
+                    // Lấy supplier trực tiếp từ database
+                    var existingSupplier = await _context.Nhacungcaps
+                        .AsNoTracking() // Quan trọng: Không track entity này
+                        .FirstOrDefaultAsync(s => s.MaNcc == maNcc);
+
+                    if (existingSupplier != null)
                     {
-                        var editForm = new SupplierAddEditForm(_context, selectedSupplier);
+                        // Tạo bản sao để edit
+                        var supplierCopy = new Nhacungcap
+                        {
+                            MaNcc = existingSupplier.MaNcc,
+                            TenNcc = existingSupplier.TenNcc,
+                            Sdtncc = existingSupplier.Sdtncc,
+                            EmailNcc = existingSupplier.EmailNcc,
+                            DiaChiNcc = existingSupplier.DiaChiNcc
+                        };
+
+                        var editForm = new SupplierAddEditForm(_context, supplierCopy);
                         if (editForm.ShowDialog() == DialogResult.OK)
                         {
                             try
