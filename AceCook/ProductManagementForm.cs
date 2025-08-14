@@ -27,8 +27,7 @@ namespace AceCook
         {
             _productRepository = new ProductRepository(context);
             SetupUI();
-            LoadProducts();
-            LoadCategories();
+            _ = LoadDataAsync(); // Sử dụng async method để load dữ liệu
         }
 
         private void SetupUI()
@@ -209,7 +208,25 @@ namespace AceCook
             };
         }
 
-        private async void LoadProducts()
+        private async Task LoadDataAsync()
+        {
+            try
+            {
+                // Load products first
+                _products = await _productRepository.GetAllProductsAsync();
+                RefreshDataGridView(_products);
+                
+                // Then load categories
+                await LoadCategories();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task LoadProducts()
         {
             try
             {
@@ -223,7 +240,7 @@ namespace AceCook
             }
         }
 
-        private async void LoadCategories()
+        private async Task LoadCategories()
         {
             try
             {
@@ -304,10 +321,9 @@ namespace AceCook
             cboCategory.SelectedIndex = 0;
         }
 
-        private void BtnRefresh_Click(object sender, EventArgs e)
+        private async void BtnRefresh_Click(object sender, EventArgs e)
         {
-            LoadProducts();
-            LoadCategories();
+            await LoadDataAsync();
         }
 
         private async void BtnAdd_Click(object sender, EventArgs e)
