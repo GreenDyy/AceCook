@@ -17,6 +17,7 @@ namespace AceCook
         private readonly ReportRepository _reportRepository;
         private DataGridView dataGridViewOrderReport;
         private DataGridView dataGridViewOrderSummary;
+        private DataGridView dataGridViewOrderStatistics; // Bảng mới
         private TextBox txtSearch;
         private ComboBox cboStatusFilter;
         private DateTimePicker dtpStartDate;
@@ -216,7 +217,7 @@ namespace AceCook
 
             lblPendingOrders = new Label
             {
-                Text = "Đang xử lý: 0",
+                Text = "Đơn hàng mới: 0",
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 ForeColor = Color.Orange,
                 Size = new Size(200, 30),
@@ -296,7 +297,7 @@ namespace AceCook
                 RowTemplate = { Height = 50 }
             };
 
-            // Summary DataGridView for statistics
+            // Summary DataGridView for statistics (existing)
             dataGridViewOrderSummary = new DataGridView
             {
                 Size = new Size(1340, 120),
@@ -316,15 +317,39 @@ namespace AceCook
                 RowTemplate = { Height = 40 }
             };
 
+            // New Statistics DataGridView with 4 columns
+            dataGridViewOrderStatistics = new DataGridView
+            {
+                Size = new Size(1340, 100),
+                Location = new Point(30, 830), // Below the existing summary table
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false,
+                ReadOnly = true,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                MultiSelect = false,
+                BackgroundColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle,
+                GridColor = Color.LightGray,
+                RowHeadersVisible = false,
+                CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
+                ColumnHeadersHeight = 40,
+                RowTemplate = { Height = 40 }
+            };
+
             // Style the DataGridViews
             StyleDataGridView(dataGridViewOrderReport);
             StyleDataGridView(dataGridViewOrderSummary);
+            StyleDataGridView(dataGridViewOrderStatistics); // Style the new table
 
-            // Add controls to form
+            // Add controls to form - update to include new table
             this.Controls.AddRange(new Control[] { 
                 lblTitle, pnlFilters, pnlSummary, pnlActions, 
-                dataGridViewOrderReport, dataGridViewOrderSummary 
+                dataGridViewOrderReport, dataGridViewOrderSummary, dataGridViewOrderStatistics // Add new table
             });
+
+            // Increase form height to accommodate new table
+            this.Size = new Size(1400, 980);
         }
 
         private void StyleDataGridView(DataGridView dgv)
@@ -378,6 +403,9 @@ namespace AceCook
             
             // Refresh summary by status
             RefreshSummaryReport(orders);
+            
+            // Refresh new statistics report
+            RefreshStatisticsReport(orders);
         }
 
         private void RefreshDetailedReport(List<Dondathang> orders)
@@ -643,6 +671,95 @@ namespace AceCook
             {
                 MessageBox.Show($"Lỗi khi áp dụng bộ lọc: {ex.Message}", 
                     "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // New method to populate the statistics table with 4 columns
+        private void RefreshStatisticsReport(List<Dondathang> orders)
+        {
+            dataGridViewOrderStatistics.DataSource = null;
+            dataGridViewOrderStatistics.Columns.Clear();
+
+            // Create 4 columns for the new statistics table
+            dataGridViewOrderStatistics.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "TrangThai",
+                HeaderText = "Trạng thái",
+                Width = 335
+            });
+
+            dataGridViewOrderStatistics.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "SoLuong",
+                HeaderText = "Số lượng",
+                Width = 335
+            });
+
+            dataGridViewOrderStatistics.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "TyLe",
+                HeaderText = "Tỷ lệ (%)",
+                Width = 335
+            });
+
+            dataGridViewOrderStatistics.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "DoanhThu",
+                HeaderText = "Doanh thu",
+                Width = 335
+            });
+
+            // Group orders by status and populate data
+            var statusGroups = orders.GroupBy(o => o.TrangThai ?? "Đơn hàng mới");
+            var totalOrders = orders.Count;
+
+            foreach (var group in statusGroups)
+            {
+                var rowIndex = dataGridViewOrderStatistics.Rows.Add();
+                var row = dataGridViewOrderStatistics.Rows[rowIndex];
+
+                var count = group.Count();
+                var percentage = totalOrders > 0 ? (count * 100.0 / totalOrders) : 0;
+                
+                decimal revenue = 0;
+                foreach (var order in group)
+                {
+                    if (order.CtDhs != null)
+                    {
+                        revenue += order.CtDhs.Sum(ct => (decimal)((ct.SoLuong ?? 0) * (ct.DonGia ?? 0)));
+                    }
+                }
+
+                row.Cells["TrangThai"].Value = group.Key;
+                row.Cells["SoLuong"].Value = count;
+                row.Cells["TyLe"].Value = $"{percentage:F1}%";
+                row.Cells["DoanhThu"].Value = revenue.ToString("N0") + " VNĐ";
+
+                // Apply styling based on status
+                StyleStatisticsRow(row, group.Key);
+            }
+        }
+
+        // Method to style the new statistics table rows
+        private void StyleStatisticsRow(DataGridViewRow row, string status)
+        {
+            if (status == "Hoàn thành")
+            {
+                row.DefaultCellStyle.BackColor = Color.FromArgb(240, 255, 240);
+                row.Cells["TrangThai"].Style.ForeColor = Color.Green;
+                row.Cells["TrangThai"].Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+            }
+            else if (status == "Đơn hàng mới")
+            {
+                row.DefaultCellStyle.BackColor = Color.FromArgb(240, 248, 255);
+                row.Cells["TrangThai"].Style.ForeColor = Color.Blue;
+                row.Cells["TrangThai"].Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+            }
+            else
+            {
+                row.DefaultCellStyle.BackColor = Color.White;
+                row.Cells["TrangThai"].Style.ForeColor = Color.Black;
+                row.Cells["TrangThai"].Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
             }
         }
     }
