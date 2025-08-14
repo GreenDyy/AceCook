@@ -62,7 +62,7 @@ namespace AceCook
                 BorderStyle = BorderStyle.FixedSingle
             };
                       
-                      var lblTotalSuppliersTitle = new Label
+                        var lblTotalSuppliersTitle = new Label
             {
                 Text = "Tổng số nhà cung cấp:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
@@ -77,9 +77,9 @@ namespace AceCook
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 ForeColor = Color.FromArgb(52, 152, 219),
                 Size = new Size(50, 25),
-                Location = new Point(200, 15),  // Điều chỉnh vị trí để hiển thị số
+                Location = new Point(200, 15),
                 TextAlign = ContentAlignment.MiddleLeft,
-                Padding = new Padding(5, 0, 0, 0)  // Thêm padding bên trái
+                Padding = new Padding(5, 0, 0, 0)
             };
 
             var lblActiveSuppliersTitle = new Label
@@ -87,7 +87,7 @@ namespace AceCook
                 Text = "Nhà cung cấp đang hoạt động:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 AutoSize = true,
-                Location = new Point(300, 15),
+                Location = new Point(350, 15),  // Tăng khoảng cách với nhóm label đầu tiên
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
@@ -97,9 +97,9 @@ namespace AceCook
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 ForeColor = Color.FromArgb(46, 204, 113),
                 Size = new Size(50, 25),
-                Location = new Point(520, 15),  // Điều chỉnh vị trí để hiển thị số
+                Location = new Point(580, 15),  // Điều chỉnh theo vị trí mới của lblActiveSuppliersTitle
                 TextAlign = ContentAlignment.MiddleLeft,
-                Padding = new Padding(5, 0, 0, 0)  // Thêm padding bên trái
+                Padding = new Padding(5, 0, 0, 0)
             };
           
             pnlSummary.Controls.AddRange(new Control[] { 
