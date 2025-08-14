@@ -76,9 +76,21 @@ namespace AceCook
             monthlyChartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
             monthlyChartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
 
-            // Thêm biểu đồ vào panel4 (nằm trong groupBox7)
-            panel4.Controls.Clear();
-            panel4.Controls.Add(monthlyRevenueChart);
+            // Tạo một panel mới để chứa biểu đồ tháng
+            Panel chartPanel = new Panel();
+            chartPanel.Dock = DockStyle.Fill;
+            chartPanel.Controls.Add(monthlyRevenueChart);
+
+            // Xóa các controls cũ trong panel1 và thêm groupBox7 và chartPanel mới
+            panel1.Controls.Clear();
+            
+            // Thêm lại groupBox7 vào đầu panel1
+            groupBox7.Dock = DockStyle.Top;
+            panel1.Controls.Add(groupBox7);
+            
+            // Thêm panel chứa biểu đồ vào phần còn lại của panel1
+            chartPanel.Dock = DockStyle.Fill;
+            panel1.Controls.Add(chartPanel);
 
             // Load dữ liệu mẫu
             LoadSampleData();

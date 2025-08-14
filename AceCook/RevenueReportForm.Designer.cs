@@ -80,7 +80,6 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
             groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox6).BeginInit();
-            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel2
@@ -376,7 +375,7 @@
             groupBox6.Controls.Add(pictureBox4);
             groupBox6.Controls.Add(label14);
             groupBox6.Controls.Add(label13);
-            groupBox6.Location = new Point(12, 349);
+            groupBox6.Location = new Point(12, 347);
             groupBox6.Name = "groupBox6";
             groupBox6.Size = new Size(632, 95);
             groupBox6.TabIndex = 0;
@@ -417,7 +416,7 @@
             groupBox7.Controls.Add(label15);
             groupBox7.Controls.Add(panel4);
             groupBox7.Controls.Add(label16);
-            groupBox7.Location = new Point(-1, 0);
+            groupBox7.Location = new Point(780, 347);
             groupBox7.Name = "groupBox7";
             groupBox7.Size = new Size(633, 93);
             groupBox7.TabIndex = 3;
@@ -453,10 +452,9 @@
             // 
             // panel1
             // 
-            panel1.Controls.Add(groupBox7);
-            panel1.Location = new Point(799, 349);
+            panel1.Location = new Point(780, 450);
             panel1.Name = "panel1";
-            panel1.Size = new Size(614, 381);
+            panel1.Size = new Size(614, 453);
             panel1.TabIndex = 6;
             // 
             // RevenueReportForm
@@ -464,6 +462,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1452, 926);
+            Controls.Add(groupBox7);
             Controls.Add(panel1);
             Controls.Add(groupBox6);
             Controls.Add(panel3);
@@ -497,7 +496,6 @@
             groupBox7.ResumeLayout(false);
             groupBox7.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox6).EndInit();
-            panel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
