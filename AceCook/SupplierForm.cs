@@ -47,6 +47,7 @@ namespace AceCook
                 Location = new Point(30, 20),
                 TextAlign = ContentAlignment.MiddleLeft
             };
+            this.Controls.Add(lblTitle);
 
             // Summary Panel
             pnlSummary = new Panel
@@ -159,13 +160,12 @@ namespace AceCook
                 lblSearch, txtSearch, btnClearFilter, btnRefresh 
             });
 
-            // Button Panel
-            var buttonPanel = new Panel
+            // Actions Panel
+            var pnlActions = new Panel
             {
                 Size = new Size(1140, 60),
                 Location = new Point(30, 290),
-                BackColor = Color.FromArgb(255, 200, 200), // Tạm thời đổi màu panel để dễ nhìn
-                Visible = true
+                BackColor = Color.Transparent
             };
 
             btnAdd = new Button
@@ -182,18 +182,11 @@ namespace AceCook
             btnAdd.FlatAppearance.BorderSize = 0;
             btnAdd.Click += BtnAdd_Click;
 
-            // Đảm bảo button được thêm vào panel
-            buttonPanel.Controls.Clear();
-            buttonPanel.Controls.Add(btnAdd);
-
-            // Đảm bảo panel được thêm vào form
-            this.Controls.Add(buttonPanel);
-
             btnEdit = new Button
             {
                 Text = "✏️ Chỉnh sửa",
                 Size = new Size(120, 40),
-                Location = new Point(140, 10),
+                Location = new Point(270, 10),
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(241, 196, 15),
                 ForeColor = Color.White,
@@ -207,7 +200,7 @@ namespace AceCook
             {
                 Text = "🗑️ Xóa",
                 Size = new Size(120, 40),
-                Location = new Point(280, 10),
+                Location = new Point(410, 10),
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(231, 76, 60),
                 ForeColor = Color.White,
@@ -217,7 +210,11 @@ namespace AceCook
             btnDelete.FlatAppearance.BorderSize = 0;
             btnDelete.Click += BtnDelete_Click;
 
-            buttonPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, btnDelete });
+            // Add buttons to actions panel
+            pnlActions.Controls.AddRange(new Control[] { btnAdd, btnEdit, btnDelete });
+
+            // Add panels to form
+            this.Controls.Add(pnlActions);
 
             // DataGridView
             dataGridViewSuppliers = new DataGridView
@@ -250,7 +247,7 @@ namespace AceCook
 
             // Add controls to form
             this.Controls.AddRange(new Control[] { 
-                lblTitle, pnlSummary, searchPanel, buttonPanel, dataGridViewSuppliers 
+                pnlSummary, searchPanel, dataGridViewSuppliers 
             });
         }
 
