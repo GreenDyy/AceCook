@@ -43,36 +43,6 @@ namespace AceCook
             this.label3 = new System.Windows.Forms.Label();
             this.lblSubtitle = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.panelSummary = new System.Windows.Forms.Panel();
-            this.panelSummaryCard4 = new System.Windows.Forms.Panel();
-            this.lblTransactionDays = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.pictureBox4 = new System.Windows.Forms.PictureBox();
-            this.panelSummaryCard3 = new System.Windows.Forms.Panel();
-            this.lblAverageInvoice = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.pictureBox3 = new System.Windows.Forms.PictureBox();
-            this.panelSummaryCard2 = new System.Windows.Forms.Panel();
-            this.lblTotalInvoices = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.panelSummaryCard1 = new System.Windows.Forms.Panel();
-            this.lblTotalRevenue = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.panelCharts = new System.Windows.Forms.Panel();
-            this.panelMonthlyChartContainer = new System.Windows.Forms.Panel();
-            this.panelMonthlyChart = new System.Windows.Forms.Panel();
-            this.panelMonthlyChartHeader = new System.Windows.Forms.Panel();
-            this.lblMonthlyChartSubtitle = new System.Windows.Forms.Label();
-            this.lblMonthlyChartTitle = new System.Windows.Forms.Label();
-            this.pictureBox6 = new System.Windows.Forms.PictureBox();
-            this.panelDailyChartContainer = new System.Windows.Forms.Panel();
-            this.panelDailyChart = new System.Windows.Forms.Panel();
-            this.panelDailyChartHeader = new System.Windows.Forms.Panel();
-            this.lblPeriod = new System.Windows.Forms.Label();
-            this.lblDailyChartTitle = new System.Windows.Forms.Label();
-            this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.panelDetails = new System.Windows.Forms.Panel();
             this.dataGridViewDetails = new System.Windows.Forms.DataGridView();
             this.colDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -80,28 +50,12 @@ namespace AceCook
             this.colRevenue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colAverage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panelDetailsHeader = new System.Windows.Forms.Panel();
-            this.lblDetailsSubtitle = new System.Windows.Forms.Label();
+            this.lblPeriod = new System.Windows.Forms.Label();
             this.lblDetailsTitle = new System.Windows.Forms.Label();
             this.pictureBox7 = new System.Windows.Forms.PictureBox();
             this.panelHeader.SuspendLayout();
             this.panelHeaderActions.SuspendLayout();
             this.panelDateFilter.SuspendLayout();
-            this.panelSummary.SuspendLayout();
-            this.panelSummaryCard4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
-            this.panelSummaryCard3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
-            this.panelSummaryCard2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            this.panelSummaryCard1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.panelCharts.SuspendLayout();
-            this.panelMonthlyChartContainer.SuspendLayout();
-            this.panelMonthlyChartHeader.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
-            this.panelDailyChartContainer.SuspendLayout();
-            this.panelDailyChartHeader.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
             this.panelDetails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDetails)).BeginInit();
             this.panelDetailsHeader.SuspendLayout();
@@ -118,7 +72,7 @@ namespace AceCook
             this.panelHeader.Location = new System.Drawing.Point(0, 0);
             this.panelHeader.Name = "panelHeader";
             this.panelHeader.Padding = new System.Windows.Forms.Padding(30);
-            this.panelHeader.Size = new System.Drawing.Size(1400, 180);
+            this.panelHeader.Size = new System.Drawing.Size(1200, 180);
             this.panelHeader.TabIndex = 0;
             // 
             // panelHeaderActions
@@ -127,9 +81,9 @@ namespace AceCook
             this.panelHeaderActions.Controls.Add(this.btnExportExcel);
             this.panelHeaderActions.Controls.Add(this.panelDateFilter);
             this.panelHeaderActions.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelHeaderActions.Location = new System.Drawing.Point(700, 30);
+            this.panelHeaderActions.Location = new System.Drawing.Point(600, 30);
             this.panelHeaderActions.Name = "panelHeaderActions";
-            this.panelHeaderActions.Size = new System.Drawing.Size(670, 120);
+            this.panelHeaderActions.Size = new System.Drawing.Size(570, 120);
             this.panelHeaderActions.TabIndex = 2;
             // 
             // btnPrint
@@ -140,7 +94,7 @@ namespace AceCook
             this.btnPrint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPrint.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(130)))), ((int)(((byte)(246)))));
-            this.btnPrint.Location = new System.Drawing.Point(540, 70);
+            this.btnPrint.Location = new System.Drawing.Point(440, 70);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(120, 35);
             this.btnPrint.TabIndex = 2;
@@ -156,7 +110,7 @@ namespace AceCook
             this.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExportExcel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnExportExcel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(197)))), ((int)(((byte)(94)))));
-            this.btnExportExcel.Location = new System.Drawing.Point(540, 25);
+            this.btnExportExcel.Location = new System.Drawing.Point(440, 25);
             this.btnExportExcel.Name = "btnExportExcel";
             this.btnExportExcel.Size = new System.Drawing.Size(120, 35);
             this.btnExportExcel.TabIndex = 1;
@@ -175,7 +129,7 @@ namespace AceCook
             this.panelDateFilter.Location = new System.Drawing.Point(20, 15);
             this.panelDateFilter.Name = "panelDateFilter";
             this.panelDateFilter.Padding = new System.Windows.Forms.Padding(15);
-            this.panelDateFilter.Size = new System.Drawing.Size(500, 90);
+            this.panelDateFilter.Size = new System.Drawing.Size(400, 90);
             this.panelDateFilter.TabIndex = 0;
             // 
             // btnFilter
@@ -185,7 +139,7 @@ namespace AceCook
             this.btnFilter.FlatAppearance.BorderSize = 0;
             this.btnFilter.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnFilter.ForeColor = System.Drawing.Color.White;
-            this.btnFilter.Location = new System.Drawing.Point(400, 25);
+            this.btnFilter.Location = new System.Drawing.Point(310, 25);
             this.btnFilter.Name = "btnFilter";
             this.btnFilter.Size = new System.Drawing.Size(80, 40);
             this.btnFilter.TabIndex = 4;
@@ -197,7 +151,7 @@ namespace AceCook
             // 
             this.dateTimePickerTo.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dateTimePickerTo.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dateTimePickerTo.Location = new System.Drawing.Point(280, 40);
+            this.dateTimePickerTo.Location = new System.Drawing.Point(190, 40);
             this.dateTimePickerTo.Name = "dateTimePickerTo";
             this.dateTimePickerTo.Size = new System.Drawing.Size(110, 27);
             this.dateTimePickerTo.TabIndex = 3;
@@ -206,7 +160,7 @@ namespace AceCook
             // 
             this.dateTimePickerFrom.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dateTimePickerFrom.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dateTimePickerFrom.Location = new System.Drawing.Point(90, 40);
+            this.dateTimePickerFrom.Location = new System.Drawing.Point(80, 40);
             this.dateTimePickerFrom.Name = "dateTimePickerFrom";
             this.dateTimePickerFrom.Size = new System.Drawing.Size(110, 27);
             this.dateTimePickerFrom.TabIndex = 2;
@@ -216,7 +170,7 @@ namespace AceCook
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(210, 45);
+            this.label4.Location = new System.Drawing.Point(190, 20);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 20);
             this.label4.TabIndex = 1;
@@ -227,7 +181,7 @@ namespace AceCook
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(20, 45);
+            this.label3.Location = new System.Drawing.Point(80, 20);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 20);
             this.label3.TabIndex = 0;
@@ -255,338 +209,16 @@ namespace AceCook
             this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "📈 Báo cáo Doanh Thu";
             // 
-            // panelSummary
-            // 
-            this.panelSummary.Controls.Add(this.panelSummaryCard4);
-            this.panelSummary.Controls.Add(this.panelSummaryCard3);
-            this.panelSummary.Controls.Add(this.panelSummaryCard2);
-            this.panelSummary.Controls.Add(this.panelSummaryCard1);
-            this.panelSummary.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelSummary.Location = new System.Drawing.Point(0, 180);
-            this.panelSummary.Name = "panelSummary";
-            this.panelSummary.Padding = new System.Windows.Forms.Padding(20, 20, 20, 0);
-            this.panelSummary.Size = new System.Drawing.Size(1400, 140);
-            this.panelSummary.TabIndex = 1;
-            // 
-            // panelSummaryCard4
-            // 
-            this.panelSummaryCard4.BackColor = System.Drawing.Color.White;
-            this.panelSummaryCard4.Controls.Add(this.lblTransactionDays);
-            this.panelSummaryCard4.Controls.Add(this.label12);
-            this.panelSummaryCard4.Controls.Add(this.pictureBox4);
-            this.panelSummaryCard4.Location = new System.Drawing.Point(1045, 20);
-            this.panelSummaryCard4.Name = "panelSummaryCard4";
-            this.panelSummaryCard4.Padding = new System.Windows.Forms.Padding(20);
-            this.panelSummaryCard4.Size = new System.Drawing.Size(320, 100);
-            this.panelSummaryCard4.TabIndex = 3;
-            // 
-            // lblTransactionDays
-            // 
-            this.lblTransactionDays.AutoSize = true;
-            this.lblTransactionDays.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTransactionDays.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
-            this.lblTransactionDays.Location = new System.Drawing.Point(80, 25);
-            this.lblTransactionDays.Name = "lblTransactionDays";
-            this.lblTransactionDays.Size = new System.Drawing.Size(37, 41);
-            this.lblTransactionDays.TabIndex = 2;
-            this.lblTransactionDays.Text = "0";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(108)))), ((int)(((byte)(117)))), ((int)(((byte)(125)))));
-            this.label12.Location = new System.Drawing.Point(80, 65);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(130, 20);
-            this.label12.TabIndex = 1;
-            this.label12.Text = "Ngày có giao dịch";
-            // 
-            // pictureBox4
-            // 
-            this.pictureBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(147)))), ((int)(((byte)(251)))));
-            this.pictureBox4.Location = new System.Drawing.Point(20, 30);
-            this.pictureBox4.Name = "pictureBox4";
-            this.pictureBox4.Size = new System.Drawing.Size(50, 50);
-            this.pictureBox4.TabIndex = 0;
-            this.pictureBox4.TabStop = false;
-            // 
-            // panelSummaryCard3
-            // 
-            this.panelSummaryCard3.BackColor = System.Drawing.Color.White;
-            this.panelSummaryCard3.Controls.Add(this.lblAverageInvoice);
-            this.panelSummaryCard3.Controls.Add(this.label10);
-            this.panelSummaryCard3.Controls.Add(this.pictureBox3);
-            this.panelSummaryCard3.Location = new System.Drawing.Point(705, 20);
-            this.panelSummaryCard3.Name = "panelSummaryCard3";
-            this.panelSummaryCard3.Padding = new System.Windows.Forms.Padding(20);
-            this.panelSummaryCard3.Size = new System.Drawing.Size(320, 100);
-            this.panelSummaryCard3.TabIndex = 2;
-            // 
-            // lblAverageInvoice
-            // 
-            this.lblAverageInvoice.AutoSize = true;
-            this.lblAverageInvoice.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAverageInvoice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
-            this.lblAverageInvoice.Location = new System.Drawing.Point(80, 25);
-            this.lblAverageInvoice.Name = "lblAverageInvoice";
-            this.lblAverageInvoice.Size = new System.Drawing.Size(37, 41);
-            this.lblAverageInvoice.TabIndex = 2;
-            this.lblAverageInvoice.Text = "0";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(108)))), ((int)(((byte)(117)))), ((int)(((byte)(125)))));
-            this.label10.Location = new System.Drawing.Point(80, 65);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(140, 20);
-            this.label10.TabIndex = 1;
-            this.label10.Text = "Trung bình/hóa đơn";
-            // 
-            // pictureBox3
-            // 
-            this.pictureBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(172)))), ((int)(((byte)(254)))));
-            this.pictureBox3.Location = new System.Drawing.Point(20, 30);
-            this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(50, 50);
-            this.pictureBox3.TabIndex = 0;
-            this.pictureBox3.TabStop = false;
-            // 
-            // panelSummaryCard2
-            // 
-            this.panelSummaryCard2.BackColor = System.Drawing.Color.White;
-            this.panelSummaryCard2.Controls.Add(this.lblTotalInvoices);
-            this.panelSummaryCard2.Controls.Add(this.label8);
-            this.panelSummaryCard2.Controls.Add(this.pictureBox2);
-            this.panelSummaryCard2.Location = new System.Drawing.Point(365, 20);
-            this.panelSummaryCard2.Name = "panelSummaryCard2";
-            this.panelSummaryCard2.Padding = new System.Windows.Forms.Padding(20);
-            this.panelSummaryCard2.Size = new System.Drawing.Size(320, 100);
-            this.panelSummaryCard2.TabIndex = 1;
-            // 
-            // lblTotalInvoices
-            // 
-            this.lblTotalInvoices.AutoSize = true;
-            this.lblTotalInvoices.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotalInvoices.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
-            this.lblTotalInvoices.Location = new System.Drawing.Point(80, 25);
-            this.lblTotalInvoices.Name = "lblTotalInvoices";
-            this.lblTotalInvoices.Size = new System.Drawing.Size(37, 41);
-            this.lblTotalInvoices.TabIndex = 2;
-            this.lblTotalInvoices.Text = "0";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(108)))), ((int)(((byte)(117)))), ((int)(((byte)(125)))));
-            this.label8.Location = new System.Drawing.Point(80, 65);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(102, 20);
-            this.label8.TabIndex = 1;
-            this.label8.Text = "Tổng hóa đơn";
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(153)))), ((int)(((byte)(142)))));
-            this.pictureBox2.Location = new System.Drawing.Point(20, 30);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(50, 50);
-            this.pictureBox2.TabIndex = 0;
-            this.pictureBox2.TabStop = false;
-            // 
-            // panelSummaryCard1
-            // 
-            this.panelSummaryCard1.BackColor = System.Drawing.Color.White;
-            this.panelSummaryCard1.Controls.Add(this.lblTotalRevenue);
-            this.panelSummaryCard1.Controls.Add(this.label6);
-            this.panelSummaryCard1.Controls.Add(this.pictureBox1);
-            this.panelSummaryCard1.Location = new System.Drawing.Point(25, 20);
-            this.panelSummaryCard1.Name = "panelSummaryCard1";
-            this.panelSummaryCard1.Padding = new System.Windows.Forms.Padding(20);
-            this.panelSummaryCard1.Size = new System.Drawing.Size(320, 100);
-            this.panelSummaryCard1.TabIndex = 0;
-            // 
-            // lblTotalRevenue
-            // 
-            this.lblTotalRevenue.AutoSize = true;
-            this.lblTotalRevenue.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotalRevenue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
-            this.lblTotalRevenue.Location = new System.Drawing.Point(80, 25);
-            this.lblTotalRevenue.Name = "lblTotalRevenue";
-            this.lblTotalRevenue.Size = new System.Drawing.Size(37, 41);
-            this.lblTotalRevenue.TabIndex = 2;
-            this.lblTotalRevenue.Text = "0";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(108)))), ((int)(((byte)(117)))), ((int)(((byte)(125)))));
-            this.label6.Location = new System.Drawing.Point(80, 65);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(114, 20);
-            this.label6.TabIndex = 1;
-            this.label6.Text = "Tổng doanh thu";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(126)))), ((int)(((byte)(234)))));
-            this.pictureBox1.Location = new System.Drawing.Point(20, 30);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(50, 50);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            // 
-            // panelCharts
-            // 
-            this.panelCharts.Controls.Add(this.panelMonthlyChartContainer);
-            this.panelCharts.Controls.Add(this.panelDailyChartContainer);
-            this.panelCharts.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelCharts.Location = new System.Drawing.Point(0, 320);
-            this.panelCharts.Name = "panelCharts";
-            this.panelCharts.Padding = new System.Windows.Forms.Padding(20, 20, 20, 0);
-            this.panelCharts.Size = new System.Drawing.Size(1400, 380);
-            this.panelCharts.TabIndex = 2;
-            // 
-            // panelMonthlyChartContainer
-            // 
-            this.panelMonthlyChartContainer.BackColor = System.Drawing.Color.White;
-            this.panelMonthlyChartContainer.Controls.Add(this.panelMonthlyChart);
-            this.panelMonthlyChartContainer.Controls.Add(this.panelMonthlyChartHeader);
-            this.panelMonthlyChartContainer.Location = new System.Drawing.Point(720, 20);
-            this.panelMonthlyChartContainer.Name = "panelMonthlyChartContainer";
-            this.panelMonthlyChartContainer.Size = new System.Drawing.Size(650, 350);
-            this.panelMonthlyChartContainer.TabIndex = 1;
-            // 
-            // panelMonthlyChart
-            // 
-            this.panelMonthlyChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMonthlyChart.Location = new System.Drawing.Point(0, 80);
-            this.panelMonthlyChart.Name = "panelMonthlyChart";
-            this.panelMonthlyChart.Padding = new System.Windows.Forms.Padding(20);
-            this.panelMonthlyChart.Size = new System.Drawing.Size(650, 270);
-            this.panelMonthlyChart.TabIndex = 1;
-            // 
-            // panelMonthlyChartHeader
-            // 
-            this.panelMonthlyChartHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
-            this.panelMonthlyChartHeader.Controls.Add(this.lblMonthlyChartSubtitle);
-            this.panelMonthlyChartHeader.Controls.Add(this.lblMonthlyChartTitle);
-            this.panelMonthlyChartHeader.Controls.Add(this.pictureBox6);
-            this.panelMonthlyChartHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelMonthlyChartHeader.Location = new System.Drawing.Point(0, 0);
-            this.panelMonthlyChartHeader.Name = "panelMonthlyChartHeader";
-            this.panelMonthlyChartHeader.Padding = new System.Windows.Forms.Padding(20);
-            this.panelMonthlyChartHeader.Size = new System.Drawing.Size(650, 80);
-            this.panelMonthlyChartHeader.TabIndex = 0;
-            // 
-            // lblMonthlyChartSubtitle
-            // 
-            this.lblMonthlyChartSubtitle.AutoSize = true;
-            this.lblMonthlyChartSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMonthlyChartSubtitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(108)))), ((int)(((byte)(117)))), ((int)(((byte)(125)))));
-            this.lblMonthlyChartSubtitle.Location = new System.Drawing.Point(85, 45);
-            this.lblMonthlyChartSubtitle.Name = "lblMonthlyChartSubtitle";
-            this.lblMonthlyChartSubtitle.Size = new System.Drawing.Size(139, 20);
-            this.lblMonthlyChartSubtitle.TabIndex = 2;
-            this.lblMonthlyChartSubtitle.Text = "Thống kê năm 2025";
-            // 
-            // lblMonthlyChartTitle
-            // 
-            this.lblMonthlyChartTitle.AutoSize = true;
-            this.lblMonthlyChartTitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMonthlyChartTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
-            this.lblMonthlyChartTitle.Location = new System.Drawing.Point(85, 20);
-            this.lblMonthlyChartTitle.Name = "lblMonthlyChartTitle";
-            this.lblMonthlyChartTitle.Size = new System.Drawing.Size(187, 28);
-            this.lblMonthlyChartTitle.TabIndex = 1;
-            this.lblMonthlyChartTitle.Text = "Doanh thu theo tháng";
-            // 
-            // pictureBox6
-            // 
-            this.pictureBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(126)))), ((int)(((byte)(234)))));
-            this.pictureBox6.Location = new System.Drawing.Point(20, 25);
-            this.pictureBox6.Name = "pictureBox6";
-            this.pictureBox6.Size = new System.Drawing.Size(50, 50);
-            this.pictureBox6.TabIndex = 0;
-            this.pictureBox6.TabStop = false;
-            // 
-            // panelDailyChartContainer
-            // 
-            this.panelDailyChartContainer.BackColor = System.Drawing.Color.White;
-            this.panelDailyChartContainer.Controls.Add(this.panelDailyChart);
-            this.panelDailyChartContainer.Controls.Add(this.panelDailyChartHeader);
-            this.panelDailyChartContainer.Location = new System.Drawing.Point(30, 20);
-            this.panelDailyChartContainer.Name = "panelDailyChartContainer";
-            this.panelDailyChartContainer.Size = new System.Drawing.Size(650, 350);
-            this.panelDailyChartContainer.TabIndex = 0;
-            // 
-            // panelDailyChart
-            // 
-            this.panelDailyChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelDailyChart.Location = new System.Drawing.Point(0, 80);
-            this.panelDailyChart.Name = "panelDailyChart";
-            this.panelDailyChart.Padding = new System.Windows.Forms.Padding(20);
-            this.panelDailyChart.Size = new System.Drawing.Size(650, 270);
-            this.panelDailyChart.TabIndex = 1;
-            // 
-            // panelDailyChartHeader
-            // 
-            this.panelDailyChartHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
-            this.panelDailyChartHeader.Controls.Add(this.lblPeriod);
-            this.panelDailyChartHeader.Controls.Add(this.lblDailyChartTitle);
-            this.panelDailyChartHeader.Controls.Add(this.pictureBox5);
-            this.panelDailyChartHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelDailyChartHeader.Location = new System.Drawing.Point(0, 0);
-            this.panelDailyChartHeader.Name = "panelDailyChartHeader";
-            this.panelDailyChartHeader.Padding = new System.Windows.Forms.Padding(20);
-            this.panelDailyChartHeader.Size = new System.Drawing.Size(650, 80);
-            this.panelDailyChartHeader.TabIndex = 0;
-            // 
-            // lblPeriod
-            // 
-            this.lblPeriod.AutoSize = true;
-            this.lblPeriod.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPeriod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(108)))), ((int)(((byte)(117)))), ((int)(((byte)(125)))));
-            this.lblPeriod.Location = new System.Drawing.Point(85, 45);
-            this.lblPeriod.Name = "lblPeriod";
-            this.lblPeriod.Size = new System.Drawing.Size(324, 20);
-            this.lblPeriod.TabIndex = 2;
-            this.lblPeriod.Text = "Thống kê doanh thu từ 1/8/2025 đến 31/8/2025";
-            // 
-            // lblDailyChartTitle
-            // 
-            this.lblDailyChartTitle.AutoSize = true;
-            this.lblDailyChartTitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDailyChartTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
-            this.lblDailyChartTitle.Location = new System.Drawing.Point(85, 20);
-            this.lblDailyChartTitle.Name = "lblDailyChartTitle";
-            this.lblDailyChartTitle.Size = new System.Drawing.Size(243, 28);
-            this.lblDailyChartTitle.TabIndex = 1;
-            this.lblDailyChartTitle.Text = "Biểu đồ doanh thu theo ngày";
-            // 
-            // pictureBox5
-            // 
-            this.pictureBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(126)))), ((int)(((byte)(234)))));
-            this.pictureBox5.Location = new System.Drawing.Point(20, 25);
-            this.pictureBox5.Name = "pictureBox5";
-            this.pictureBox5.Size = new System.Drawing.Size(50, 50);
-            this.pictureBox5.TabIndex = 0;
-            this.pictureBox5.TabStop = false;
-            // 
             // panelDetails
             // 
             this.panelDetails.BackColor = System.Drawing.Color.White;
             this.panelDetails.Controls.Add(this.dataGridViewDetails);
             this.panelDetails.Controls.Add(this.panelDetailsHeader);
             this.panelDetails.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelDetails.Location = new System.Drawing.Point(0, 700);
+            this.panelDetails.Location = new System.Drawing.Point(0, 180);
             this.panelDetails.Name = "panelDetails";
-            this.panelDetails.Size = new System.Drawing.Size(1400, 300);
-            this.panelDetails.TabIndex = 3;
+            this.panelDetails.Size = new System.Drawing.Size(1200, 520);
+            this.panelDetails.TabIndex = 1;
             // 
             // dataGridViewDetails
             // 
@@ -636,7 +268,7 @@ namespace AceCook
             this.dataGridViewDetails.RowHeadersWidth = 51;
             this.dataGridViewDetails.RowTemplate.Height = 40;
             this.dataGridViewDetails.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewDetails.Size = new System.Drawing.Size(1400, 220);
+            this.dataGridViewDetails.Size = new System.Drawing.Size(1200, 440);
             this.dataGridViewDetails.TabIndex = 1;
             // 
             // colDate
@@ -661,7 +293,7 @@ namespace AceCook
             this.colRevenue.MinimumWidth = 6;
             this.colRevenue.Name = "colRevenue";
             this.colRevenue.ReadOnly = true;
-            this.colRevenue.Width = 300;
+            this.colRevenue.Width = 400;
             // 
             // colAverage
             // 
@@ -669,46 +301,46 @@ namespace AceCook
             this.colAverage.MinimumWidth = 6;
             this.colAverage.Name = "colAverage";
             this.colAverage.ReadOnly = true;
-            this.colAverage.Width = 300;
+            this.colAverage.Width = 400;
             // 
             // panelDetailsHeader
             // 
-            this.panelDetailsHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
-            this.panelDetailsHeader.Controls.Add(this.lblDetailsSubtitle);
+            this.panelDetailsHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(126)))), ((int)(((byte)(234)))));
+            this.panelDetailsHeader.Controls.Add(this.lblPeriod);
             this.panelDetailsHeader.Controls.Add(this.lblDetailsTitle);
             this.panelDetailsHeader.Controls.Add(this.pictureBox7);
             this.panelDetailsHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelDetailsHeader.Location = new System.Drawing.Point(0, 0);
             this.panelDetailsHeader.Name = "panelDetailsHeader";
             this.panelDetailsHeader.Padding = new System.Windows.Forms.Padding(20);
-            this.panelDetailsHeader.Size = new System.Drawing.Size(1400, 80);
+            this.panelDetailsHeader.Size = new System.Drawing.Size(1200, 80);
             this.panelDetailsHeader.TabIndex = 0;
             // 
-            // lblDetailsSubtitle
+            // lblPeriod
             // 
-            this.lblDetailsSubtitle.AutoSize = true;
-            this.lblDetailsSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDetailsSubtitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(108)))), ((int)(((byte)(117)))), ((int)(((byte)(125)))));
-            this.lblDetailsSubtitle.Location = new System.Drawing.Point(85, 45);
-            this.lblDetailsSubtitle.Name = "lblDetailsSubtitle";
-            this.lblDetailsSubtitle.Size = new System.Drawing.Size(336, 20);
-            this.lblDetailsSubtitle.TabIndex = 2;
-            this.lblDetailsSubtitle.Text = "Danh sách doanh thu từng ngày trong khoảng thời gian";
+            this.lblPeriod.AutoSize = true;
+            this.lblPeriod.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPeriod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(200)))));
+            this.lblPeriod.Location = new System.Drawing.Point(85, 45);
+            this.lblPeriod.Name = "lblPeriod";
+            this.lblPeriod.Size = new System.Drawing.Size(336, 20);
+            this.lblPeriod.TabIndex = 2;
+            this.lblPeriod.Text = "Danh sách doanh thu từng ngày trong khoảng thời gian";
             // 
             // lblDetailsTitle
             // 
             this.lblDetailsTitle.AutoSize = true;
-            this.lblDetailsTitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDetailsTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
+            this.lblDetailsTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDetailsTitle.ForeColor = System.Drawing.Color.White;
             this.lblDetailsTitle.Location = new System.Drawing.Point(85, 20);
             this.lblDetailsTitle.Name = "lblDetailsTitle";
-            this.lblDetailsTitle.Size = new System.Drawing.Size(238, 28);
+            this.lblDetailsTitle.Size = new System.Drawing.Size(308, 37);
             this.lblDetailsTitle.TabIndex = 1;
             this.lblDetailsTitle.Text = "Chi tiết doanh thu theo ngày";
             // 
             // pictureBox7
             // 
-            this.pictureBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(126)))), ((int)(((byte)(234)))));
+            this.pictureBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(50)))));
             this.pictureBox7.Location = new System.Drawing.Point(20, 25);
             this.pictureBox7.Name = "pictureBox7";
             this.pictureBox7.Size = new System.Drawing.Size(50, 50);
@@ -720,45 +352,21 @@ namespace AceCook
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
-            this.ClientSize = new System.Drawing.Size(1400, 1000);
+            this.ClientSize = new System.Drawing.Size(1200, 700);
             this.Controls.Add(this.panelDetails);
-            this.Controls.Add(this.panelCharts);
-            this.Controls.Add(this.panelSummary);
             this.Controls.Add(this.panelHeader);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            this.MinimumSize = new System.Drawing.Size(1000, 600);
             this.Name = "RevenueReportForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Báo cáo Doanh Thu - ACECOOK";
+            this.Text = "Chi tiết doanh thu theo ngày - ACECOOK";
             this.Load += new System.EventHandler(this.RevenueReportForm_Load);
             this.panelHeader.ResumeLayout(false);
             this.panelHeader.PerformLayout();
             this.panelHeaderActions.ResumeLayout(false);
             this.panelDateFilter.ResumeLayout(false);
             this.panelDateFilter.PerformLayout();
-            this.panelSummary.ResumeLayout(false);
-            this.panelSummaryCard4.ResumeLayout(false);
-            this.panelSummaryCard4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
-            this.panelSummaryCard3.ResumeLayout(false);
-            this.panelSummaryCard3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
-            this.panelSummaryCard2.ResumeLayout(false);
-            this.panelSummaryCard2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            this.panelSummaryCard1.ResumeLayout(false);
-            this.panelSummaryCard1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.panelCharts.ResumeLayout(false);
-            this.panelMonthlyChartContainer.ResumeLayout(false);
-            this.panelMonthlyChartHeader.ResumeLayout(false);
-            this.panelMonthlyChartHeader.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
-            this.panelDailyChartContainer.ResumeLayout(false);
-            this.panelDailyChartHeader.ResumeLayout(false);
-            this.panelDailyChartHeader.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
             this.panelDetails.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDetails)).EndInit();
             this.panelDetailsHeader.ResumeLayout(false);
@@ -782,39 +390,9 @@ namespace AceCook
         private Button btnFilter;
         private Button btnExportExcel;
         private Button btnPrint;
-        private Panel panelSummary;
-        private Panel panelSummaryCard1;
-        private PictureBox pictureBox1;
-        private Label label6;
-        private Label lblTotalRevenue;
-        private Panel panelSummaryCard2;
-        private Label lblTotalInvoices;
-        private Label label8;
-        private PictureBox pictureBox2;
-        private Panel panelSummaryCard3;
-        private Label lblAverageInvoice;
-        private Label label10;
-        private PictureBox pictureBox3;
-        private Panel panelSummaryCard4;
-        private Label lblTransactionDays;
-        private Label label12;
-        private PictureBox pictureBox4;
-        private Panel panelCharts;
-        private Panel panelDailyChartContainer;
-        private Panel panelDailyChartHeader;
-        private PictureBox pictureBox5;
-        private Label lblDailyChartTitle;
-        private Label lblPeriod;
-        private Panel panelDailyChart;
-        private Panel panelMonthlyChartContainer;
-        private Panel panelMonthlyChart;
-        private Panel panelMonthlyChartHeader;
-        private Label lblMonthlyChartSubtitle;
-        private Label lblMonthlyChartTitle;
-        private PictureBox pictureBox6;
         private Panel panelDetails;
         private Panel panelDetailsHeader;
-        private Label lblDetailsSubtitle;
+        private Label lblPeriod;
         private Label lblDetailsTitle;
         private PictureBox pictureBox7;
         private DataGridView dataGridViewDetails;
