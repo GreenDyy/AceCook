@@ -28,324 +28,337 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lblOrderId = new System.Windows.Forms.Label();
-            this.txtOrderId = new System.Windows.Forms.TextBox();
-            this.lblCustomer = new System.Windows.Forms.Label();
-            this.cboCustomer = new System.Windows.Forms.ComboBox();
-            this.lblOrderDate = new System.Windows.Forms.Label();
-            this.dtpOrderDate = new System.Windows.Forms.DateTimePicker();
-            this.lblDeliveryDate = new System.Windows.Forms.Label();
-            this.dtpDeliveryDate = new System.Windows.Forms.DateTimePicker();
-            this.lblStatus = new System.Windows.Forms.Label();
-            this.cboStatus = new System.Windows.Forms.ComboBox();
-            this.grpProductSelection = new System.Windows.Forms.GroupBox();
-            this.lblProduct = new System.Windows.Forms.Label();
-            this.cboProduct = new System.Windows.Forms.ComboBox();
-            this.lblQuantity = new System.Windows.Forms.Label();
-            this.numQuantity = new System.Windows.Forms.NumericUpDown();
-            this.btnAddProduct = new System.Windows.Forms.Button();
-            this.lblStockInfo = new System.Windows.Forms.Label();
-            this.btnRemoveProduct = new System.Windows.Forms.Button();
-            this.dgvOrderItems = new System.Windows.Forms.DataGridView();
-            this.lblTotalAmount = new System.Windows.Forms.Label();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.grpOrderInfo = new System.Windows.Forms.GroupBox();
-            this.grpOrderItems = new System.Windows.Forms.GroupBox();
-            this.grpProductSelection.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numQuantity)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvOrderItems)).BeginInit();
-            this.grpOrderInfo.SuspendLayout();
-            this.grpOrderItems.SuspendLayout();
-            this.SuspendLayout();
+            lblOrderId = new Label();
+            txtOrderId = new TextBox();
+            lblCustomer = new Label();
+            cboCustomer = new ComboBox();
+            lblOrderDate = new Label();
+            dtpOrderDate = new DateTimePicker();
+            lblDeliveryDate = new Label();
+            dtpDeliveryDate = new DateTimePicker();
+            lblStatus = new Label();
+            cboStatus = new ComboBox();
+            grpProductSelection = new GroupBox();
+            lblStockInfo = new Label();
+            btnAddProduct = new Button();
+            btnRemoveProduct = new Button();
+            numQuantity = new NumericUpDown();
+            lblQuantity = new Label();
+            cboProduct = new ComboBox();
+            lblProduct = new Label();
+            dgvOrderItems = new DataGridView();
+            lblTotalAmount = new Label();
+            btnSave = new Button();
+            btnCancel = new Button();
+            grpOrderInfo = new GroupBox();
+            grpOrderItems = new GroupBox();
+            grpProductSelection.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numQuantity).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvOrderItems).BeginInit();
+            grpOrderInfo.SuspendLayout();
+            grpOrderItems.SuspendLayout();
+            SuspendLayout();
             // 
             // lblOrderId
             // 
-            this.lblOrderId.AutoSize = true;
-            this.lblOrderId.Location = new System.Drawing.Point(20, 30);
-            this.lblOrderId.Name = "lblOrderId";
-            this.lblOrderId.Size = new System.Drawing.Size(70, 15);
-            this.lblOrderId.TabIndex = 0;
-            this.lblOrderId.Text = "Mã đơn hàng:";
+            lblOrderId.AutoSize = true;
+            lblOrderId.Location = new Point(37, 64);
+            lblOrderId.Margin = new Padding(6, 0, 6, 0);
+            lblOrderId.Name = "lblOrderId";
+            lblOrderId.Size = new Size(163, 32);
+            lblOrderId.TabIndex = 0;
+            lblOrderId.Text = "Mã đơn hàng:";
             // 
             // txtOrderId
             // 
-            this.txtOrderId.Location = new System.Drawing.Point(120, 27);
-            this.txtOrderId.Name = "txtOrderId";
-            this.txtOrderId.ReadOnly = true;
-            this.txtOrderId.Size = new System.Drawing.Size(150, 23);
-            this.txtOrderId.TabIndex = 1;
+            txtOrderId.Location = new Point(223, 58);
+            txtOrderId.Margin = new Padding(6);
+            txtOrderId.Name = "txtOrderId";
+            txtOrderId.ReadOnly = true;
+            txtOrderId.Size = new Size(275, 39);
+            txtOrderId.TabIndex = 1;
             // 
             // lblCustomer
             // 
-            this.lblCustomer.AutoSize = true;
-            this.lblCustomer.Location = new System.Drawing.Point(20, 70);
-            this.lblCustomer.Name = "lblCustomer";
-            this.lblCustomer.Size = new System.Drawing.Size(80, 15);
-            this.lblCustomer.TabIndex = 2;
-            this.lblCustomer.Text = "Khách hàng:";
+            lblCustomer.AutoSize = true;
+            lblCustomer.Location = new Point(37, 149);
+            lblCustomer.Margin = new Padding(6, 0, 6, 0);
+            lblCustomer.Name = "lblCustomer";
+            lblCustomer.Size = new Size(145, 32);
+            lblCustomer.TabIndex = 2;
+            lblCustomer.Text = "Khách hàng:";
             // 
             // cboCustomer
             // 
-            this.cboCustomer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboCustomer.FormattingEnabled = true;
-            this.cboCustomer.Location = new System.Drawing.Point(120, 67);
-            this.cboCustomer.Name = "cboCustomer";
-            this.cboCustomer.Size = new System.Drawing.Size(250, 23);
-            this.cboCustomer.TabIndex = 3;
+            cboCustomer.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboCustomer.FormattingEnabled = true;
+            cboCustomer.Location = new Point(223, 143);
+            cboCustomer.Margin = new Padding(6);
+            cboCustomer.Name = "cboCustomer";
+            cboCustomer.Size = new Size(461, 40);
+            cboCustomer.TabIndex = 3;
+            cboCustomer.SelectedIndexChanged += CboCustomer_SelectedIndexChanged;
             // 
             // lblOrderDate
             // 
-            this.lblOrderDate.AutoSize = true;
-            this.lblOrderDate.Location = new System.Drawing.Point(20, 110);
-            this.lblOrderDate.Name = "lblOrderDate";
-            this.lblOrderDate.Size = new System.Drawing.Size(70, 15);
-            this.lblOrderDate.TabIndex = 4;
-            this.lblOrderDate.Text = "Ngày đặt:";
+            lblOrderDate.AutoSize = true;
+            lblOrderDate.Location = new Point(37, 235);
+            lblOrderDate.Margin = new Padding(6, 0, 6, 0);
+            lblOrderDate.Name = "lblOrderDate";
+            lblOrderDate.Size = new Size(116, 32);
+            lblOrderDate.TabIndex = 4;
+            lblOrderDate.Text = "Ngày đặt:";
             // 
             // dtpOrderDate
             // 
-            this.dtpOrderDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpOrderDate.Location = new System.Drawing.Point(120, 107);
-            this.dtpOrderDate.Name = "dtpOrderDate";
-            this.dtpOrderDate.Size = new System.Drawing.Size(150, 23);
-            this.dtpOrderDate.TabIndex = 5;
+            dtpOrderDate.Format = DateTimePickerFormat.Short;
+            dtpOrderDate.Location = new Point(223, 228);
+            dtpOrderDate.Margin = new Padding(6);
+            dtpOrderDate.Name = "dtpOrderDate";
+            dtpOrderDate.Size = new Size(275, 39);
+            dtpOrderDate.TabIndex = 5;
             // 
             // lblDeliveryDate
             // 
-            this.lblDeliveryDate.AutoSize = true;
-            this.lblDeliveryDate.Location = new System.Drawing.Point(300, 110);
-            this.lblDeliveryDate.Name = "lblDeliveryDate";
-            this.lblDeliveryDate.Size = new System.Drawing.Size(80, 15);
-            this.lblDeliveryDate.TabIndex = 6;
-            this.lblDeliveryDate.Text = "Ngày giao:";
+            lblDeliveryDate.AutoSize = true;
+            lblDeliveryDate.Location = new Point(557, 235);
+            lblDeliveryDate.Margin = new Padding(6, 0, 6, 0);
+            lblDeliveryDate.Name = "lblDeliveryDate";
+            lblDeliveryDate.Size = new Size(128, 32);
+            lblDeliveryDate.TabIndex = 6;
+            lblDeliveryDate.Text = "Ngày giao:";
             // 
             // dtpDeliveryDate
             // 
-            this.dtpDeliveryDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpDeliveryDate.Location = new System.Drawing.Point(400, 107);
-            this.dtpDeliveryDate.Name = "dtpDeliveryDate";
-            this.dtpDeliveryDate.Size = new System.Drawing.Size(150, 23);
-            this.dtpDeliveryDate.TabIndex = 7;
+            dtpDeliveryDate.Format = DateTimePickerFormat.Short;
+            dtpDeliveryDate.Location = new Point(743, 228);
+            dtpDeliveryDate.Margin = new Padding(6);
+            dtpDeliveryDate.Name = "dtpDeliveryDate";
+            dtpDeliveryDate.Size = new Size(275, 39);
+            dtpDeliveryDate.TabIndex = 7;
             // 
             // lblStatus
             // 
-            this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(20, 150);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(60, 15);
-            this.lblStatus.TabIndex = 8;
-            this.lblStatus.Text = "Trạng thái:";
+            lblStatus.AutoSize = true;
+            lblStatus.Location = new Point(37, 320);
+            lblStatus.Margin = new Padding(6, 0, 6, 0);
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(125, 32);
+            lblStatus.TabIndex = 8;
+            lblStatus.Text = "Trạng thái:";
             // 
             // cboStatus
             // 
-            this.cboStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboStatus.FormattingEnabled = true;
-            this.cboStatus.Items.AddRange(new object[] {
-            "Chờ xử lý",
-            "Đang xử lý",
-            "Đã giao",
-            "Đã hủy"});
-            this.cboStatus.Location = new System.Drawing.Point(120, 147);
-            this.cboStatus.Name = "cboStatus";
-            this.cboStatus.Size = new System.Drawing.Size(150, 23);
-            this.cboStatus.TabIndex = 9;
+            cboStatus.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboStatus.FormattingEnabled = true;
+            cboStatus.Items.AddRange(new object[] { "Chờ xử lý", "Đang xử lý", "Đã giao", "Đã hủy" });
+            cboStatus.Location = new Point(120, 147);
+            cboStatus.Name = "cboStatus";
+            cboStatus.Size = new Size(150, 40);
+            cboStatus.TabIndex = 9;
             // 
             // grpProductSelection
             // 
-            this.grpProductSelection.Controls.Add(this.lblStockInfo);
-            this.grpProductSelection.Controls.Add(this.btnAddProduct);
-            this.grpProductSelection.Controls.Add(this.numQuantity);
-            this.grpProductSelection.Controls.Add(this.lblQuantity);
-            this.grpProductSelection.Controls.Add(this.cboProduct);
-            this.grpProductSelection.Controls.Add(this.lblProduct);
-            this.grpProductSelection.Location = new System.Drawing.Point(20, 200);
-            this.grpProductSelection.Name = "grpProductSelection";
-            this.grpProductSelection.Size = new System.Drawing.Size(560, 100);
-            this.grpProductSelection.TabIndex = 10;
-            this.grpProductSelection.TabStop = false;
-            this.grpProductSelection.Text = "Chọn sản phẩm";
-            // 
-            // lblProduct
-            // 
-            this.lblProduct.AutoSize = true;
-            this.lblProduct.Location = new System.Drawing.Point(20, 30);
-            this.lblProduct.Name = "lblProduct";
-            this.lblProduct.Size = new System.Drawing.Size(70, 15);
-            this.lblProduct.TabIndex = 0;
-            this.lblProduct.Text = "Sản phẩm:";
-            // 
-            // cboProduct
-            // 
-            this.cboProduct.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboProduct.FormattingEnabled = true;
-            this.cboProduct.Location = new System.Drawing.Point(120, 27);
-            this.cboProduct.Name = "cboProduct";
-            this.cboProduct.Size = new System.Drawing.Size(250, 23);
-            this.cboProduct.TabIndex = 1;
-            // 
-            // lblQuantity
-            // 
-            this.lblQuantity.AutoSize = true;
-            this.lblQuantity.Location = new System.Drawing.Point(20, 65);
-            this.lblQuantity.Name = "lblQuantity";
-            this.lblQuantity.Size = new System.Drawing.Size(60, 15);
-            this.lblQuantity.TabIndex = 2;
-            this.lblQuantity.Text = "Số lượng:";
-            // 
-            // numQuantity
-            // 
-            this.numQuantity.Location = new System.Drawing.Point(120, 62);
-            this.numQuantity.Maximum = new decimal(new int[] {
-            9999,
-            0,
-            0,
-            0});
-            this.numQuantity.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numQuantity.Name = "numQuantity";
-            this.numQuantity.Size = new System.Drawing.Size(100, 23);
-            this.numQuantity.TabIndex = 3;
-            this.numQuantity.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // btnAddProduct
-            // 
-            this.btnAddProduct.Location = new System.Drawing.Point(400, 60);
-            this.btnAddProduct.Name = "btnAddProduct";
-            this.btnAddProduct.Size = new System.Drawing.Size(100, 30);
-            this.btnAddProduct.TabIndex = 4;
-            this.btnAddProduct.Text = "Thêm SP";
-            this.btnAddProduct.UseVisualStyleBackColor = true;
-            this.btnAddProduct.Click += new System.EventHandler(this.btnAddProduct_Click);
+            grpProductSelection.Controls.Add(lblStockInfo);
+            grpProductSelection.Controls.Add(btnAddProduct);
+            grpProductSelection.Controls.Add(btnRemoveProduct);
+            grpProductSelection.Controls.Add(numQuantity);
+            grpProductSelection.Controls.Add(lblQuantity);
+            grpProductSelection.Controls.Add(cboProduct);
+            grpProductSelection.Controls.Add(lblProduct);
+            grpProductSelection.Location = new Point(37, 519);
+            grpProductSelection.Margin = new Padding(6);
+            grpProductSelection.Name = "grpProductSelection";
+            grpProductSelection.Padding = new Padding(6);
+            grpProductSelection.Size = new Size(1300, 213);
+            grpProductSelection.TabIndex = 10;
+            grpProductSelection.TabStop = false;
+            grpProductSelection.Text = "Chọn sản phẩm";
             // 
             // lblStockInfo
             // 
-            this.lblStockInfo.AutoSize = true;
-            this.lblStockInfo.Location = new System.Drawing.Point(120, 65);
-            this.lblStockInfo.Name = "lblStockInfo";
-            this.lblStockInfo.Size = new System.Drawing.Size(200, 15);
-            this.lblStockInfo.TabIndex = 5;
-            this.lblStockInfo.Text = "";
-            this.lblStockInfo.ForeColor = System.Drawing.Color.Blue;
+            lblStockInfo.AutoSize = true;
+            lblStockInfo.ForeColor = Color.Blue;
+            lblStockInfo.Location = new Point(223, 139);
+            lblStockInfo.Margin = new Padding(6, 0, 6, 0);
+            lblStockInfo.Name = "lblStockInfo";
+            lblStockInfo.Size = new Size(0, 32);
+            lblStockInfo.TabIndex = 5;
+            // 
+            // btnAddProduct
+            // 
+            btnAddProduct.Location = new Point(743, 128);
+            btnAddProduct.Margin = new Padding(6);
+            btnAddProduct.Name = "btnAddProduct";
+            btnAddProduct.Size = new Size(186, 64);
+            btnAddProduct.TabIndex = 4;
+            btnAddProduct.Text = "Thêm SP";
+            btnAddProduct.UseVisualStyleBackColor = true;
+            btnAddProduct.Click += btnAddProduct_Click;
             // 
             // btnRemoveProduct
             // 
-            this.btnRemoveProduct.Location = new System.Drawing.Point(600, 200);
-            this.btnRemoveProduct.Name = "btnRemoveProduct";
-            this.btnRemoveProduct.Size = new System.Drawing.Size(100, 30);
-            this.btnRemoveProduct.TabIndex = 11;
-            this.btnRemoveProduct.Text = "Xóa SP";
-            this.btnRemoveProduct.UseVisualStyleBackColor = true;
-            this.btnRemoveProduct.Click += new System.EventHandler(this.btnRemoveProduct_Click);
+            btnRemoveProduct.Location = new Point(955, 123);
+            btnRemoveProduct.Margin = new Padding(6);
+            btnRemoveProduct.Name = "btnRemoveProduct";
+            btnRemoveProduct.Size = new Size(186, 64);
+            btnRemoveProduct.TabIndex = 11;
+            btnRemoveProduct.Text = "Xóa SP";
+            btnRemoveProduct.UseVisualStyleBackColor = true;
+            btnRemoveProduct.Click += btnRemoveProduct_Click;
+            // 
+            // numQuantity
+            // 
+            numQuantity.Location = new Point(223, 132);
+            numQuantity.Margin = new Padding(6);
+            numQuantity.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+            numQuantity.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            numQuantity.Name = "numQuantity";
+            numQuantity.Size = new Size(186, 39);
+            numQuantity.TabIndex = 3;
+            numQuantity.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // lblQuantity
+            // 
+            lblQuantity.AutoSize = true;
+            lblQuantity.Location = new Point(38, 144);
+            lblQuantity.Margin = new Padding(6, 0, 6, 0);
+            lblQuantity.Name = "lblQuantity";
+            lblQuantity.Size = new Size(115, 32);
+            lblQuantity.TabIndex = 2;
+            lblQuantity.Text = "Số lượng:";
+            // 
+            // cboProduct
+            // 
+            cboProduct.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboProduct.FormattingEnabled = true;
+            cboProduct.Location = new Point(223, 58);
+            cboProduct.Margin = new Padding(6);
+            cboProduct.Name = "cboProduct";
+            cboProduct.Size = new Size(461, 40);
+            cboProduct.TabIndex = 1;
+            cboProduct.SelectedIndexChanged += CboProduct_SelectedIndexChanged;
+            // 
+            // lblProduct
+            // 
+            lblProduct.AutoSize = true;
+            lblProduct.Location = new Point(37, 64);
+            lblProduct.Margin = new Padding(6, 0, 6, 0);
+            lblProduct.Name = "lblProduct";
+            lblProduct.Size = new Size(126, 32);
+            lblProduct.TabIndex = 0;
+            lblProduct.Text = "Sản phẩm:";
             // 
             // dgvOrderItems
             // 
-            this.dgvOrderItems.AllowUserToAddRows = false;
-            this.dgvOrderItems.AllowUserToDeleteRows = false;
-            this.dgvOrderItems.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvOrderItems.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvOrderItems.Location = new System.Drawing.Point(20, 30);
-            this.dgvOrderItems.MultiSelect = false;
-            this.dgvOrderItems.Name = "dgvOrderItems";
-            this.dgvOrderItems.ReadOnly = true;
-            this.dgvOrderItems.RowTemplate.Height = 25;
-            this.dgvOrderItems.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvOrderItems.Size = new System.Drawing.Size(680, 200);
-            this.dgvOrderItems.TabIndex = 0;
+            dgvOrderItems.AllowUserToAddRows = false;
+            dgvOrderItems.AllowUserToDeleteRows = false;
+            dgvOrderItems.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvOrderItems.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvOrderItems.Location = new Point(37, 64);
+            dgvOrderItems.Margin = new Padding(6);
+            dgvOrderItems.MultiSelect = false;
+            dgvOrderItems.Name = "dgvOrderItems";
+            dgvOrderItems.ReadOnly = true;
+            dgvOrderItems.RowHeadersWidth = 82;
+            dgvOrderItems.RowTemplate.Height = 25;
+            dgvOrderItems.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvOrderItems.Size = new Size(1263, 427);
+            dgvOrderItems.TabIndex = 0;
             // 
             // lblTotalAmount
             // 
-            this.lblTotalAmount.AutoSize = true;
-            this.lblTotalAmount.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.lblTotalAmount.Location = new System.Drawing.Point(20, 250);
-            this.lblTotalAmount.Name = "lblTotalAmount";
-            this.lblTotalAmount.Size = new System.Drawing.Size(120, 21);
-            this.lblTotalAmount.TabIndex = 1;
-            this.lblTotalAmount.Text = "Tổng tiền: 0 VNĐ";
+            lblTotalAmount.AutoSize = true;
+            lblTotalAmount.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblTotalAmount.Location = new Point(37, 533);
+            lblTotalAmount.Margin = new Padding(6, 0, 6, 0);
+            lblTotalAmount.Name = "lblTotalAmount";
+            lblTotalAmount.Size = new Size(279, 45);
+            lblTotalAmount.TabIndex = 1;
+            lblTotalAmount.Text = "Tổng tiền: 0 VNĐ";
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(500, 300);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(100, 35);
-            this.btnSave.TabIndex = 2;
-            this.btnSave.Text = "Lưu";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            btnSave.Location = new Point(929, 640);
+            btnSave.Margin = new Padding(6);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(186, 75);
+            btnSave.TabIndex = 2;
+            btnSave.Text = "Lưu";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += btnSave_Click;
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(620, 300);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(100, 35);
-            this.btnCancel.TabIndex = 3;
-            this.btnCancel.Text = "Hủy";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            btnCancel.Location = new Point(1151, 640);
+            btnCancel.Margin = new Padding(6);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(186, 75);
+            btnCancel.TabIndex = 3;
+            btnCancel.Text = "Hủy";
+            btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.Click += btnCancel_Click;
             // 
             // grpOrderInfo
             // 
-            this.grpOrderInfo.Controls.Add(this.lblStatus);
-            this.grpOrderInfo.Controls.Add(this.dtpDeliveryDate);
-            this.grpOrderInfo.Controls.Add(this.lblDeliveryDate);
-            this.grpOrderInfo.Controls.Add(this.dtpOrderDate);
-            this.grpOrderInfo.Controls.Add(this.lblOrderDate);
-            this.grpOrderInfo.Controls.Add(this.cboCustomer);
-            this.grpOrderInfo.Controls.Add(this.lblCustomer);
-            this.grpOrderInfo.Controls.Add(this.txtOrderId);
-            this.grpOrderInfo.Controls.Add(this.lblOrderId);
-            this.grpOrderInfo.Location = new System.Drawing.Point(20, 20);
-            this.grpOrderInfo.Name = "grpOrderInfo";
-            this.grpOrderInfo.Size = new System.Drawing.Size(760, 190);
-            this.grpOrderInfo.TabIndex = 12;
-            this.grpOrderInfo.TabStop = false;
-            this.grpOrderInfo.Text = "Thông tin đơn hàng";
+            grpOrderInfo.Controls.Add(lblStatus);
+            grpOrderInfo.Controls.Add(dtpDeliveryDate);
+            grpOrderInfo.Controls.Add(lblDeliveryDate);
+            grpOrderInfo.Controls.Add(dtpOrderDate);
+            grpOrderInfo.Controls.Add(lblOrderDate);
+            grpOrderInfo.Controls.Add(cboCustomer);
+            grpOrderInfo.Controls.Add(lblCustomer);
+            grpOrderInfo.Controls.Add(txtOrderId);
+            grpOrderInfo.Controls.Add(lblOrderId);
+            grpOrderInfo.Location = new Point(37, 43);
+            grpOrderInfo.Margin = new Padding(6);
+            grpOrderInfo.Name = "grpOrderInfo";
+            grpOrderInfo.Padding = new Padding(6);
+            grpOrderInfo.Size = new Size(1411, 405);
+            grpOrderInfo.TabIndex = 12;
+            grpOrderInfo.TabStop = false;
+            grpOrderInfo.Text = "Thông tin đơn hàng";
             // 
             // grpOrderItems
             // 
-            this.grpOrderItems.Controls.Add(this.btnCancel);
-            this.grpOrderItems.Controls.Add(this.btnSave);
-            this.grpOrderItems.Controls.Add(this.lblTotalAmount);
-            this.grpOrderItems.Controls.Add(this.dgvOrderItems);
-            this.grpOrderItems.Location = new System.Drawing.Point(20, 320);
-            this.grpOrderItems.Name = "grpOrderItems";
-            this.grpOrderItems.Size = new System.Drawing.Size(760, 350);
-            this.grpOrderItems.TabIndex = 13;
-            this.grpOrderItems.TabStop = false;
-            this.grpOrderItems.Text = "Danh sách sản phẩm";
+            grpOrderItems.Controls.Add(btnCancel);
+            grpOrderItems.Controls.Add(btnSave);
+            grpOrderItems.Controls.Add(lblTotalAmount);
+            grpOrderItems.Controls.Add(dgvOrderItems);
+            grpOrderItems.Location = new Point(37, 824);
+            grpOrderItems.Margin = new Padding(6);
+            grpOrderItems.Name = "grpOrderItems";
+            grpOrderItems.Padding = new Padding(6);
+            grpOrderItems.Size = new Size(1411, 747);
+            grpOrderItems.TabIndex = 13;
+            grpOrderItems.TabStop = false;
+            grpOrderItems.Text = "Danh sách sản phẩm";
             // 
             // OrderAddEditForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 700);
-            this.Controls.Add(this.grpOrderItems);
-            this.Controls.Add(this.grpOrderInfo);
-            this.Controls.Add(this.btnRemoveProduct);
-            this.Controls.Add(this.grpProductSelection);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "OrderAddEditForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Thêm/Sửa đơn hàng";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OrderAddEditForm_FormClosing);
-            this.grpProductSelection.ResumeLayout(false);
-            this.grpProductSelection.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numQuantity)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvOrderItems)).EndInit();
-            this.grpOrderInfo.ResumeLayout(false);
-            this.grpOrderInfo.PerformLayout();
-            this.grpOrderItems.ResumeLayout(false);
-            this.grpOrderItems.PerformLayout();
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(13F, 32F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1486, 1782);
+            Controls.Add(grpOrderItems);
+            Controls.Add(grpOrderInfo);
+            Controls.Add(grpProductSelection);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            Margin = new Padding(6);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "OrderAddEditForm";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Thêm/Sửa đơn hàng";
+            FormClosing += OrderAddEditForm_FormClosing;
+            grpProductSelection.ResumeLayout(false);
+            grpProductSelection.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numQuantity).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvOrderItems).EndInit();
+            grpOrderInfo.ResumeLayout(false);
+            grpOrderInfo.PerformLayout();
+            grpOrderItems.ResumeLayout(false);
+            grpOrderItems.PerformLayout();
+            ResumeLayout(false);
 
         }
 

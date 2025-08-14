@@ -439,13 +439,11 @@ namespace AceCook
             }
         }
 
-
-
         private void ViewOrderDetails(Dondathang order)
         {
             try
             {
-                var viewForm = new OrderAddEditForm(_context, order, true); // true = view mode
+                var viewForm = new OrderAddEditForm(order, true); // true = view mode
                 viewForm.ShowDialog();
             }
             catch (Exception ex)
@@ -459,7 +457,7 @@ namespace AceCook
         {
             try
             {
-                var editForm = new OrderAddEditForm(_context, order, false); // false = edit mode
+                var editForm = new OrderAddEditForm(order, false); // false = edit mode
                 if (editForm.ShowDialog() == DialogResult.OK)
                 {
                     LoadOrders(); // Reload data after edit
@@ -620,7 +618,7 @@ namespace AceCook
             try
             {
                 _isProcessing = true;
-                var addForm = new OrderAddEditForm(_context, null, false); // null = new order, false = not view mode
+                var addForm = new OrderAddEditForm(); // Sử dụng constructor mặc định để tạo đơn hàng mới
                 if (addForm.ShowDialog() == DialogResult.OK)
                 {
                     LoadOrders(); // Reload data after adding
