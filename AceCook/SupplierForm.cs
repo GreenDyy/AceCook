@@ -234,7 +234,7 @@ namespace AceCook
                 RowTemplate = { Height = 45 }
             };
 
-            // Style the DataGridView
+            // Style cho DataGridView
             dataGridViewSuppliers.DefaultCellStyle.Font = new Font("Segoe UI", 9);
             dataGridViewSuppliers.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
             dataGridViewSuppliers.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
