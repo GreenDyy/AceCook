@@ -1,4 +1,4 @@
-                                                                            namespace AceCook
+namespace AceCook
 {
     partial class DashboardForm
     {
@@ -142,7 +142,7 @@
             lblSystemTitle.Name = "lblSystemTitle";
             lblSystemTitle.Size = new Size(400, 37);
             lblSystemTitle.TabIndex = 0;
-            lblSystemTitle.Text = "ACECOOK SALES MANAGEMENT";
+            lblSystemTitle.Text = "Hệ thống quản lý bán hàng Acecook";
             // 
             // btnMinimize
             // 

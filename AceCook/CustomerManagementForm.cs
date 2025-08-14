@@ -24,125 +24,133 @@ namespace AceCook
         public CustomerManagementForm(AppDbContext context)
         {
             _customerRepository = new CustomerRepository(context);
+            InitializeComponent();
             SetupUI();
             LoadCustomers();
         }
 
-        private void SetupUI()
+        private void InitializeComponent()
         {
+            this.SuspendLayout();
+            
             this.Text = "Quản lý Khách hàng";
-            this.Size = new Size(1000, 600);
+            this.Size = new Size(1400, 800);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(248, 249, 250);
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            
+            this.ResumeLayout(false);
+        }
 
+        private void SetupUI()
+        {
             // Title
             lblTitle = new Label
             {
                 Text = "QUẢN LÝ KHÁCH HÀNG",
-                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                Font = new Font("Segoe UI", 20, FontStyle.Bold),
                 ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(300, 40),
-                Location = new Point(20, 20)
+                Dock = DockStyle.Top,
+                Height = 70,
+                TextAlign = ContentAlignment.MiddleLeft,
             };
 
             // Search Panel
-            var searchPanel = new Panel
+            var pnlSearch = new FlowLayoutPanel
             {
-                Size = new Size(960, 60),
-                Location = new Point(20, 70),
-                BackColor = Color.White
+                Dock = DockStyle.Top,
+                Height = 90,
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle,
+                Padding = new Padding(15),
+                FlowDirection = FlowDirection.LeftToRight,
+                AutoScroll = true,
+                WrapContents = false,
+                Margin = new Padding(0, 200, 0, 150)
             };
 
             var lblSearch = new Label
             {
                 Text = "Tìm kiếm:",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(80, 25),
-                Location = new Point(20, 20)
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                AutoSize = true,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Margin = new Padding(0, 8, 10, 0)
             };
 
             txtSearch = new TextBox
             {
-                Size = new Size(200, 25),
-                Location = new Point(100, 18),
-                Font = new Font("Segoe UI", 10)
+                Width = 300,
+                Font = new Font("Segoe UI", 10),
+                PlaceholderText = "Mã KH, tên KH, số điện thoại, email...",
+                Margin = new Padding(0, 5, 20, 0)
             };
             txtSearch.TextChanged += TxtSearch_TextChanged;
 
-            btnRefresh = new Button
+            var btnSearch = new Button
             {
-                Text = "Làm mới",
-                Size = new Size(80, 30),
-                Location = new Point(320, 15),
-                Font = new Font("Segoe UI", 9),
+                Text = "🔍 Tìm kiếm",
+                Width = 120,
+                Height = 35,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(52, 152, 219),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                FlatStyle = FlatStyle.Flat,
+                Margin = new Padding(0, 5, 10, 0)
             };
-            btnRefresh.FlatAppearance.BorderSize = 0;
-            btnRefresh.Click += BtnRefresh_Click;
+            btnSearch.FlatAppearance.BorderSize = 0;
+            btnSearch.Click += BtnSearch_Click;
 
-            searchPanel.Controls.Add(lblSearch);
-            searchPanel.Controls.Add(txtSearch);
-            searchPanel.Controls.Add(btnRefresh);
-
-            // Button Panel
-            var buttonPanel = new Panel
+            var btnReset = new Button
             {
-                Size = new Size(960, 50),
-                Location = new Point(20, 140),
+                Text = "🔄 Làm mới",
+                Width = 100,
+                Height = 35,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                BackColor = Color.FromArgb(95, 95, 95),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Margin = new Padding(0, 5, 10, 0)
+            };
+            btnReset.FlatAppearance.BorderSize = 0;
+            btnReset.Click += BtnReset_Click;
+
+            pnlSearch.Controls.AddRange(new Control[] {
+                lblSearch, txtSearch, btnSearch, btnReset
+            });
+
+            // Actions Panel
+            var pnlActions = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Top,
+                Height = 70,
+                FlowDirection = FlowDirection.LeftToRight,
+                Padding = new Padding(15),
                 BackColor = Color.Transparent
             };
 
-            btnAdd = new Button
-            {
-                Text = "Thêm mới",
-                Size = new Size(100, 35),
-                Location = new Point(0, 0),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnAdd.FlatAppearance.BorderSize = 0;
+            btnAdd = CreateActionButton("➕ Thêm khách hàng mới", Color.FromArgb(46, 204, 113));
             btnAdd.Click += BtnAdd_Click;
 
-            btnEdit = new Button
-            {
-                Text = "Chỉnh sửa",
-                Size = new Size(100, 35),
-                Location = new Point(120, 0),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(241, 196, 15),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnEdit.FlatAppearance.BorderSize = 0;
+            btnRefresh = CreateActionButton("🔄 Làm mới dữ liệu", Color.FromArgb(52, 152, 219));
+            btnRefresh.Click += BtnRefresh_Click;
+
+            var btnViewDetails = CreateActionButton("👁️ Xem chi tiết", Color.FromArgb(108, 92, 231));
+            btnViewDetails.Click += BtnViewDetails_Click;
+
+            btnEdit = CreateActionButton("✏️ Chỉnh sửa khách hàng", Color.FromArgb(255, 193, 7));
             btnEdit.Click += BtnEdit_Click;
 
-            btnDelete = new Button
-            {
-                Text = "Xóa",
-                Size = new Size(100, 35),
-                Location = new Point(240, 0),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(231, 76, 60),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnDelete.FlatAppearance.BorderSize = 0;
+            btnDelete = CreateActionButton("🗑️ Xóa khách hàng", Color.FromArgb(231, 76, 60));
             btnDelete.Click += BtnDelete_Click;
 
-            buttonPanel.Controls.Add(btnAdd);
-            buttonPanel.Controls.Add(btnEdit);
-            buttonPanel.Controls.Add(btnDelete);
+            pnlActions.Controls.AddRange(new Control[] { btnAdd, btnRefresh, btnViewDetails, btnEdit, btnDelete });
 
             // DataGridView
             dataGridViewCustomers = new DataGridView
             {
-                Size = new Size(1140, 350),
-                Location = new Point(30, 370),
+                Dock = DockStyle.Fill,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -158,7 +166,6 @@ namespace AceCook
                 RowTemplate = { Height = 50 }
             };
 
-            // Style the DataGridView
             dataGridViewCustomers.DefaultCellStyle.Font = new Font("Segoe UI", 9);
             dataGridViewCustomers.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
             dataGridViewCustomers.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
@@ -167,21 +174,27 @@ namespace AceCook
             dataGridViewCustomers.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
             dataGridViewCustomers.DefaultCellStyle.SelectionForeColor = Color.White;
 
-            // Add controls to form
-            this.Controls.Add(lblTitle);
-            this.Controls.Add(searchPanel);
-            this.Controls.Add(buttonPanel);
-            this.Controls.Add(dataGridViewCustomers);
+            // Add all to form
+            this.Controls.AddRange(new Control[] { dataGridViewCustomers, pnlActions, pnlSearch, lblTitle });
+        }
 
-            // Add shadow effect to search panel
-            searchPanel.Paint += (sender, e) =>
+        // Helper to create buttons
+        private Button CreateActionButton(string text, Color backColor)
+        {
+            var btn = new Button
             {
-                ControlPaint.DrawBorder(e.Graphics, searchPanel.ClientRectangle,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid);
+                Text = text,
+                Width = 200,
+                Height = 40,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                BackColor = backColor,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Margin = new Padding(0, 0, 15, 0),
+                Cursor = Cursors.Hand
             };
+            btn.FlatAppearance.BorderSize = 0;
+            return btn;
         }
 
         private async void LoadCustomers()
@@ -201,70 +214,219 @@ namespace AceCook
         private void RefreshDataGridView(System.Collections.Generic.List<Khachhang> customers)
         {
             dataGridViewCustomers.DataSource = null;
-            dataGridViewCustomers.DataSource = customers;
+            dataGridViewCustomers.Columns.Clear();
 
-            // Configure columns
-            if (dataGridViewCustomers.Columns.Count > 0)
+            // Create custom columns
+            dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
             {
-                dataGridViewCustomers.Columns["MaKh"].HeaderText = "Mã KH";
-                dataGridViewCustomers.Columns["TenKh"].HeaderText = "Tên Khách Hàng";
-                dataGridViewCustomers.Columns["DiaChiKh"].HeaderText = "Địa Chỉ";
-                dataGridViewCustomers.Columns["Sdtkh"].HeaderText = "Số Điện Thoại";
-                dataGridViewCustomers.Columns["EmailKh"].HeaderText = "Email";
+                Name = "MaKh",
+                HeaderText = "Mã KH",
+                Width = 100
+            });
 
-                // Hide navigation properties
-                dataGridViewCustomers.Columns["Dondathangs"].Visible = false;
+            dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "TenKh",
+                HeaderText = "Tên Khách Hàng",
+                Width = 200
+            });
+
+            dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "DiaChiKh",
+                HeaderText = "Địa Chỉ",
+                Width = 250
+            });
+
+            dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Sdtkh",
+                HeaderText = "Số Điện Thoại",
+                Width = 150
+            });
+
+            dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "EmailKh",
+                HeaderText = "Email",
+                Width = 200
+            });
+
+            dataGridViewCustomers.Columns.Add(new DataGridViewButtonColumn
+            {
+                Name = "ViewDetails",
+                HeaderText = "Xem chi tiết",
+                Width = 100,
+                Text = "👁️ Xem",
+                UseColumnTextForButtonValue = true
+            });
+
+            // Populate data
+            foreach (var customer in customers)
+            {
+                var rowIndex = dataGridViewCustomers.Rows.Add();
+                var row = dataGridViewCustomers.Rows[rowIndex];
+
+                row.Cells["MaKh"].Value = customer.MaKh;
+                row.Cells["TenKh"].Value = customer.TenKh;
+                row.Cells["DiaChiKh"].Value = customer.DiaChiKh;
+                row.Cells["Sdtkh"].Value = customer.Sdtkh;
+                row.Cells["EmailKh"].Value = customer.EmailKh;
+            }
+
+            // Handle button clicks
+            dataGridViewCustomers.CellClick += DataGridViewCustomers_CellClick;
+        }
+
+        private async void DataGridViewCustomers_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.ColumnIndex == dataGridViewCustomers.Columns["ViewDetails"].Index)
+            {
+                try
+                {
+                    var customerId = dataGridViewCustomers.Rows[e.RowIndex].Cells["MaKh"].Value.ToString();
+                    var customer = await _customerRepository.GetCustomerByIdAsync(customerId);
+                    if (customer != null)
+                    {
+                        ViewCustomerDetails(customer);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi xem chi tiết: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void ViewCustomerDetails(Khachhang customer)
+        {
+            try
+            {
+                var viewForm = new CustomerAddEditForm(_customerRepository, FormMode.View, customer);
+                viewForm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở form xem chi tiết: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private async void TxtSearch_TextChanged(object sender, EventArgs e)
         {
-            string searchText = txtSearch.Text;
-            if (!string.IsNullOrEmpty(searchText))
+            try
             {
-                var filteredCustomers = await _customerRepository.SearchCustomersAsync(searchText);
-                RefreshDataGridView(filteredCustomers);
-            }
-            else
-            {
-                if (_customers != null)
+                string searchText = txtSearch.Text;
+                if (!string.IsNullOrEmpty(searchText))
                 {
-                    RefreshDataGridView(_customers);
+                    var filteredCustomers = await _customerRepository.SearchCustomersAsync(searchText);
+                    RefreshDataGridView(filteredCustomers);
                 }
+                else
+                {
+                    if (_customers != null)
+                    {
+                        RefreshDataGridView(_customers);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tìm kiếm: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void BtnRefresh_Click(object sender, EventArgs e)
+        private async void BtnSearch_Click(object sender, EventArgs e)
+        {
+            await ApplySearch();
+        }
+
+        private async void BtnReset_Click(object sender, EventArgs e)
+        {
+            txtSearch.Clear();
+            await ApplySearch();
+        }
+
+        private async void BtnRefresh_Click(object sender, EventArgs e)
         {
             txtSearch.Clear();
             LoadCustomers();
         }
 
-        private async void BtnAdd_Click(object sender, EventArgs e)
+        private async Task ApplySearch()
         {
-            var addForm = new CustomerAddEditForm();
-            if (addForm.ShowDialog() == DialogResult.OK)
+            try
+            {
+                string searchText = txtSearch.Text.Trim();
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    var filteredCustomers = await _customerRepository.SearchCustomersAsync(searchText);
+                    RefreshDataGridView(filteredCustomers);
+                }
+                else
+                {
+                    LoadCustomers();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tìm kiếm: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void BtnViewDetails_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewCustomers.SelectedRows.Count > 0)
             {
                 try
                 {
-                    bool success = await _customerRepository.AddCustomerAsync(addForm.Customer);
-                    if (success)
+                    // Get the selected customer ID from the first column
+                    var selectedRow = dataGridViewCustomers.SelectedRows[0];
+                    var customerId = selectedRow.Cells["MaKh"].Value?.ToString();
+                    
+                    if (!string.IsNullOrEmpty(customerId))
                     {
-                        MessageBox.Show("Thêm khách hàng thành công!", "Thông báo", 
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadCustomers();
+                        var customer = await _customerRepository.GetCustomerByIdAsync(customerId);
+                        if (customer != null)
+                        {
+                            ViewCustomerDetails(customer);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Không thể tải thông tin khách hàng!", "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                     else
                     {
-                        MessageBox.Show("Lỗi khi thêm khách hàng!", "Lỗi", 
+                        MessageBox.Show("Không thể lấy thông tin khách hàng đã chọn!", "Lỗi",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi thêm khách hàng: {ex.Message}", "Lỗi", 
+                    MessageBox.Show($"Lỗi khi tải thông tin khách hàng: {ex.Message}", "Lỗi",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một khách hàng để xem chi tiết!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private async void BtnAdd_Click(object sender, EventArgs e)
+        {
+            var addForm = new CustomerAddEditForm(_customerRepository, FormMode.Add);
+            if (addForm.ShowDialog() == DialogResult.OK)
+            {
+                MessageBox.Show("Thêm khách hàng thành công!", "Thông báo", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadCustomers();
             }
         }
 
@@ -275,29 +437,12 @@ namespace AceCook
                 var selectedCustomer = dataGridViewCustomers.SelectedRows[0].DataBoundItem as Khachhang;
                 if (selectedCustomer != null)
                 {
-                    var editForm = new CustomerAddEditForm(selectedCustomer);
+                    var editForm = new CustomerAddEditForm(_customerRepository, FormMode.Edit, selectedCustomer);
                     if (editForm.ShowDialog() == DialogResult.OK)
                     {
-                        try
-                        {
-                            bool success = await _customerRepository.UpdateCustomerAsync(editForm.Customer);
-                            if (success)
-                            {
-                                MessageBox.Show("Cập nhật khách hàng thành công!", "Thông báo", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                LoadCustomers();
-                            }
-                            else
-                            {
-                                MessageBox.Show("Lỗi khi cập nhật khách hàng!", "Lỗi", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"Lỗi khi cập nhật khách hàng: {ex.Message}", "Lỗi", 
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                        MessageBox.Show("Cập nhật khách hàng thành công!", "Thông báo", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadCustomers();
                     }
                 }
             }

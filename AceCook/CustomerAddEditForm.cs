@@ -1,291 +1,265 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 using AceCook.Models;
+using AceCook.Repositories;
 
 namespace AceCook
 {
+    public enum FormMode
+    {
+        Add,
+        Edit,
+        View
+    }
+
     public partial class CustomerAddEditForm : Form
     {
-        private Khachhang _customer;
-        private TextBox txtMaKH;
-        private TextBox txtTenKH;
-        private TextBox txtDiaChi;
-        private TextBox txtSDT;
-        private TextBox txtEmail;
-        private Button btnSave;
-        private Button btnCancel;
-        private Label lblTitle;
+        private readonly CustomerRepository _customerRepository;
+        private FormMode _mode;
+        private Khachhang _currentCustomer;
+        public Khachhang Customer { get; private set; }
 
-        public Khachhang Customer => _customer;
-
-        public CustomerAddEditForm()
+        public CustomerAddEditForm(CustomerRepository customerRepository, FormMode mode = FormMode.Add, Khachhang customer = null)
         {
-            _customer = new Khachhang();
-            SetupUI();
+            InitializeComponent();
+            _customerRepository = customerRepository;
+            _mode = mode;
+            _currentCustomer = customer;
+            
+            InitializeForm();
         }
 
-        public CustomerAddEditForm(Khachhang customer)
+        private void InitializeForm()
         {
-            _customer = customer;
-            SetupUI();
-            LoadCustomerData();
-        }
-
-        private void SetupUI()
-        {
-            this.Text = _customer.MaKh == null ? "Thêm Khách Hàng Mới" : "Chỉnh Sửa Khách Hàng";
-            this.Size = new Size(500, 400);
-            this.StartPosition = FormStartPosition.CenterParent;
-            this.FormBorderStyle = FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.BackColor = Color.FromArgb(248, 249, 250);
-
-            // Title
-            lblTitle = new Label
+            switch (_mode)
             {
-                Text = _customer.MaKh == null ? "THÊM KHÁCH HÀNG MỚI" : "CHỈNH SỬA KHÁCH HÀNG",
-                Font = new Font("Segoe UI", 14, FontStyle.Bold),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                TextAlign = ContentAlignment.MiddleCenter,
-                Size = new Size(460, 30),
-                Location = new Point(20, 20)
-            };
+                case FormMode.Add:
+                    this.Text = "Thêm khách hàng mới";
+                    lblTitle.Text = "Thêm khách hàng mới";
+                    btnSave.Text = "Thêm";
+                    break;
+                case FormMode.Edit:
+                    this.Text = "Chỉnh sửa khách hàng";
+                    lblTitle.Text = "Chỉnh sửa khách hàng";
+                    btnSave.Text = "Cập nhật";
+                    LoadCustomerData();
+                    break;
+                case FormMode.View:
+                    this.Text = "Xem thông tin khách hàng";
+                    lblTitle.Text = "Thông tin khách hàng";
+                    btnSave.Visible = false;
+                    btnCancel.Text = "Đóng";
+                    SetControlsReadOnly(true);
+                    LoadCustomerData();
+                    break;
+            }
 
-            // Form Panel
-            var formPanel = new Panel
+            // Set default customer type
+            if (cmbLoaiKH.Items.Count > 0 && _mode == FormMode.Add)
             {
-                Size = new Size(460, 280),
-                Location = new Point(20, 60),
-                BackColor = Color.White
-            };
-
-            // Mã KH
-            var lblMaKH = new Label
-            {
-                Text = "Mã Khách Hàng:",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(120, 25),
-                Location = new Point(20, 30)
-            };
-
-            txtMaKH = new TextBox
-            {
-                Size = new Size(300, 25),
-                Location = new Point(140, 28),
-                Font = new Font("Segoe UI", 10),
-                Enabled = _customer.MaKh == null // Only enable for new customer
-            };
-
-            // Tên KH
-            var lblTenKH = new Label
-            {
-                Text = "Tên Khách Hàng:",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(120, 25),
-                Location = new Point(20, 70)
-            };
-
-            txtTenKH = new TextBox
-            {
-                Size = new Size(300, 25),
-                Location = new Point(140, 68),
-                Font = new Font("Segoe UI", 10)
-            };
-
-            // Địa chỉ
-            var lblDiaChi = new Label
-            {
-                Text = "Địa Chỉ:",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(120, 25),
-                Location = new Point(20, 110)
-            };
-
-            txtDiaChi = new TextBox
-            {
-                Size = new Size(300, 25),
-                Location = new Point(140, 108),
-                Font = new Font("Segoe UI", 10)
-            };
-
-            // Số điện thoại
-            var lblSDT = new Label
-            {
-                Text = "Số Điện Thoại:",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(120, 25),
-                Location = new Point(20, 150)
-            };
-
-            txtSDT = new TextBox
-            {
-                Size = new Size(300, 25),
-                Location = new Point(140, 148),
-                Font = new Font("Segoe UI", 10)
-            };
-
-            // Email
-            var lblEmail = new Label
-            {
-                Text = "Email:",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(120, 25),
-                Location = new Point(20, 190)
-            };
-
-            txtEmail = new TextBox
-            {
-                Size = new Size(300, 25),
-                Location = new Point(140, 188),
-                Font = new Font("Segoe UI", 10)
-            };
-
-            // Buttons
-            btnSave = new Button
-            {
-                Text = "Lưu",
-                Size = new Size(100, 35),
-                Location = new Point(140, 230),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnSave.FlatAppearance.BorderSize = 0;
-            btnSave.Click += BtnSave_Click;
-
-            btnCancel = new Button
-            {
-                Text = "Hủy",
-                Size = new Size(100, 35),
-                Location = new Point(260, 230),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(231, 76, 60),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnCancel.FlatAppearance.BorderSize = 0;
-            btnCancel.Click += BtnCancel_Click;
-
-            // Add controls to form panel
-            formPanel.Controls.Add(lblMaKH);
-            formPanel.Controls.Add(txtMaKH);
-            formPanel.Controls.Add(lblTenKH);
-            formPanel.Controls.Add(txtTenKH);
-            formPanel.Controls.Add(lblDiaChi);
-            formPanel.Controls.Add(txtDiaChi);
-            formPanel.Controls.Add(lblSDT);
-            formPanel.Controls.Add(txtSDT);
-            formPanel.Controls.Add(lblEmail);
-            formPanel.Controls.Add(txtEmail);
-            formPanel.Controls.Add(btnSave);
-            formPanel.Controls.Add(btnCancel);
-
-            // Add controls to form
-            this.Controls.Add(lblTitle);
-            this.Controls.Add(formPanel);
-
-            // Set default button
-            this.AcceptButton = btnSave;
-            this.CancelButton = btnCancel;
-
-            // Add shadow effect to form panel
-            formPanel.Paint += (sender, e) =>
-            {
-                ControlPaint.DrawBorder(e.Graphics, formPanel.ClientRectangle,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid);
-            };
+                cmbLoaiKH.SelectedIndex = 0;
+            }
         }
 
         private void LoadCustomerData()
         {
-            txtMaKH.Text = _customer.MaKh;
-            txtTenKH.Text = _customer.TenKh;
-            txtDiaChi.Text = _customer.DiaChiKh;
-            txtSDT.Text = _customer.Sdtkh;
-            txtEmail.Text = _customer.EmailKh;
-        }
-
-        private void BtnSave_Click(object sender, EventArgs e)
-        {
-            if (ValidateInput())
+            if (_currentCustomer != null)
             {
-                _customer.MaKh = txtMaKH.Text.Trim();
-                _customer.TenKh = txtTenKH.Text.Trim();
-                _customer.DiaChiKh = txtDiaChi.Text.Trim();
-                _customer.Sdtkh = txtSDT.Text.Trim();
-                _customer.EmailKh = txtEmail.Text.Trim();
+                txtMaKH.Text = _currentCustomer.MaKh;
+                txtTenKH.Text = _currentCustomer.TenKh;
+                txtSDTKH.Text = _currentCustomer.Sdtkh;
+                txtDiaChiKH.Text = _currentCustomer.DiaChiKh;
+                txtEmailKH.Text = _currentCustomer.EmailKh;
+                
+                if (!string.IsNullOrEmpty(_currentCustomer.LoaiKh))
+                {
+                    int index = cmbLoaiKH.FindStringExact(_currentCustomer.LoaiKh);
+                    if (index != -1)
+                        cmbLoaiKH.SelectedIndex = index;
+                }
 
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                // Disable MaKH for edit mode
+                if (_mode == FormMode.Edit)
+                {
+                    txtMaKH.ReadOnly = true;
+                    txtMaKH.BackColor = SystemColors.Control;
+                }
             }
         }
 
-        private void BtnCancel_Click(object sender, EventArgs e)
+        private void SetControlsReadOnly(bool readOnly)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            txtMaKH.ReadOnly = readOnly;
+            txtTenKH.ReadOnly = readOnly;
+            txtSDTKH.ReadOnly = readOnly;
+            txtDiaChiKH.ReadOnly = readOnly;
+            txtEmailKH.ReadOnly = readOnly;
+            cmbLoaiKH.Enabled = !readOnly;
+
+            if (readOnly)
+            {
+                var backColor = SystemColors.Control;
+                txtMaKH.BackColor = backColor;
+                txtTenKH.BackColor = backColor;
+                txtSDTKH.BackColor = backColor;
+                txtDiaChiKH.BackColor = backColor;
+                txtEmailKH.BackColor = backColor;
+                cmbLoaiKH.BackColor = backColor;
+            }
         }
 
         private bool ValidateInput()
         {
+            var errors = new List<string>();
+
+            // Validate MaKH
             if (string.IsNullOrWhiteSpace(txtMaKH.Text))
             {
-                MessageBox.Show("Vui lòng nhập mã khách hàng!", "Lỗi", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtMaKH.Focus();
-                return false;
+                errors.Add("Mã khách hàng không được để trống.");
+            }
+            else if (txtMaKH.Text.Length > 10)
+            {
+                errors.Add("Mã khách hàng không được vượt quá 10 ký tự.");
             }
 
+            // Validate TenKH
             if (string.IsNullOrWhiteSpace(txtTenKH.Text))
             {
-                MessageBox.Show("Vui lòng nhập tên khách hàng!", "Lỗi", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtTenKH.Focus();
-                return false;
+                errors.Add("Tên khách hàng không được để trống.");
+            }
+            else if (txtTenKH.Text.Length > 50)
+            {
+                errors.Add("Tên khách hàng không được vượt quá 50 ký tự.");
             }
 
-            if (string.IsNullOrWhiteSpace(txtSDT.Text))
+            // Validate LoaiKH
+            if (cmbLoaiKH.SelectedIndex == -1)
             {
-                MessageBox.Show("Vui lòng nhập số điện thoại!", "Lỗi", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtSDT.Focus();
-                return false;
+                errors.Add("Vui lòng chọn loại khách hàng.");
             }
 
-            // Validate phone number format
-            if (!System.Text.RegularExpressions.Regex.IsMatch(txtSDT.Text, @"^\d{10,11}$"))
+            // Validate SDTKH
+            if (!string.IsNullOrWhiteSpace(txtSDTKH.Text))
             {
-                MessageBox.Show("Số điện thoại không hợp lệ! Vui lòng nhập 10-11 chữ số.", "Lỗi", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtSDT.Focus();
-                return false;
-            }
-
-            // Validate email format if provided
-            if (!string.IsNullOrWhiteSpace(txtEmail.Text))
-            {
-                if (!System.Text.RegularExpressions.Regex.IsMatch(txtEmail.Text, 
-                    @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                if (txtSDTKH.Text.Length > 10)
                 {
-                    MessageBox.Show("Email không hợp lệ!", "Lỗi", 
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    txtEmail.Focus();
-                    return false;
+                    errors.Add("Số điện thoại không được vượt quá 10 ký tự.");
                 }
+                if (!Regex.IsMatch(txtSDTKH.Text, @"^[0-9]+$"))
+                {
+                    errors.Add("Số điện thoại chỉ được chứa các chữ số.");
+                }
+            }
+
+            // Validate DiaChiKH
+            if (!string.IsNullOrWhiteSpace(txtDiaChiKH.Text) && txtDiaChiKH.Text.Length > 100)
+            {
+                errors.Add("Địa chỉ không được vượt quá 100 ký tự.");
+            }
+
+            // Validate EmailKH
+            if (!string.IsNullOrWhiteSpace(txtEmailKH.Text))
+            {
+                if (txtEmailKH.Text.Length > 50)
+                {
+                    errors.Add("Email không được vượt quá 50 ký tự.");
+                }
+                if (!Regex.IsMatch(txtEmailKH.Text, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
+                {
+                    errors.Add("Email không đúng định dạng.");
+                }
+            }
+
+            if (errors.Count > 0)
+            {
+                MessageBox.Show(string.Join("\n", errors), "Lỗi xác thực", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
             }
 
             return true;
         }
+
+        private async void btnSave_Click(object sender, EventArgs e)
+        {
+            if (!ValidateInput())
+                return;
+
+            try
+            {
+                btnSave.Enabled = false;
+                Cursor = Cursors.WaitCursor;
+
+                var customer = new Khachhang
+                {
+                    MaKh = txtMaKH.Text.Trim(),
+                    TenKh = txtTenKH.Text.Trim(),
+                    LoaiKh = cmbLoaiKH.SelectedItem?.ToString(),
+                    Sdtkh = string.IsNullOrWhiteSpace(txtSDTKH.Text) ? null : txtSDTKH.Text.Trim(),
+                    DiaChiKh = string.IsNullOrWhiteSpace(txtDiaChiKH.Text) ? null : txtDiaChiKH.Text.Trim(),
+                    EmailKh = string.IsNullOrWhiteSpace(txtEmailKH.Text) ? null : txtEmailKH.Text.Trim()
+                };
+
+                bool success = false;
+                string operation = "";
+
+                if (_mode == FormMode.Add)
+                {
+                    // Check if customer already exists
+                    var existingCustomer = await _customerRepository.GetCustomerByIdAsync(customer.MaKh);
+                    if (existingCustomer != null)
+                    {
+                        MessageBox.Show("Mã khách hàng đã tồn tại. Vui lòng chọn mã khác.", 
+                            "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    success = await _customerRepository.AddCustomerAsync(customer);
+                    operation = "thêm";
+                }
+                else if (_mode == FormMode.Edit)
+                {
+                    success = await _customerRepository.UpdateCustomerAsync(customer);
+                    operation = "cập nhật";
+                }
+
+                if (success)
+                {
+                    Customer = customer;
+                    MessageBox.Show($"Đã {operation} khách hàng thành công!", "Thành công", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show($"Không thể {operation} khách hàng. Vui lòng thử lại.", "Lỗi", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnSave.Enabled = true;
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
     }
-} 
+}

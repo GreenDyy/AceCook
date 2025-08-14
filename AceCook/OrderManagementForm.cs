@@ -61,108 +61,107 @@ namespace AceCook
                 Text = "QUẢN LÝ ĐƠN HÀNG",
                 Font = new Font("Segoe UI", 20, FontStyle.Bold),
                 ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(800, 50),
-                Location = new Point(30, 20),
-                TextAlign = ContentAlignment.MiddleLeft
+                Dock = DockStyle.Top,
+                Height = 70, // tăng lên
+                TextAlign = ContentAlignment.MiddleLeft,
             };
 
             // Filters Panel
-            pnlFilters = new Panel
+            pnlFilters = new FlowLayoutPanel
             {
-                Size = new Size(1340, 80),
-                Location = new Point(30, 90),
+                Dock = DockStyle.Top,
+                Height = 90,
                 BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle
+                BorderStyle = BorderStyle.FixedSingle,
+                Padding = new Padding(15),
+                FlowDirection = FlowDirection.LeftToRight,
+                AutoScroll = true,
+                WrapContents = false,
+                Margin = new Padding(0, 200, 0, 150) // Thêm dòng này để tạo khoảng cách phía trên
+
             };
 
-            // Search controls
             lblSearch = new Label
             {
                 Text = "Tìm kiếm:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(80, 25),
-                Location = new Point(20, 15),
-                TextAlign = ContentAlignment.MiddleLeft
+                AutoSize = true,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Margin = new Padding(0, 8, 10, 0)
             };
 
             txtSearch = new TextBox
             {
-                Size = new Size(200, 30),
-                Location = new Point(110, 12),
+                Width = 250,
                 Font = new Font("Segoe UI", 10),
-                PlaceholderText = "Mã đơn hàng, tên KH, trạng thái..."
+                PlaceholderText = "Mã đơn hàng, tên KH, trạng thái...",
+                Margin = new Padding(0, 5, 20, 0)
             };
             txtSearch.TextChanged += TxtSearch_TextChanged;
 
-            // Status filter
             lblStatusFilter = new Label
             {
                 Text = "Trạng thái:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(80, 25),
-                Location = new Point(330, 15),
-                TextAlign = ContentAlignment.MiddleLeft
+                AutoSize = true,
+                Margin = new Padding(0, 8, 10, 0)
             };
 
             cboStatusFilter = new ComboBox
             {
-                Size = new Size(150, 30),
-                Location = new Point(420, 12),
+                Width = 150,
                 Font = new Font("Segoe UI", 10),
-                DropDownStyle = ComboBoxStyle.DropDownList
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Margin = new Padding(0, 5, 20, 0)
             };
             cboStatusFilter.Items.AddRange(new object[] { "Tất cả", "Chờ xử lý", "Đang xử lý", "Đã giao", "Đã hủy" });
             cboStatusFilter.SelectedIndex = 0;
             cboStatusFilter.SelectedIndexChanged += CboStatusFilter_SelectedIndexChanged;
 
-            // Date range
             lblDateRange = new Label
             {
                 Text = "Từ ngày:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(70, 25),
-                Location = new Point(590, 15),
-                TextAlign = ContentAlignment.MiddleLeft
+                AutoSize = true,
+                Margin = new Padding(0, 8, 10, 0)
             };
 
             dtpStartDate = new DateTimePicker
             {
-                Size = new Size(130, 30),
-                Location = new Point(670, 12),
+                Width = 120,
                 Font = new Font("Segoe UI", 10),
                 Format = DateTimePickerFormat.Short,
-                Value = DateTime.Now.AddDays(-30)
+                Value = DateTime.Now.AddDays(-30),
+                Margin = new Padding(0, 5, 10, 0)
             };
 
-            Label lblToDate = new Label
+            var lblToDate = new Label
             {
                 Text = "đến:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(40, 25),
-                Location = new Point(820, 15),
-                TextAlign = ContentAlignment.MiddleLeft
+                AutoSize = true,
+                Margin = new Padding(0, 8, 10, 0)
             };
 
             dtpEndDate = new DateTimePicker
             {
-                Size = new Size(130, 30),
-                Location = new Point(870, 12),
+                Width = 120,
                 Font = new Font("Segoe UI", 10),
                 Format = DateTimePickerFormat.Short,
-                Value = DateTime.Now
+                Value = DateTime.Now,
+                Margin = new Padding(0, 5, 10, 0)
             };
 
-            // Filter buttons
             btnSearch = new Button
             {
                 Text = "🔍 Tìm kiếm",
-                Size = new Size(100, 35),
-                Location = new Point(1020, 12),
+                Width = 120,
+                Height = 35,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(52, 152, 219),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
+                Margin = new Padding(0, 5, 10, 0)
             };
             btnSearch.FlatAppearance.BorderSize = 0;
             btnSearch.Click += BtnSearch_Click;
@@ -170,87 +169,43 @@ namespace AceCook
             btnReset = new Button
             {
                 Text = "🔄 Làm mới",
-                Size = new Size(100, 35),
-                Location = new Point(1130, 12),
+                Width = 100,
+                Height = 35,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(95, 95, 95),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
+                Margin = new Padding(0, 5, 10, 0)
             };
             btnReset.FlatAppearance.BorderSize = 0;
             btnReset.Click += BtnReset_Click;
 
-            // Add controls to filters panel
-            pnlFilters.Controls.AddRange(new Control[] { 
-                lblSearch, txtSearch, lblStatusFilter, cboStatusFilter,
-                lblDateRange, dtpStartDate, lblToDate, dtpEndDate,
-                btnSearch, btnReset
-            });
+            pnlFilters.Controls.AddRange(new Control[] {
+        lblSearch, txtSearch, lblStatusFilter, cboStatusFilter,
+        lblDateRange, dtpStartDate, lblToDate, dtpEndDate,
+        btnSearch, btnReset
+    });
 
             // Actions Panel
-            pnlActions = new Panel
+            pnlActions = new FlowLayoutPanel
             {
-                Size = new Size(1340, 60),
-                Location = new Point(30, 190),
+                Dock = DockStyle.Top,
+                Height = 70,
+                FlowDirection = FlowDirection.LeftToRight,
+                Padding = new Padding(15),
                 BackColor = Color.Transparent
             };
 
-            btnCreateOrder = new Button
-            {
-                Text = "➕ Tạo đơn hàng mới",
-                Size = new Size(250, 60),
-                Location = new Point(0, 0),
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand,
-
-            };
-            btnCreateOrder.FlatAppearance.BorderSize = 0;
+            btnCreateOrder = CreateActionButton("➕ Tạo đơn hàng mới", Color.FromArgb(46, 204, 113));
             btnCreateOrder.Click += BtnCreateOrder_Click;
 
-            btnRefresh = new Button
-            {
-                Text = "🔄 Làm mới dữ liệu",
-                Size = new Size(200, 60),
-                Location = new Point(270, 0),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(52, 152, 219),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnRefresh.FlatAppearance.BorderSize = 0;
+            btnRefresh = CreateActionButton("🔄 Làm mới dữ liệu", Color.FromArgb(52, 152, 219));
             btnRefresh.Click += BtnRefresh_Click;
 
-            var btnEditOrder = new Button
-            {
-                Text = "✏️ Chỉnh sửa đơn hàng",
-                Size = new Size(200, 60),
-                Location = new Point(490, 0),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(255, 193, 7),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnEditOrder.FlatAppearance.BorderSize = 0;
+            var btnEditOrder = CreateActionButton("✏️ Chỉnh sửa đơn hàng", Color.FromArgb(255, 193, 7));
             btnEditOrder.Click += BtnEditOrder_Click;
 
-            var btnChangeStatus = new Button
-            {
-                Text = "🔄 Thay đổi trạng thái",
-                Size = new Size(200, 60),
-                Location = new Point(710, 0),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(155, 89, 182),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnChangeStatus.FlatAppearance.BorderSize = 0;
+            var btnChangeStatus = CreateActionButton("🔄 Thay đổi trạng thái", Color.FromArgb(155, 89, 182));
             btnChangeStatus.Click += BtnChangeStatus_Click;
 
             pnlActions.Controls.AddRange(new Control[] { btnCreateOrder, btnRefresh, btnEditOrder, btnChangeStatus });
@@ -258,8 +213,7 @@ namespace AceCook
             // DataGridView
             dataGridViewOrders = new DataGridView
             {
-                Size = new Size(1340, 480),
-                Location = new Point(30, 270),
+                Dock = DockStyle.Fill,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -272,10 +226,8 @@ namespace AceCook
                 RowHeadersVisible = false,
                 CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
                 ColumnHeadersHeight = 50,
-                RowTemplate = { Height = 60 }
+                RowTemplate = { Height = 50 }
             };
-
-            // Style the DataGridView
             dataGridViewOrders.DefaultCellStyle.Font = new Font("Segoe UI", 9);
             dataGridViewOrders.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
             dataGridViewOrders.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
@@ -284,11 +236,29 @@ namespace AceCook
             dataGridViewOrders.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
             dataGridViewOrders.DefaultCellStyle.SelectionForeColor = Color.White;
 
-            // Add controls to form
-            this.Controls.AddRange(new Control[] { 
-                lblTitle, pnlFilters, pnlActions, dataGridViewOrders 
-            });
+            // Add all to form
+            this.Controls.AddRange(new Control[] { dataGridViewOrders, pnlActions, pnlFilters, lblTitle });
         }
+
+        // Helper to create buttons
+        private Button CreateActionButton(string text, Color backColor)
+        {
+            var btn = new Button
+            {
+                Text = text,
+                Width = 200,
+                Height = 40,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                BackColor = backColor,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Margin = new Padding(0, 0, 15, 0),
+                Cursor = Cursors.Hand
+            };
+            btn.FlatAppearance.BorderSize = 0;
+            return btn;
+        }
+
 
         private async void LoadOrders()
         {
@@ -620,38 +590,14 @@ namespace AceCook
         {
             try
             {
-                List<Dondathang> orders;
+                // Get filter values
+                var searchTerm = txtSearch.Text.Trim();
+                var status = cboStatusFilter.SelectedIndex > 0 ? cboStatusFilter.SelectedItem.ToString() : null;
+                var startDate = dtpStartDate.Value <= dtpEndDate.Value ? DateOnly.FromDateTime(dtpStartDate.Value) : (DateOnly?)null;
+                var endDate = dtpStartDate.Value <= dtpEndDate.Value ? DateOnly.FromDateTime(dtpEndDate.Value) : (DateOnly?)null;
 
-                // Apply status filter
-                if (cboStatusFilter.SelectedIndex > 0)
-                {
-                    var status = cboStatusFilter.SelectedItem.ToString();
-                    orders = await _orderRepository.GetOrdersByStatusAsync(status);
-                }
-                else
-                {
-                    orders = await _orderRepository.GetAllOrdersAsync();
-                }
-
-                // Apply date range filter
-                if (dtpStartDate.Value <= dtpEndDate.Value)
-                {
-                    orders = orders.Where(o => o.NgayDat.HasValue &&
-                        o.NgayDat.Value.ToDateTime(TimeOnly.MinValue) >= dtpStartDate.Value &&
-                        o.NgayDat.Value.ToDateTime(TimeOnly.MinValue) <= dtpEndDate.Value.AddDays(1).AddSeconds(-1))
-                        .ToList();
-                }
-
-                // Apply search filter
-                if (!string.IsNullOrWhiteSpace(txtSearch.Text))
-                {
-                    var searchTerm = txtSearch.Text.ToLower();
-                    orders = orders.Where(o => 
-                        o.MaDdh.ToLower().Contains(searchTerm) ||
-                        (o.MaKhNavigation?.TenKh?.ToLower().Contains(searchTerm) ?? false) ||
-                        (o.TrangThai?.ToLower().Contains(searchTerm) ?? false)
-                    ).ToList();
-                }
+                // Get filtered orders from repository
+                var orders = await _orderRepository.GetFilteredOrdersAsync(searchTerm, status, startDate, endDate);
 
                 RefreshDataGridView(orders);
                 

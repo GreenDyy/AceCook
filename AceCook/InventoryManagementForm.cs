@@ -20,13 +20,9 @@ namespace AceCook
         private ComboBox cboProductTypeFilter;
         private Button btnRefresh;
         private Button btnExport;
-        private Button btnAdd;
-        private Button btnEdit;
-        private Button btnDelete;
         private Label lblTitle;
         private Label lblTotalItems;
         private Label lblTotalValue; 
-        private Panel pnlFilters;
         private Panel pnlSummary;
         private List<CtTon> _currentInventory; // Lưu trữ dữ liệu hiện tại
 
@@ -45,7 +41,7 @@ namespace AceCook
             this.SuspendLayout();
             
             this.Text = "Quản lý Tồn kho";
-            this.Size = new Size(1200, 700);
+            this.Size = new Size(1400, 800);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(248, 249, 250);
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -62,18 +58,19 @@ namespace AceCook
                 Text = "QUẢN LÝ TỒN KHO",
                 Font = new Font("Segoe UI", 20, FontStyle.Bold),
                 ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(800, 50),
-                Location = new Point(30, 20),
-                TextAlign = ContentAlignment.MiddleLeft
+                Dock = DockStyle.Top,
+                Height = 70,
+                TextAlign = ContentAlignment.MiddleLeft,
             };
 
             // Summary Panel
             pnlSummary = new Panel
             {
-                Size = new Size(1140, 80),
-                Location = new Point(30, 90),
+                Dock = DockStyle.Top,
+                Height = 80,
                 BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle
+                BorderStyle = BorderStyle.FixedSingle,
+                Margin = new Padding(0, 200, 0, 150)
             };
 
             var lblTotalItemsTitle = new Label
@@ -140,29 +137,34 @@ namespace AceCook
             });
 
             // Filters Panel
-            pnlFilters = new Panel
+            var pnlFilters = new FlowLayoutPanel
             {
-                Size = new Size(1140, 80),
-                Location = new Point(30, 190),
+                Dock = DockStyle.Top,
+                Height = 90,
                 BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle
+                BorderStyle = BorderStyle.FixedSingle,
+                Padding = new Padding(15),
+                FlowDirection = FlowDirection.LeftToRight,
+                AutoScroll = true,
+                WrapContents = false,
+                Margin = new Padding(0, 200, 0, 150)
             };
 
             var lblSearch = new Label
             {
                 Text = "Tìm kiếm:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(80, 25),
-                Location = new Point(20, 15),
-                TextAlign = ContentAlignment.MiddleLeft
+                AutoSize = true,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Margin = new Padding(0, 8, 10, 0)
             };
 
             txtSearch = new TextBox
             {
-                Size = new Size(200, 30),
-                Location = new Point(110, 12),
+                Width = 200,
                 Font = new Font("Segoe UI", 10),
-                PlaceholderText = "Mã SP, tên SP..."
+                PlaceholderText = "Mã SP, tên SP...",
+                Margin = new Padding(0, 5, 20, 0)
             };
             txtSearch.TextChanged += TxtSearch_TextChanged;
 
@@ -170,17 +172,17 @@ namespace AceCook
             {
                 Text = "Kho hàng:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(80, 25),
-                Location = new Point(330, 15),
-                TextAlign = ContentAlignment.MiddleLeft
+                AutoSize = true,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Margin = new Padding(0, 8, 10, 0)
             };
 
             cboWarehouseFilter = new ComboBox
             {
-                Size = new Size(150, 30),
-                Location = new Point(420, 12),
+                Width = 150,
                 Font = new Font("Segoe UI", 10),
-                DropDownStyle = ComboBoxStyle.DropDownList
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Margin = new Padding(0, 5, 20, 0)
             };
             cboWarehouseFilter.Items.Add("Tất cả kho");
             cboWarehouseFilter.SelectedIndex = 0;
@@ -190,17 +192,17 @@ namespace AceCook
             {
                 Text = "Loại SP:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(70, 25),
-                Location = new Point(590, 15),
-                TextAlign = ContentAlignment.MiddleLeft
+                AutoSize = true,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Margin = new Padding(0, 8, 10, 0)
             };
 
             cboProductTypeFilter = new ComboBox
             {
-                Size = new Size(150, 30),
-                Location = new Point(670, 12),
+                Width = 150,
                 Font = new Font("Segoe UI", 10),
-                DropDownStyle = ComboBoxStyle.DropDownList
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Margin = new Padding(0, 5, 20, 0)
             };
             cboProductTypeFilter.Items.Add("Tất cả loại");
             cboProductTypeFilter.SelectedIndex = 0;
@@ -209,13 +211,13 @@ namespace AceCook
             btnRefresh = new Button
             {
                 Text = "🔄 Làm mới",
-                Size = new Size(100, 35),
-                Location = new Point(840, 12),
+                Width = 100,
+                Height = 35,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(52, 152, 219),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
+                Margin = new Padding(0, 5, 10, 0)
             };
             btnRefresh.FlatAppearance.BorderSize = 0;
             btnRefresh.Click += BtnRefresh_Click;
@@ -223,13 +225,13 @@ namespace AceCook
             btnExport = new Button
             {
                 Text = "📊 Xuất báo cáo",
-                Size = new Size(120, 35),
-                Location = new Point(960, 12),
+                Width = 120,
+                Height = 35,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(46, 204, 113),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
+                Margin = new Padding(0, 5, 10, 0)
             };
             btnExport.FlatAppearance.BorderSize = 0;
             btnExport.Click += BtnExport_Click;
@@ -239,63 +241,31 @@ namespace AceCook
                 lblProductType, cboProductTypeFilter, btnRefresh, btnExport
             });
 
-            // CRUD Buttons Panel
-            var crudPanel = new Panel
+            // Actions Panel
+            var pnlActions = new FlowLayoutPanel
             {
-                Size = new Size(1140, 60),
-                Location = new Point(30, 290),
+                Dock = DockStyle.Top,
+                Height = 70,
+                FlowDirection = FlowDirection.LeftToRight,
+                Padding = new Padding(15),
                 BackColor = Color.Transparent
             };
 
-            btnAdd = new Button
-            {
-                Text = "➕ Thêm mới",
-                Size = new Size(120, 40),
-                Location = new Point(0, 10),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnAdd.FlatAppearance.BorderSize = 0;
-            btnAdd.Click += BtnAdd_Click;
+             var btnViewDetails = CreateActionButton("👁️ Xem chi tiết", Color.FromArgb(108, 92, 231));
+             btnViewDetails.Click += BtnViewDetails_Click;
 
-            btnEdit = new Button
-            {
-                Text = "✏️ Chỉnh sửa",
-                Size = new Size(120, 40),
-                Location = new Point(140, 10),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(241, 196, 15),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnEdit.FlatAppearance.BorderSize = 0;
-            btnEdit.Click += BtnEdit_Click;
-
-            btnDelete = new Button
-            {
-                Text = "🗑️ Xóa",
-                Size = new Size(120, 40),
-                Location = new Point(280, 10),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(231, 76, 60),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnDelete.FlatAppearance.BorderSize = 0;
-            btnDelete.Click += BtnDelete_Click;
-
-            crudPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, btnDelete });
+             var btnNhapKho = CreateActionButton("📦 Nhập kho", Color.FromArgb(46, 204, 113));
+             btnNhapKho.Click += BtnNhapKho_Click;
+ 
+             var btnXuatKho = CreateActionButton("📤 Xuất kho", Color.FromArgb(255, 193, 7));
+             btnXuatKho.Click += BtnXuatKho_Click;
+ 
+             pnlActions.Controls.AddRange(new Control[] { btnViewDetails, btnNhapKho, btnXuatKho });
 
             // DataGridView
             dataGridViewInventory = new DataGridView
             {
-                Size = new Size(1140, 350),
-                Location = new Point(30, 370),
+                Dock = DockStyle.Fill,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -320,21 +290,47 @@ namespace AceCook
             dataGridViewInventory.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
             dataGridViewInventory.DefaultCellStyle.SelectionForeColor = Color.White;
 
-            // Add controls to form
+            // Add all to form
             this.Controls.AddRange(new Control[] { 
-                lblTitle, pnlSummary, pnlFilters, crudPanel, dataGridViewInventory 
+                dataGridViewInventory, pnlActions, pnlFilters, pnlSummary, lblTitle 
             });
+        }
+
+        // Helper to create buttons
+        private Button CreateActionButton(string text, Color backColor)
+        {
+            var btn = new Button
+            {
+                Text = text,
+                Width = 200,
+                Height = 40,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                BackColor = backColor,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Margin = new Padding(0, 0, 15, 0),
+                Cursor = Cursors.Hand
+            };
+            btn.FlatAppearance.BorderSize = 0;
+            return btn;
         }
 
         private async Task LoadInventory()
         {
             try
             {
-                var inventory = await _inventoryRepository.GetAllInventoryAsync();
-                await LoadWarehouseData();
-                await LoadProductTypeData();
+                // Load data in parallel for better performance
+                var inventoryTask = _inventoryRepository.GetAllInventoryAsync();
+                var warehouseTask = LoadWarehouseData();
+                var productTypeTask = LoadProductTypeData();
+
+                // Wait for all tasks to complete
+                var inventory = await inventoryTask;
+                await warehouseTask;
+                await productTypeTask;
+
                 RefreshDataGridView(inventory);
-                UpdateSummary(inventory);
+                await UpdateSummary(inventory);
             }
             catch (Exception ex)
             {
@@ -513,20 +509,38 @@ namespace AceCook
             }
         }
 
-        private void UpdateSummary(List<CtTon> inventory)
+        private async Task UpdateSummary(List<CtTon> inventory)
         {
-            var totalItems = inventory.Sum(i => i.SoLuongTonKho ?? 0);
-            var totalValue = inventory.Sum(i => (i.SoLuongTonKho ?? 0) * (i.MaSpNavigation?.Gia ?? 0));
-            var lowStockCount = inventory.Count(i => (i.SoLuongTonKho ?? 0) <= 10);
-
-            lblTotalItems.Text = totalItems.ToString("N0");
-            lblTotalValue.Text = totalValue.ToString("N0") + " VNĐ";
-            
-            // Update low stock count in summary panel
-            var lowStockLabel = pnlSummary.Controls.OfType<Label>().FirstOrDefault(l => l.Text == "0");
-            if (lowStockLabel != null)
+            try
             {
-                lowStockLabel.Text = lowStockCount.ToString();
+                // Sử dụng Repository method để lấy thống kê
+                var (totalItems, totalValue, lowStockCount) = await _inventoryRepository.GetInventorySummaryAsync();
+
+                lblTotalItems.Text = totalItems.ToString("N0");
+                lblTotalValue.Text = totalValue.ToString("N0") + " VNĐ";
+                
+                // Update low stock count in summary panel
+                var lowStockLabel = pnlSummary.Controls.OfType<Label>().FirstOrDefault(l => l.Text == "0");
+                if (lowStockLabel != null)
+                {
+                    lowStockLabel.Text = lowStockCount.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Fallback to local calculation if repository fails
+                var totalItems = inventory.Sum(i => i.SoLuongTonKho ?? 0);
+                var totalValue = inventory.Sum(i => (i.SoLuongTonKho ?? 0) * (i.MaSpNavigation?.Gia ?? 0));
+                var lowStockCount = inventory.Count(i => (i.SoLuongTonKho ?? 0) <= 10);
+
+                lblTotalItems.Text = totalItems.ToString("N0");
+                lblTotalValue.Text = totalValue.ToString("N0") + " VNĐ";
+                
+                var lowStockLabel = pnlSummary.Controls.OfType<Label>().FirstOrDefault(l => l.Text == "0");
+                if (lowStockLabel != null)
+                {
+                    lowStockLabel.Text = lowStockCount.ToString();
+                }
             }
         }
 
@@ -549,39 +563,16 @@ namespace AceCook
         {
             try
             {
-                List<CtTon> inventory;
+                var searchTerm = txtSearch.Text.Trim();
+                var selectedWarehouse = cboWarehouseFilter.SelectedItem?.ToString();
+                var selectedProductType = cboProductTypeFilter.SelectedItem?.ToString();
 
-                // Apply warehouse filter
-                if (cboWarehouseFilter.SelectedIndex > 0)
-                {
-                    var selectedWarehouse = cboWarehouseFilter.SelectedItem.ToString();
-                    inventory = await _inventoryRepository.GetInventoryByWarehouseAsync(selectedWarehouse);
-                }
-                else
-                {
-                    inventory = await _inventoryRepository.GetAllInventoryAsync();
-                }
-
-                // Apply product type filter
-                if (cboProductTypeFilter.SelectedIndex > 0)
-                {
-                    var selectedType = cboProductTypeFilter.SelectedItem.ToString();
-                    inventory = inventory.Where(i => i.MaSpNavigation?.Loai == selectedType).ToList();
-                }
-
-                // Apply search filter
-                if (!string.IsNullOrWhiteSpace(txtSearch.Text))
-                {
-                    var searchTerm = txtSearch.Text.ToLower();
-                    inventory = inventory.Where(i => 
-                        i.MaSp.ToLower().Contains(searchTerm) ||
-                        (i.MaSpNavigation?.TenSp?.ToLower().Contains(searchTerm) ?? false) ||
-                        (i.MaKhoNavigation?.TenKho?.ToLower().Contains(searchTerm) ?? false)
-                    ).ToList();
-                }
+                // Sử dụng Repository method để lấy dữ liệu đã được lọc
+                var inventory = await _inventoryRepository.GetFilteredInventoryAsync(
+                    searchTerm, selectedWarehouse, selectedProductType);
 
                 RefreshDataGridView(inventory);
-                UpdateSummary(inventory);
+                await UpdateSummary(inventory);
                 
                 // Update title with result count
                 var resultCount = inventory.Count;
@@ -595,13 +586,78 @@ namespace AceCook
             }
         }
 
-        private async void BtnRefresh_Click(object sender, EventArgs e)
-        {
-            txtSearch.Text = "";
-            cboWarehouseFilter.SelectedIndex = 0;
-            cboProductTypeFilter.SelectedIndex = 0;
-            await LoadInventory();
-        }
+                 private async void BtnRefresh_Click(object sender, EventArgs e)
+         {
+             try
+             {
+                 // Clear all filters
+                 txtSearch.Text = "";
+                 cboWarehouseFilter.SelectedIndex = 0;
+                 cboProductTypeFilter.SelectedIndex = 0;
+                 
+                 // Reload all data
+                 await LoadInventory();
+                 
+                 MessageBox.Show("Đã làm mới dữ liệu thành công!", "Thông báo", 
+                     MessageBoxButtons.OK, MessageBoxIcon.Information);
+             }
+             catch (Exception ex)
+             {
+                 MessageBox.Show($"Lỗi khi làm mới dữ liệu: {ex.Message}", "Lỗi",
+                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+             }
+         }
+
+         private async void BtnViewDetails_Click(object sender, EventArgs e)
+         {
+             if (dataGridViewInventory.SelectedRows.Count > 0)
+             {
+                 var selectedRow = dataGridViewInventory.SelectedRows[0];
+                 var maSp = selectedRow.Cells["MaSp"].Value?.ToString();
+                 var maKho = selectedRow.Cells["MaKho"].Value?.ToString();
+
+                 if (!string.IsNullOrEmpty(maSp) && !string.IsNullOrEmpty(maKho))
+                 {
+                     try
+                     {
+                         var inventoryItem = await _inventoryRepository.GetInventoryByIdAsync(maSp, maKho);
+                         if (inventoryItem != null)
+                         {
+                             ViewInventoryDetails(inventoryItem);
+                         }
+                         else
+                         {
+                             MessageBox.Show("Không thể tải thông tin tồn kho!", "Lỗi",
+                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
+                         }
+                     }
+                     catch (Exception ex)
+                     {
+                         MessageBox.Show($"Lỗi khi tải thông tin tồn kho: {ex.Message}", "Lỗi",
+                             MessageBoxButtons.OK, MessageBoxIcon.Error);
+                     }
+                 }
+             }
+             else
+             {
+                 MessageBox.Show("Vui lòng chọn một dòng tồn kho để xem chi tiết!", "Thông báo",
+                     MessageBoxButtons.OK, MessageBoxIcon.Information);
+             }
+         }
+
+         private void ViewInventoryDetails(CtTon inventoryItem)
+         {
+             try
+             {
+                 var viewForm = new InventoryAddEditForm(_inventoryRepository, InventoryOperationType.View, inventoryItem);
+                 viewForm.ShowDialog();
+             }
+             catch (Exception ex)
+             {
+                 MessageBox.Show($"Lỗi khi mở form xem chi tiết: {ex.Message}", "Lỗi",
+                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+             }
+         }
 
         private async void BtnExport_Click(object sender, EventArgs e)
         {
@@ -637,71 +693,67 @@ namespace AceCook
 
         private async Task ExportToCSV(List<CtTon> inventory, string filePath)
         {
-            var lines = new List<string>
-            {
-                "Mã SP,Tên sản phẩm,Loại,Mã kho,Tên kho,Vị trí,Số lượng tồn,Đơn giá,Thành tiền,Trạng thái"
-            };
-
-            foreach (var item in inventory)
-            {
-                var status = GetStockStatus(item.SoLuongTonKho ?? 0);
-                var thanhTien = (item.SoLuongTonKho ?? 0) * (item.MaSpNavigation?.Gia ?? 0);
-                
-                var line = $"{item.MaSp}," +
-                          $"\"{item.MaSpNavigation?.TenSp ?? ""}\"," +
-                          $"\"{item.MaSpNavigation?.Loai ?? ""}\"," +
-                          $"{item.MaKho}," +
-                          $"\"{item.MaKhoNavigation?.TenKho ?? ""}\"," +
-                          $"\"{item.MaKhoNavigation?.ViTri ?? ""}\"," +
-                          $"{item.SoLuongTonKho ?? 0}," +
-                          $"{item.MaSpNavigation?.Gia ?? 0}," +
-                          $"{thanhTien}," +
-                          $"\"{status}\"";
-                
-                lines.Add(line);
-            }
-
-            await System.IO.File.WriteAllLinesAsync(filePath, lines);
-        }
-
-        // CRUD Operations
-        private async void BtnAdd_Click(object sender, EventArgs e)
-        {
             try
             {
-                var addForm = new InventoryAddEditForm(_context);
-                if (addForm.ShowDialog() == DialogResult.OK)
+                // Sử dụng Repository method để lấy dữ liệu báo cáo
+                var reportData = await _inventoryRepository.GetInventoryReportDataAsync(inventory);
+                
+                var lines = new List<string>
                 {
-                    try
-                    {
-                        bool success = await _inventoryRepository.AddInventoryAsync(addForm.InventoryItem);
-                        if (success)
-                        {
-                            MessageBox.Show("Thêm tồn kho thành công!", "Thông báo", 
-                                MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            await LoadInventory();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Lỗi khi thêm tồn kho!", "Lỗi", 
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Lỗi khi thêm tồn kho: {ex.Message}", "Lỗi",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    "Mã SP,Tên sản phẩm,Loại,Mã kho,Tên kho,Vị trí,Số lượng tồn,Đơn giá,Thành tiền,Trạng thái"
+                };
+
+                foreach (dynamic item in reportData)
+                {
+                    var line = $"{item.MaSp}," +
+                              $"\"{item.TenSp}\"," +
+                              $"\"{item.Loai}\"," +
+                              $"{item.MaKho}," +
+                              $"\"{item.TenKho}\"," +
+                              $"\"{item.ViTri}\"," +
+                              $"{item.SoLuongTon}," +
+                              $"{item.DonGia}," +
+                              $"{item.ThanhTien}," +
+                              $"\"{item.TrangThai}\"";
+                    
+                    lines.Add(line);
                 }
+
+                await System.IO.File.WriteAllLinesAsync(filePath, lines);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi mở form thêm tồn kho: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Fallback to original method if repository fails
+                var lines = new List<string>
+                {
+                    "Mã SP,Tên sản phẩm,Loại,Mã kho,Tên kho,Vị trí,Số lượng tồn,Đơn giá,Thành tiền,Trạng thái"
+                };
+
+                foreach (var item in inventory)
+                {
+                    var status = GetStockStatus(item.SoLuongTonKho ?? 0);
+                    var thanhTien = (item.SoLuongTonKho ?? 0) * (item.MaSpNavigation?.Gia ?? 0);
+                    
+                    var line = $"{item.MaSp}," +
+                              $"\"{item.MaSpNavigation?.TenSp ?? ""}\"," +
+                              $"\"{item.MaSpNavigation?.Loai ?? ""}\"," +
+                              $"{item.MaKho}," +
+                              $"\"{item.MaKhoNavigation?.TenKho ?? ""}\"," +
+                              $"\"{item.MaKhoNavigation?.ViTri ?? ""}\"," +
+                              $"{item.SoLuongTonKho ?? 0}," +
+                              $"{item.MaSpNavigation?.Gia ?? 0}," +
+                              $"{thanhTien}," +
+                              $"\"{status}\"";
+                    
+                    lines.Add(line);
+                }
+
+                await System.IO.File.WriteAllLinesAsync(filePath, lines);
             }
         }
 
-        private async void BtnEdit_Click(object sender, EventArgs e)
+        // Inventory Operations
+        private async void BtnNhapKho_Click(object sender, EventArgs e)
         {
             if (dataGridViewInventory.SelectedRows.Count > 0)
             {
@@ -713,91 +765,76 @@ namespace AceCook
                 {
                     try
                     {
-                        var inventoryItem = await _inventoryRepository.GetInventoryByIdAsync(maSp);
+                        var inventoryItem = await _inventoryRepository.GetInventoryByIdAsync(maSp, maKho);
                         if (inventoryItem != null)
                         {
-                            var editForm = new InventoryAddEditForm(_context, inventoryItem);
-                            if (editForm.ShowDialog() == DialogResult.OK)
+                            var nhapKhoForm = new InventoryAddEditForm(_inventoryRepository, InventoryOperationType.NhapKho, inventoryItem);
+                            if (nhapKhoForm.ShowDialog() == DialogResult.OK)
                             {
-                                try
-                                {
-                                    bool success = await _inventoryRepository.UpdateInventoryAsync(editForm.InventoryItem);
-                                    if (success)
-                                    {
-                                        MessageBox.Show("Cập nhật tồn kho thành công!", "Thông báo", 
-                                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                        await LoadInventory();
-                                    }
-                                    else
-                                    {
-                                        MessageBox.Show("Lỗi khi cập nhật tồn kho!", "Lỗi", 
-                                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    MessageBox.Show($"Lỗi khi cập nhật tồn kho: {ex.Message}", "Lỗi",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }
+                                MessageBox.Show("Nhập kho thành công!", "Thông báo", 
+                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                await LoadInventory();
                             }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Không thể tải thông tin tồn kho!", "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Lỗi khi mở form chỉnh sửa tồn kho: {ex.Message}", "Lỗi",
+                        MessageBox.Show($"Lỗi khi mở form nhập kho: {ex.Message}", "Lỗi",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn một dòng để chỉnh sửa", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn một sản phẩm để nhập kho!", "Thông báo", 
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
-        private async void BtnDelete_Click(object sender, EventArgs e)
+        private async void BtnXuatKho_Click(object sender, EventArgs e)
         {
             if (dataGridViewInventory.SelectedRows.Count > 0)
             {
                 var selectedRow = dataGridViewInventory.SelectedRows[0];
                 var maSp = selectedRow.Cells["MaSp"].Value?.ToString();
-                var tenSp = selectedRow.Cells["TenSp"].Value?.ToString();
                 var maKho = selectedRow.Cells["MaKho"].Value?.ToString();
 
                 if (!string.IsNullOrEmpty(maSp) && !string.IsNullOrEmpty(maKho))
                 {
-                    var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa tồn kho của sản phẩm '{tenSp}' tại kho '{maKho}'?", 
-                        "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    
-                    if (result == DialogResult.Yes)
+                    try
                     {
-                        try
+                        var inventoryItem = await _inventoryRepository.GetInventoryByIdAsync(maSp, maKho);
+                        if (inventoryItem != null)
                         {
-                            bool success = await _inventoryRepository.DeleteInventoryAsync(maSp, maKho);
-                            if (success)
+                            var xuatKhoForm = new InventoryAddEditForm(_inventoryRepository, InventoryOperationType.XuatKho, inventoryItem);
+                            if (xuatKhoForm.ShowDialog() == DialogResult.OK)
                             {
-                                MessageBox.Show("Xóa tồn kho thành công!", "Thông báo", 
+                                MessageBox.Show("Xuất kho thành công!", "Thông báo", 
                                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 await LoadInventory();
                             }
-                            else
-                            {
-                                MessageBox.Show("Lỗi khi xóa tồn kho!", "Lỗi", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            MessageBox.Show($"Lỗi khi xóa tồn kho: {ex.Message}", "Lỗi",
+                            MessageBox.Show("Không thể tải thông tin tồn kho!", "Lỗi",
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Lỗi khi mở form xuất kho: {ex.Message}", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn một dòng để xóa", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn một sản phẩm để xuất kho!", "Thông báo", 
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }

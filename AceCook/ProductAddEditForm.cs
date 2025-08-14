@@ -1,324 +1,269 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
+using System.Globalization;
 using AceCook.Models;
+using AceCook.Repositories;
 
 namespace AceCook
 {
     public partial class ProductAddEditForm : Form
     {
-        private Sanpham _product;
-        private TextBox txtMaSP;
-        private TextBox txtTenSP;
-        private TextBox txtMoTa;
-        private TextBox txtGia;
-        private TextBox txtDVT;
-        private ComboBox cboLoai;
-        private Button btnSave;
-        private Button btnCancel;
-        private Label lblTitle;
+        private readonly ProductRepository _productRepository;
+        private FormMode _mode;
+        private Sanpham _currentProduct;
+        public Sanpham Product { get; private set; }
 
-        public Sanpham Product => _product;
-
-        public ProductAddEditForm()
+        public ProductAddEditForm(ProductRepository productRepository, FormMode mode = FormMode.Add, Sanpham product = null)
         {
-            _product = new Sanpham();
-            SetupUI();
+            InitializeComponent();
+            _productRepository = productRepository;
+            _mode = mode;
+            _currentProduct = product;
+            
+            InitializeForm();
         }
 
-        public ProductAddEditForm(Sanpham product)
+        private void InitializeForm()
         {
-            _product = product;
-            SetupUI();
-            LoadProductData();
-        }
-
-        private void SetupUI()
-        {
-            this.Text = _product.MaSp == null ? "Thêm Sản Phẩm Mới" : "Chỉnh Sửa Sản Phẩm";
-            this.Size = new Size(500, 450);
-            this.StartPosition = FormStartPosition.CenterParent;
-            this.FormBorderStyle = FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.BackColor = Color.FromArgb(248, 249, 250);
-
-            // Title
-            lblTitle = new Label
+            switch (_mode)
             {
-                Text = _product.MaSp == null ? "THÊM SẢN PHẨM MỚI" : "CHỈNH SỬA SẢN PHẨM",
-                Font = new Font("Segoe UI", 14, FontStyle.Bold),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                TextAlign = ContentAlignment.MiddleCenter,
-                Size = new Size(460, 30),
-                Location = new Point(20, 20)
-            };
+                case FormMode.Add:
+                    this.Text = "Thêm sản phẩm mới";
+                    lblTitle.Text = "Thêm sản phẩm mới";
+                    btnSave.Text = "Thêm";
+                    break;
+                case FormMode.Edit:
+                    this.Text = "Chỉnh sửa sản phẩm";
+                    lblTitle.Text = "Chỉnh sửa sản phẩm";
+                    btnSave.Text = "Cập nhật";
+                    LoadProductData();
+                    break;
+                case FormMode.View:
+                    this.Text = "Xem thông tin sản phẩm";
+                    lblTitle.Text = "Thông tin sản phẩm";
+                    btnSave.Visible = false;
+                    btnCancel.Text = "Đóng";
+                    SetControlsReadOnly(true);
+                    LoadProductData();
+                    break;
+            }
 
-            // Form Panel
-            var formPanel = new Panel
+            // Set default product type
+            if (cmbLoai.Items.Count > 0 && _mode == FormMode.Add)
             {
-                Size = new Size(460, 330),
-                Location = new Point(20, 60),
-                BackColor = Color.White
-            };
-
-            // Mã SP
-            var lblMaSP = new Label
-            {
-                Text = "Mã Sản Phẩm:",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(120, 25),
-                Location = new Point(20, 30)
-            };
-
-            txtMaSP = new TextBox
-            {
-                Size = new Size(300, 25),
-                Location = new Point(140, 28),
-                Font = new Font("Segoe UI", 10),
-                Enabled = _product.MaSp == null // Only enable for new product
-            };
-
-            // Tên SP
-            var lblTenSP = new Label
-            {
-                Text = "Tên Sản Phẩm:",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(120, 25),
-                Location = new Point(20, 70)
-            };
-
-            txtTenSP = new TextBox
-            {
-                Size = new Size(300, 25),
-                Location = new Point(140, 68),
-                Font = new Font("Segoe UI", 10)
-            };
-
-            // Mô tả
-            var lblMoTa = new Label
-            {
-                Text = "Mô Tả:",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(120, 25),
-                Location = new Point(20, 110)
-            };
-
-            txtMoTa = new TextBox
-            {
-                Size = new Size(300, 25),
-                Location = new Point(140, 108),
-                Font = new Font("Segoe UI", 10)
-            };
-
-            // Giá
-            var lblGia = new Label
-            {
-                Text = "Giá:",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(120, 25),
-                Location = new Point(20, 150)
-            };
-
-            txtGia = new TextBox
-            {
-                Size = new Size(300, 25),
-                Location = new Point(140, 148),
-                Font = new Font("Segoe UI", 10)
-            };
-
-            // Đơn vị
-            var lblDVT = new Label
-            {
-                Text = "Đơn Vị:",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(120, 25),
-                Location = new Point(20, 190)
-            };
-
-            txtDVT = new TextBox
-            {
-                Size = new Size(300, 25),
-                Location = new Point(140, 188),
-                Font = new Font("Segoe UI", 10)
-            };
-
-            // Loại
-            var lblLoai = new Label
-            {
-                Text = "Loại:",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(120, 25),
-                Location = new Point(20, 230)
-            };
-
-            cboLoai = new ComboBox
-            {
-                Size = new Size(300, 25),
-                Location = new Point(140, 228),
-                Font = new Font("Segoe UI", 10),
-                DropDownStyle = ComboBoxStyle.DropDownList
-            };
-
-            // Load categories
-            cboLoai.Items.AddRange(new string[] { "Mì ăn liền", "Gia vị", "Nước chấm", "Đồ khô", "Khác" });
-
-            // Buttons
-            btnSave = new Button
-            {
-                Text = "Lưu",
-                Size = new Size(100, 35),
-                Location = new Point(140, 280),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnSave.FlatAppearance.BorderSize = 0;
-            btnSave.Click += BtnSave_Click;
-
-            btnCancel = new Button
-            {
-                Text = "Hủy",
-                Size = new Size(100, 35),
-                Location = new Point(260, 280),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(231, 76, 60),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnCancel.FlatAppearance.BorderSize = 0;
-            btnCancel.Click += BtnCancel_Click;
-
-            // Add controls to form panel
-            formPanel.Controls.Add(lblMaSP);
-            formPanel.Controls.Add(txtMaSP);
-            formPanel.Controls.Add(lblTenSP);
-            formPanel.Controls.Add(txtTenSP);
-            formPanel.Controls.Add(lblMoTa);
-            formPanel.Controls.Add(txtMoTa);
-            formPanel.Controls.Add(lblGia);
-            formPanel.Controls.Add(txtGia);
-            formPanel.Controls.Add(lblDVT);
-            formPanel.Controls.Add(txtDVT);
-            formPanel.Controls.Add(lblLoai);
-            formPanel.Controls.Add(cboLoai);
-            formPanel.Controls.Add(btnSave);
-            formPanel.Controls.Add(btnCancel);
-
-            // Add controls to form
-            this.Controls.Add(lblTitle);
-            this.Controls.Add(formPanel);
-
-            // Set default button
-            this.AcceptButton = btnSave;
-            this.CancelButton = btnCancel;
-
-            // Add shadow effect to form panel
-            formPanel.Paint += (sender, e) =>
-            {
-                ControlPaint.DrawBorder(e.Graphics, formPanel.ClientRectangle,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid);
-            };
+                cmbLoai.SelectedIndex = 0;
+            }
         }
 
         private void LoadProductData()
         {
-            txtMaSP.Text = _product.MaSp;
-            txtTenSP.Text = _product.TenSp;
-            txtMoTa.Text = _product.MoTa;
-            txtGia.Text = _product.Gia?.ToString();
-            txtDVT.Text = _product.Dvtsp;
-            cboLoai.Text = _product.Loai;
-        }
-
-        private void BtnSave_Click(object sender, EventArgs e)
-        {
-            if (ValidateInput())
+            if (_currentProduct != null)
             {
-                _product.MaSp = txtMaSP.Text.Trim();
-                _product.TenSp = txtTenSP.Text.Trim();
-                _product.MoTa = txtMoTa.Text.Trim();
+                txtMaSP.Text = _currentProduct.MaSp;
+                txtTenSP.Text = _currentProduct.TenSp;
+                txtMoTa.Text = _currentProduct.MoTa;
+                txtGia.Text = _currentProduct.Gia?.ToString("N0", CultureInfo.GetCultureInfo("vi-VN"));
+                txtDonVi.Text = _currentProduct.Dvtsp;
                 
-                if (decimal.TryParse(txtGia.Text, out decimal gia))
+                if (!string.IsNullOrEmpty(_currentProduct.Loai))
                 {
-                    _product.Gia = gia;
+                    int index = cmbLoai.FindStringExact(_currentProduct.Loai);
+                    if (index != -1)
+                        cmbLoai.SelectedIndex = index;
+                    else
+                    {
+                        // If category doesn't exist in predefined list, add it
+                        cmbLoai.Items.Add(_currentProduct.Loai);
+                        cmbLoai.SelectedItem = _currentProduct.Loai;
+                    }
                 }
-                
-                _product.Dvtsp = txtDVT.Text.Trim();
-                _product.Loai = cboLoai.Text;
 
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                // Disable MaSP for edit mode
+                if (_mode == FormMode.Edit)
+                {
+                    txtMaSP.ReadOnly = true;
+                    txtMaSP.BackColor = SystemColors.Control;
+                }
             }
         }
 
-        private void BtnCancel_Click(object sender, EventArgs e)
+        private void SetControlsReadOnly(bool readOnly)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            txtMaSP.ReadOnly = readOnly;
+            txtTenSP.ReadOnly = readOnly;
+            txtMoTa.ReadOnly = readOnly;
+            txtGia.ReadOnly = readOnly;
+            txtDonVi.ReadOnly = readOnly;
+            cmbLoai.Enabled = !readOnly;
+
+            if (readOnly)
+            {
+                var backColor = SystemColors.Control;
+                txtMaSP.BackColor = backColor;
+                txtTenSP.BackColor = backColor;
+                txtMoTa.BackColor = backColor;
+                txtGia.BackColor = backColor;
+                txtDonVi.BackColor = backColor;
+                cmbLoai.BackColor = backColor;
+            }
         }
 
         private bool ValidateInput()
         {
+            var errors = new List<string>();
+
+            // Validate MaSP
             if (string.IsNullOrWhiteSpace(txtMaSP.Text))
             {
-                MessageBox.Show("Vui lòng nhập mã sản phẩm!", "Lỗi", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtMaSP.Focus();
-                return false;
+                errors.Add("Mã sản phẩm không được để trống.");
+            }
+            else if (txtMaSP.Text.Length > 10)
+            {
+                errors.Add("Mã sản phẩm không được vượt quá 10 ký tự.");
             }
 
+            // Validate TenSP
             if (string.IsNullOrWhiteSpace(txtTenSP.Text))
             {
-                MessageBox.Show("Vui lòng nhập tên sản phẩm!", "Lỗi", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtTenSP.Focus();
-                return false;
+                errors.Add("Tên sản phẩm không được để trống.");
+            }
+            else if (txtTenSP.Text.Length > 50)
+            {
+                errors.Add("Tên sản phẩm không được vượt quá 50 ký tự.");
             }
 
-            if (string.IsNullOrWhiteSpace(txtGia.Text))
+            // Validate MoTa
+            if (!string.IsNullOrWhiteSpace(txtMoTa.Text) && txtMoTa.Text.Length > 100)
             {
-                MessageBox.Show("Vui lòng nhập giá sản phẩm!", "Lỗi", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtGia.Focus();
-                return false;
+                errors.Add("Mô tả không được vượt quá 100 ký tự.");
             }
 
-            if (!decimal.TryParse(txtGia.Text, out decimal gia) || gia < 0)
+            // Validate Gia
+            if (!string.IsNullOrWhiteSpace(txtGia.Text))
             {
-                MessageBox.Show("Giá sản phẩm không hợp lệ! Vui lòng nhập số dương.", "Lỗi", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtGia.Focus();
-                return false;
+                var giaText = txtGia.Text.Replace(",", "").Replace(".", "");
+                if (!decimal.TryParse(giaText, out decimal gia) || gia < 0)
+                {
+                    errors.Add("Giá phải là số dương.");
+                }
+                else if (gia > 999999999999999999)
+                {
+                    errors.Add("Giá quá lớn.");
+                }
             }
 
-            if (string.IsNullOrWhiteSpace(txtDVT.Text))
+            // Validate DonVi
+            if (!string.IsNullOrWhiteSpace(txtDonVi.Text) && txtDonVi.Text.Length > 20)
             {
-                MessageBox.Show("Vui lòng nhập đơn vị sản phẩm!", "Lỗi", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtDVT.Focus();
-                return false;
+                errors.Add("Đơn vị tính không được vượt quá 20 ký tự.");
             }
 
-            if (string.IsNullOrWhiteSpace(cboLoai.Text))
+            // Validate Loai
+            if (!string.IsNullOrWhiteSpace(cmbLoai.Text) && cmbLoai.Text.Length > 20)
             {
-                MessageBox.Show("Vui lòng chọn loại sản phẩm!", "Lỗi", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                cboLoai.Focus();
+                errors.Add("Loại sản phẩm không được vượt quá 20 ký tự.");
+            }
+
+            if (errors.Count > 0)
+            {
+                MessageBox.Show(string.Join("\n", errors), "Lỗi xác thực", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
             return true;
         }
+
+        private async void btnSave_Click(object sender, EventArgs e)
+        {
+            if (!ValidateInput())
+                return;
+
+            try
+            {
+                btnSave.Enabled = false;
+                Cursor = Cursors.WaitCursor;
+
+                decimal? gia = null;
+                if (!string.IsNullOrWhiteSpace(txtGia.Text))
+                {
+                    var giaText = txtGia.Text.Replace(",", "").Replace(".", "");
+                    if (decimal.TryParse(giaText, out decimal giaValue))
+                    {
+                        gia = giaValue;
+                    }
+                }
+
+                var product = new Sanpham
+                {
+                    MaSp = txtMaSP.Text.Trim(),
+                    TenSp = string.IsNullOrWhiteSpace(txtTenSP.Text) ? null : txtTenSP.Text.Trim(),
+                    MoTa = string.IsNullOrWhiteSpace(txtMoTa.Text) ? null : txtMoTa.Text.Trim(),
+                    Gia = gia,
+                    Dvtsp = string.IsNullOrWhiteSpace(txtDonVi.Text) ? null : txtDonVi.Text.Trim(),
+                    Loai = string.IsNullOrWhiteSpace(cmbLoai.Text) ? null : cmbLoai.Text.Trim()
+                };
+
+                bool success = false;
+                string operation = "";
+
+                if (_mode == FormMode.Add)
+                {
+                    // Check if product already exists
+                    var existingProduct = await _productRepository.GetProductByIdAsync(product.MaSp);
+                    if (existingProduct != null)
+                    {
+                        MessageBox.Show("Mã sản phẩm đã tồn tại. Vui lòng chọn mã khác.", 
+                            "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    success = await _productRepository.AddProductAsync(product);
+                    operation = "thêm";
+                }
+                else if (_mode == FormMode.Edit)
+                {
+                    success = await _productRepository.UpdateProductAsync(product);
+                    operation = "cập nhật";
+                }
+
+                if (success)
+                {
+                    Product = product;
+                    MessageBox.Show($"Đã {operation} sản phẩm thành công!", "Thành công", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show($"Không thể {operation} sản phẩm. Vui lòng thử lại.", "Lỗi", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnSave.Enabled = true;
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
     }
-} 
+}

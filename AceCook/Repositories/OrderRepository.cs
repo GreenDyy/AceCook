@@ -55,13 +55,16 @@ namespace AceCook.Repositories
 
         public async Task<List<Dondathang>> GetOrdersByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
+            var startDateOnly = DateOnly.FromDateTime(startDate);
+            var endDateOnly = DateOnly.FromDateTime(endDate);
+            
             return await _context.Dondathangs
                 .Include(d => d.MaKhNavigation)
                 .Include(d => d.MaNvNavigation)
                 .Include(d => d.CtDhs)
                 .Where(d => d.NgayDat.HasValue &&
-                            d.NgayDat.Value.ToDateTime(TimeOnly.MinValue) >= startDate &&
-                            d.NgayDat.Value.ToDateTime(TimeOnly.MinValue) <= endDate)
+                            d.NgayDat.Value >= startDateOnly &&
+                            d.NgayDat.Value <= endDateOnly)
                 .OrderByDescending(d => d.NgayDat)
                 .ToListAsync();
         }
@@ -197,6 +200,44 @@ namespace AceCook.Repositories
 
             var lastNumber = int.Parse(lastOrder.MaDdh.Substring(3));
             return $"DDH{(lastNumber + 1):D3}";
+        }
+
+        public async Task<List<Dondathang>> GetFilteredOrdersAsync(string? searchTerm, string? status, DateOnly? startDate, DateOnly? endDate)
+        {
+            var query = _context.Dondathangs
+                .Include(d => d.MaKhNavigation)
+                .Include(d => d.MaNvNavigation)
+                .Include(d => d.CtDhs)
+                    .ThenInclude(ct => ct.MaSpNavigation)
+                .AsQueryable();
+
+            // Apply status filter
+            if (!string.IsNullOrWhiteSpace(status) && status != "Tất cả")
+            {
+                query = query.Where(d => d.TrangThai == status);
+            }
+
+            // Apply date range filter
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                query = query.Where(d => d.NgayDat.HasValue &&
+                                       d.NgayDat.Value >= startDate.Value &&
+                                       d.NgayDat.Value <= endDate.Value);
+            }
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var searchTermLower = searchTerm.ToLower();
+                query = query.Where(d => 
+                    (d.MaDdh != null && d.MaDdh.ToLower().Contains(searchTermLower)) ||
+                    (d.MaKhNavigation != null && d.MaKhNavigation.TenKh != null && 
+                     d.MaKhNavigation.TenKh.ToLower().Contains(searchTermLower)) ||
+                    (d.TrangThai != null && d.TrangThai.ToLower().Contains(searchTermLower))
+                );
+            }
+
+            return await query.OrderByDescending(d => d.NgayDat).ToListAsync();
         }
     }
 }
