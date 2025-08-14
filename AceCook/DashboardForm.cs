@@ -350,7 +350,8 @@ namespace AceCook
         {
             try
             {
-                var orderReportForm = new OrderReportForm();
+                var orderRepository = new OrderRepository(_context);
+                var orderReportForm = new OrderReportForm(orderRepository);
                 orderReportForm.TopLevel = false;
                 orderReportForm.FormBorderStyle = FormBorderStyle.None;
                 orderReportForm.Dock = DockStyle.Fill;

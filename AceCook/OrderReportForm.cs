@@ -55,7 +55,7 @@ namespace AceCook
                     {
                         Status = g.Key,
                         Count = g.Count(),
-                        TotalValue = g.Sum(o => o.CtDhs.Sum(ct => ct.SoLuong * ct.DonGia ?? 0))
+                        TotalValue = g.Sum(o => o.CtDhs.Sum(ct => (decimal)(ct.SoLuong * ct.DonGia ?? 0)))
                     })
                     .OrderByDescending(x => x.Count)
                     .ToList();
@@ -78,7 +78,7 @@ namespace AceCook
                     {
                         Customer = g.Key?.TenKh ?? "Không xác định",
                         OrderCount = g.Count(),
-                        TotalValue = g.Sum(o => o.CtDhs.Sum(ct => ct.SoLuong * ct.DonGia ?? 0))
+                        TotalValue = g.Sum(o => o.CtDhs.Sum(ct => (decimal)(ct.SoLuong * ct.DonGia ?? 0)))
                     })
                     .OrderByDescending(x => x.TotalValue)
                     .Take(10)
