@@ -383,23 +383,11 @@ namespace AceCook
         {
             try 
             {
-                // Debug Point 1: Bắt đầu thêm mới
-                Console.WriteLine("Debug: Bắt đầu thêm nhà cung cấp mới");
-                
                 using (var addForm = new SupplierAddEditForm(_context, null))
                 {
                     if (addForm.ShowDialog() == DialogResult.OK)
                     {
-                        // Debug Point 2: Lấy dữ liệu từ form
                         var newSupplier = addForm.Supplier;
-                        Console.WriteLine($"Debug: Thông tin nhà cung cấp mới:");
-                        Console.WriteLine($"- Mã NCC: {newSupplier.MaNcc}");
-                        Console.WriteLine($"- Tên NCC: {newSupplier.TenNcc}");
-                        Console.WriteLine($"- SĐT: {newSupplier.Sdtncc}");
-                        Console.WriteLine($"- Email: {newSupplier.EmailNcc}");
-                        Console.WriteLine($"- Địa chỉ: {newSupplier.DiaChiNcc}");
-
-                        // Kiểm tra dữ liệu
                         if (string.IsNullOrWhiteSpace(newSupplier.MaNcc))
                         {
                             MessageBox.Show("Mã nhà cung cấp không được để trống!", "Lỗi", 
@@ -407,11 +395,9 @@ namespace AceCook
                             return;
                         }
 
-                        // Debug Point 3: Kiểm tra trùng mã
                         var existingSupplier = _suppliers.FirstOrDefault(s => s.MaNcc == newSupplier.MaNcc);
                         if (existingSupplier != null)
                         {
-                            Console.WriteLine($"Debug: Phát hiện mã NCC đã tồn tại: {newSupplier.MaNcc}");
                             MessageBox.Show("Mã nhà cung cấp đã tồn tại!", "Lỗi", 
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
@@ -419,18 +405,12 @@ namespace AceCook
 
                         try
                         {
-                            // Debug Point 4: Chuẩn bị dữ liệu trước khi thêm
                             newSupplier.TenNcc = newSupplier.TenNcc ?? "";
                             newSupplier.Sdtncc = newSupplier.Sdtncc ?? "";
                             newSupplier.EmailNcc = newSupplier.EmailNcc ?? "";
                             newSupplier.DiaChiNcc = newSupplier.DiaChiNcc ?? "";
                             
-                            Console.WriteLine("Debug: Bắt đầu gọi AddSupplierAsync");
                             bool success = await _supplierRepository.AddSupplierAsync(newSupplier);
-                            
-                            // Debug Point 5: Kết quả thêm mới
-                            Console.WriteLine($"Debug: Kết quả thêm mới: {success}");
-
                             if (success)
                             {
                                 MessageBox.Show("Thêm nhà cung cấp thành công!", "Thông báo", 
@@ -445,9 +425,6 @@ namespace AceCook
                         }
                         catch (Exception ex)
                         {
-                            // Debug Point 6: Bắt lỗi khi thêm
-                            Console.WriteLine($"Debug: Lỗi trong quá trình thêm: {ex.Message}");
-                            Console.WriteLine($"Debug: Stack trace: {ex.StackTrace}");
                             MessageBox.Show($"Lỗi khi thêm nhà cung cấp: {ex.Message}", "Lỗi", 
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
@@ -456,9 +433,6 @@ namespace AceCook
             }
             catch (Exception ex)
             {
-                // Debug Point 7: Bắt lỗi tổng thể
-                Console.WriteLine($"Debug: Lỗi không mong muốn: {ex.Message}");
-                Console.WriteLine($"Debug: Stack trace: {ex.StackTrace}");
                 MessageBox.Show($"Lỗi không mong muốn: {ex.Message}", "Lỗi", 
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
