@@ -224,6 +224,7 @@ namespace AceCook
         {
             if (ValidateInput())
             {
+                // Cập nhật thông tin cho supplier
                 _supplier.MaNcc = txtMaNcc.Text.Trim();
                 _supplier.TenNcc = txtTenNcc.Text.Trim();
                 _supplier.Sdtncc = txtSoDienThoai.Text.Trim();
@@ -231,6 +232,7 @@ namespace AceCook
                 _supplier.DiaChiNcc = txtDiaChi.Text.Trim();
 
                 // Chỉ cần set DialogResult và đóng form
+                // Form chính sẽ xử lý việc thêm mới hoặc cập nhật
                 DialogResult = DialogResult.OK;
                 Close();
             }

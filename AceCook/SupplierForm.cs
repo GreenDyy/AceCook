@@ -434,10 +434,8 @@ namespace AceCook
 
         private async void BtnEdit_Click(object sender, EventArgs e)
         {
-            // Thay đổi cách lấy dữ liệu được chọn
             if (dataGridViewSuppliers.SelectedRows.Count > 0)
             {
-                // Lấy dữ liệu từ row được chọn
                 string maNcc = dataGridViewSuppliers.SelectedRows[0].Cells["MaNcc"].Value.ToString();
                 var selectedSupplier = _suppliers.FirstOrDefault(s => s.MaNcc == maNcc);
                 
@@ -448,12 +446,16 @@ namespace AceCook
                     {
                         try
                         {
-                            bool success = await _supplierRepository.UpdateSupplierAsync(editForm.Supplier);
+                            // Lấy supplier đã được cập nhật từ form
+                            var updatedSupplier = editForm.Supplier;
+                            
+                            // Gọi repository để cập nhật
+                            bool success = await _supplierRepository.UpdateSupplierAsync(updatedSupplier);
                             if (success)
                             {
+                                await LoadDataAsync(); // Cập nhật UI trước
                                 MessageBox.Show("Cập nhật nhà cung cấp thành công!", "Thông báo", 
                                     MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                await LoadDataAsync();
                             }
                             else
                             {
