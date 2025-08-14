@@ -37,7 +37,6 @@ namespace AceCook
 
         private void SetupUI()
         {
-            // Form settings
             this.Text = "Quản lý Nhà cung cấp";
             this.Size = new Size(1200, 800);
             this.StartPosition = FormStartPosition.CenterScreen;
@@ -49,7 +48,7 @@ namespace AceCook
                 Text = "QUẢN LÝ NHÀ CUNG CẤP",
                 Font = new Font("Segoe UI", 20, FontStyle.Bold),
                 ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(400, 50),
+                Size = new Size(500, 50),
                 Location = new Point(30, 20),
                 TextAlign = ContentAlignment.MiddleLeft
             };
@@ -57,184 +56,256 @@ namespace AceCook
             // Summary Panel
             pnlSummary = new Panel
             {
-                Size = new Size(1140, 60),  // Giảm chiều cao
-                Location = new Point(30, 80), // Di chuyển lên trên
+                Size = new Size(1140, 80),
+                Location = new Point(30, 90),
                 BackColor = Color.White,
-                BorderStyle = BorderStyle.None // Bỏ border
+                BorderStyle = BorderStyle.FixedSingle
             };
+                      
+            //             var lblTotalSuppliersTitle = new Label
+            // {
+            //     Text = "Tổng số nhà cung cấp:",
+            //     Font = new Font("Segoe UI", 10, FontStyle.Bold),
+            //     AutoSize = true,
+            //     Location = new Point(20, 15),
+            //     TextAlign = ContentAlignment.MiddleLeft
+            // };
 
-            // Tạo container cho thông tin tổng quan
-            var summaryContainer = new TableLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                ColumnCount = 4,
-                RowCount = 1,
-                Padding = new Padding(10),
-                BackColor = Color.White
-            };
+            // lblTotalSuppliers = new Label
+            // {
+            //     Text = "0",
+            //     Font = new Font("Segoe UI", 12, FontStyle.Bold),
+            //     ForeColor = Color.FromArgb(52, 152, 219),
+            //     Size = new Size(50, 25),
+            //     Location = new Point(200, 15),
+            //     TextAlign = ContentAlignment.MiddleLeft,
+            //     Padding = new Padding(5, 0, 0, 0)
+            // };
 
-            // Thông tin tổng số nhà cung cấp
-            var totalPanel = new Panel
-            {
-                BackColor = Color.FromArgb(52, 152, 219),
-                Dock = DockStyle.Fill,
-                Margin = new Padding(5)
-            };
+            // var lblActiveSuppliersTitle = new Label
+            // {
+            //     Text = "Nhà cung cấp đang hoạt động:",
+            //     Font = new Font("Segoe UI", 10, FontStyle.Bold),
+            //     AutoSize = true,
+            //     Location = new Point(350, 15),  // Tăng khoảng cách với nhóm label đầu tiên
+            //     TextAlign = ContentAlignment.MiddleLeft
+            // };
 
-            var lblTotalTitle = new Label
+            // var lblActiveSuppliers = new Label
+            // {
+            //     Text = "0",
+            //     Font = new Font("Segoe UI", 12, FontStyle.Bold),
+            //     ForeColor = Color.FromArgb(46, 204, 113),
+            //     Size = new Size(50, 25),
+            //     Location = new Point(580, 15),  // Điều chỉnh theo vị trí mới của lblActiveSuppliersTitle
+            //     TextAlign = ContentAlignment.MiddleLeft,
+            //     Padding = new Padding(5, 0, 0, 0)
+            // };
+          
+            // pnlSummary.Controls.AddRange(new Control[] { 
+            //     lblTotalSuppliersTitle, lblTotalSuppliers,
+            //     lblActiveSuppliersTitle, lblActiveSuppliers
+            // });
+
+                        var lblTotalSuppliersTitle = new Label
             {
-                Text = "Tổng số nhà cung cấp",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.White,
-                Dock = DockStyle.Top,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Height = 25
+                Text = "Tổng số nhà cung cấp:",
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                AutoSize = true,
+                Location = new Point(20, 15),
+                TextAlign = ContentAlignment.MiddleLeft
             };
 
             lblTotalSuppliers = new Label
             {
                 Text = "0",
-                Font = new Font("Segoe UI", 14, FontStyle.Bold),
-                ForeColor = Color.White,
-                Dock = DockStyle.Fill,
-                TextAlign = ContentAlignment.MiddleCenter
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                ForeColor = Color.FromArgb(52, 152, 219),
+                Size = new Size(50, 25),
+                Location = new Point(200, 15),
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(5, 0, 0, 0)
             };
 
-            totalPanel.Controls.AddRange(new Control[] { lblTotalTitle, lblTotalSuppliers });
-            summaryContainer.Controls.Add(totalPanel, 0, 0);
+            var lblActiveSuppliersTitle = new Label
+            {
+                Text = "Nhà cung cấp đang hoạt động:",
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                AutoSize = true,
+                Location = new Point(350, 15),
+                TextAlign = ContentAlignment.MiddleLeft
+            };
 
-            pnlSummary.Controls.Add(summaryContainer);
+            var lblActiveSuppliers = new Label
+            {
+                Text = "0",
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                ForeColor = Color.FromArgb(46, 204, 113),
+                Size = new Size(50, 25),
+                Location = new Point(580, 15),
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(5, 0, 0, 0)
+            };
 
-            // Search Panel
+            // Xóa tất cả controls hiện có trong panel
+            pnlSummary.Controls.Clear();
+            
+            // Thêm lại các controls theo thứ tự
+            pnlSummary.Controls.AddRange(new Control[] { 
+                lblTotalSuppliersTitle,
+                lblTotalSuppliers,
+                lblActiveSuppliersTitle,
+                lblActiveSuppliers
+            });
+
+                    // Search Panel
             var searchPanel = new Panel
             {
-                Size = new Size(1140, 50),  // Giảm chiều cao
-                Location = new Point(30, 150), // Điều chỉnh vị trí
+                Size = new Size(1140, 80),
+                Location = new Point(30, 190),
                 BackColor = Color.White,
-                Padding = new Padding(10)
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            var lblSearch = new Label
+            {
+                Text = "Tìm kiếm:",
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Size = new Size(100, 25),
+                Location = new Point(20, 25),
+                TextAlign = ContentAlignment.MiddleLeft
             };
 
             txtSearch = new TextBox
             {
-                Size = new Size(300, 30),
-                Location = new Point(10, 10),
+                Size = new Size(350, 30),
+                Location = new Point(150, 22),  // Tăng khoảng cách với label
                 Font = new Font("Segoe UI", 10),
-                PlaceholderText = "Tìm kiếm theo mã, tên, số điện thoại..."
+                PlaceholderText = "Mã NCC, tên NCC, SĐT..."
             };
+            txtSearch.TextChanged += TxtSearch_TextChanged;
 
             btnClearFilter = new Button
             {
-                Text = "Xóa bộ lọc",
-                Size = new Size(100, 30),
-                Location = new Point(320, 10),
-                Font = new Font("Segoe UI", 9),
+                Text = "🔄 Xóa bộ lọc",
+                Size = new Size(120, 35),
+                Location = new Point(520, 20),  // Điều chỉnh vị trí theo TextBox mới
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(149, 165, 166),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand
             };
             btnClearFilter.FlatAppearance.BorderSize = 0;
+            btnClearFilter.Click += BtnClearFilter_Click;
 
             btnRefresh = new Button
             {
-                Text = "Làm mới",
-                Size = new Size(100, 30),
-                Location = new Point(430, 10),
-                Font = new Font("Segoe UI", 9),
+                Text = "🔄 Làm mới",
+                Size = new Size(120, 35),
+                Location = new Point(660, 20),  // Điều chỉnh vị trí theo nút Xóa bộ lọc
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(52, 152, 219),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand
             };
             btnRefresh.FlatAppearance.BorderSize = 0;
+            btnRefresh.Click += BtnRefresh_Click;
 
-            searchPanel.Controls.AddRange(new Control[] { txtSearch, btnClearFilter, btnRefresh });
-
-            // Action Buttons Panel
-            var actionPanel = new Panel
+            searchPanel.Controls.AddRange(new Control[] { 
+                lblSearch, txtSearch, btnClearFilter, btnRefresh 
+            });
+            // Actions Panel
+            var pnlActions = new Panel
             {
-                Size = new Size(1140, 50),
-                Location = new Point(30, 210),
+                Size = new Size(1140, 60),
+                Location = new Point(30, 290),
                 BackColor = Color.Transparent
             };
 
-            btnAdd = new Button
+                         btnAdd = new Button
             {
-                Text = "Thêm mới",
-                Size = new Size(120, 35),
-                Location = new Point(0, 7),
+                Text = "+ Thêm nhà cung cấp",  // Đổi sang dấu + đơn giản và bỏ bớt từ "mới"
+                Size = new Size(200, 35),  // Giảm height xuống bằng các nút khác
+                Location = new Point(20, 0),  // Căn theo các nút khác
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(46, 204, 113),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
+                Cursor = Cursors.Hand,
+                TextAlign = ContentAlignment.MiddleCenter,  // Căn giữa text
+                Padding = new Padding(0)  // Reset padding
             };
             btnAdd.FlatAppearance.BorderSize = 0;
+            btnAdd.Click += BtnAdd_Click;
 
             btnEdit = new Button
             {
-                Text = "Chỉnh sửa",
-                Size = new Size(100, 35),
-                Location = new Point(130, 7),
-                Font = new Font("Segoe UI", 10),
+                Text = "✎ Chỉnh sửa",
+                Size = new Size(120, 35),
+                Location = new Point(240, 0),  // Điều chỉnh khoảng cách
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(241, 196, 15),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
+                Cursor = Cursors.Hand,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Padding = new Padding(0)
             };
             btnEdit.FlatAppearance.BorderSize = 0;
+            btnEdit.Click += BtnEdit_Click;
 
             btnDelete = new Button
             {
-                Text = "Xóa",
+                Text = "✕ Xóa",  // Đổi sang dấu x đơn giản
                 Size = new Size(100, 35),
-                Location = new Point(240, 7),
-                Font = new Font("Segoe UI", 10),
+                Location = new Point(380, 0),  // Điều chỉnh khoảng cách
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(231, 76, 60),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
+                Cursor = Cursors.Hand,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Padding = new Padding(0)
             };
             btnDelete.FlatAppearance.BorderSize = 0;
+            btnDelete.Click += BtnDelete_Click;
 
-            actionPanel.Controls.AddRange(new Control[] { btnAdd, btnEdit, btnDelete });
+            pnlActions.Controls.AddRange(new Control[] { btnAdd, btnEdit, btnDelete });
 
             // DataGridView
             dataGridViewSuppliers = new DataGridView
             {
-                Size = new Size(1140, 450), // Tăng chiều cao
-                Location = new Point(30, 270),
+                Size = new Size(1140, 350),
+                Location = new Point(30, 370),
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                BackgroundColor = Color.White,
-                BorderStyle = BorderStyle.None,
-                RowHeadersVisible = false,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
                 ReadOnly = true,
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 MultiSelect = false,
-                ColumnHeadersHeight = 40,
-                RowTemplate = { Height = 40 }
+                BackgroundColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle,
+                GridColor = Color.LightGray,
+                RowHeadersVisible = false,
+                CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
+                ColumnHeadersHeight = 50,
+                RowTemplate = { Height = 45 }
             };
 
-   // Style DataGridView
-            dataGridViewSuppliers.DefaultCellStyle.Font = new Font("Segoe UI", 10);
-
+            // Style the DataGridView
+            dataGridViewSuppliers.DefaultCellStyle.Font = new Font("Segoe UI", 9);
             dataGridViewSuppliers.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
             dataGridViewSuppliers.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
             dataGridViewSuppliers.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dataGridViewSuppliers.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewSuppliers.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
             dataGridViewSuppliers.DefaultCellStyle.SelectionForeColor = Color.White;
-            dataGridViewSuppliers.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridViewSuppliers.GridColor = Color.FromArgb(224, 224, 224);
 
             // Add controls to form
             this.Controls.AddRange(new Control[] { 
-                lblTitle,
-                pnlSummary,
-                searchPanel,
-                actionPanel,
-                dataGridViewSuppliers
+                lblTitle, pnlSummary, searchPanel, pnlActions, dataGridViewSuppliers 
             });
         }
         //bản ổn nhất nhà cung cấp

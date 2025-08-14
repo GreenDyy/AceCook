@@ -28,6 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            grbOrderStatus = new GroupBox();
+            grbTopCustomers = new GroupBox();
+            dgvOrderStatus = new DataGridView();
+            dgvTopCustomers = new DataGridView();
             panel2 = new Panel();
             button3 = new Button();
             button2 = new Button();
@@ -80,6 +84,10 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox6).BeginInit();
             groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
+            grbOrderStatus.SuspendLayout();
+            grbTopCustomers.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvOrderStatus).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvTopCustomers).BeginInit();
             SuspendLayout();
             // 
             // panel2
@@ -136,6 +144,7 @@
             button1.TabIndex = 4;
             button1.Text = "Lọc";
             button1.UseVisualStyleBackColor = false;
+            button1.Click += new EventHandler(button1_Click);
             // 
             // dateTimePicker2
             // 
@@ -444,12 +453,41 @@
             panel3.Name = "panel3";
             panel3.Size = new Size(632, 453);
             panel3.TabIndex = 16;
+            // Cấu hình GroupBox thống kê trạng thái
+            grbOrderStatus.Controls.Add(dgvOrderStatus);
+            grbOrderStatus.Location = new Point(12, 457);
+            grbOrderStatus.Size = new Size(900, 400);
+            grbOrderStatus.Text = "Thống kê theo trạng thái";
+            grbOrderStatus.Name = "grbOrderStatus";
+            // Cấu hình DataGridView thống kê trạng thái
+            dgvOrderStatus.Dock = DockStyle.Fill;
+            dgvOrderStatus.ReadOnly = true;
+            dgvOrderStatus.AllowUserToAddRows = false;
+            dgvOrderStatus.AllowUserToDeleteRows = false;
+            dgvOrderStatus.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvOrderStatus.Name = "dgvOrderStatus";
+            // Cấu hình GroupBox top khách hàng
+            grbTopCustomers.Controls.Add(dgvTopCustomers);
+            grbTopCustomers.Location = new Point(927, 457);
+            grbTopCustomers.Size = new Size(900, 400);
+            grbTopCustomers.Text = "Top khách hàng";
+            grbTopCustomers.Name = "grbTopCustomers";
+            // Cấu hình DataGridView top khách hàng
+            dgvTopCustomers.Dock = DockStyle.Fill;
+            dgvTopCustomers.ReadOnly = true;
+            dgvTopCustomers.AllowUserToAddRows = false;
+            dgvTopCustomers.AllowUserToDeleteRows = false;
+            dgvTopCustomers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvTopCustomers.Name = "dgvTopCustomers";
+            // Thêm controls vào form
+            Controls.Add(grbOrderStatus);
+            Controls.Add(grbTopCustomers);
             // 
             // OrderReportForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1839, 890);
+            ClientSize = new Size(1839, 900);
             Controls.Add(groupBox6);
             Controls.Add(panel3);
             Controls.Add(groupBox7);
@@ -483,6 +521,10 @@
             groupBox6.ResumeLayout(false);
             groupBox6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
+            grbOrderStatus.ResumeLayout(false);
+            grbTopCustomers.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvOrderStatus).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvTopCustomers).EndInit();
             ResumeLayout(false);
         }
 
@@ -526,5 +568,9 @@
         private Label label14;
         private Label label13;
         private Panel panel3;
+        private GroupBox grbOrderStatus;
+        private GroupBox grbTopCustomers;
+        private DataGridView dgvOrderStatus;
+        private DataGridView dgvTopCustomers;
     }
 }

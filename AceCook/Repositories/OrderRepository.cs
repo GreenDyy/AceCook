@@ -55,18 +55,33 @@ namespace AceCook.Repositories
 
         public async Task<List<Dondathang>> GetOrdersByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
-            var startDateOnly = DateOnly.FromDateTime(startDate);
-            var endDateOnly = DateOnly.FromDateTime(endDate);
-            
-            return await _context.Dondathangs
+            // Lấy tất cả đơn hàng để debug
+            var allOrders = await _context.Dondathangs
                 .Include(d => d.MaKhNavigation)
                 .Include(d => d.MaNvNavigation)
                 .Include(d => d.CtDhs)
-                .Where(d => d.NgayDat.HasValue &&
-                            d.NgayDat.Value >= startDateOnly &&
-                            d.NgayDat.Value <= endDateOnly)
-                .OrderByDescending(d => d.NgayDat)
                 .ToListAsync();
+
+            // In ra số lượng và ngày đặt của tất cả đơn hàng
+            var orderDates = string.Join(", ", allOrders.Select(o => o.NgayDat?.ToString() ?? "null"));
+            System.Windows.Forms.MessageBox.Show($"Tất cả đơn hàng ({allOrders.Count}): {orderDates}");
+
+            var startDateOnly = DateOnly.FromDateTime(startDate);
+            var endDateOnly = DateOnly.FromDateTime(endDate);
+            
+            // In ra khoảng thời gian tìm kiếm
+            System.Windows.Forms.MessageBox.Show($"Tìm từ {startDateOnly} đến {endDateOnly}");
+
+            var filteredOrders = allOrders.Where(d => d.NgayDat.HasValue &&
+                                                     d.NgayDat.Value >= startDateOnly &&
+                                                     d.NgayDat.Value <= endDateOnly)
+                                        .OrderByDescending(d => d.NgayDat)
+                                        .ToList();
+
+            // In ra số lượng đơn hàng tìm được
+            System.Windows.Forms.MessageBox.Show($"Tìm được {filteredOrders.Count} đơn hàng");
+
+            return filteredOrders;
         }
 
         public async Task<List<Dondathang>> GetOrdersByStatusAsync(string status)
@@ -238,6 +253,75 @@ namespace AceCook.Repositories
             }
 
             return await query.OrderByDescending(d => d.NgayDat).ToListAsync();
+        }
+
+        // Class để chứa kết quả thống kê trạng thái
+        public class OrderStatusStatistic
+        {
+            public string Status { get; set; } = string.Empty;
+            public int Count { get; set; }
+            public decimal TotalValue { get; set; }
+        }
+
+        // Class để chứa kết quả thống kê khách hàng
+        public class TopCustomerStatistic
+        {
+            public string CustomerName { get; set; } = string.Empty;
+            public int OrderCount { get; set; }
+            public decimal TotalValue { get; set; }
+        }
+
+        // Phương thức lấy thống kê theo trạng thái
+        public async Task<List<OrderStatusStatistic>> GetOrderStatusStatisticsAsync(DateTime startDate, DateTime endDate)
+        {
+            var startDateOnly = DateOnly.FromDateTime(startDate);
+            var endDateOnly = DateOnly.FromDateTime(endDate);
+
+            var orders = await _context.Dondathangs
+                .Include(d => d.CtDhs)
+                .Where(d => d.NgayDat.HasValue &&
+                            d.NgayDat.Value >= startDateOnly &&
+                            d.NgayDat.Value <= endDateOnly)
+                .ToListAsync();
+
+            return orders
+                .GroupBy(o => o.TrangThai ?? "Không xác định")
+                .Select(g => new OrderStatusStatistic
+                {
+                    Status = g.Key,
+                    Count = g.Count(),
+                    TotalValue = g.Sum(o => o.CtDhs.Sum(ct => (decimal)(ct.SoLuong * ct.DonGia ?? 0)))
+                })
+                .OrderByDescending(x => x.Count)
+                .ToList();
+        }
+
+        // Phương thức lấy thống kê top khách hàng
+        public async Task<List<TopCustomerStatistic>> GetTopCustomersStatisticsAsync(DateTime startDate, DateTime endDate, int top = 10)
+        {
+            var startDateOnly = DateOnly.FromDateTime(startDate);
+            var endDateOnly = DateOnly.FromDateTime(endDate);
+
+            var orders = await _context.Dondathangs
+                .Include(d => d.MaKhNavigation)
+                .Include(d => d.CtDhs)
+                .Where(d => d.NgayDat.HasValue &&
+                            d.NgayDat.Value >= startDateOnly &&
+                            d.NgayDat.Value <= endDateOnly &&
+                            d.MaKhNavigation != null)
+                .ToListAsync();
+
+            return orders
+                .GroupBy(o => o.MaKhNavigation)
+                .Select(g => new TopCustomerStatistic
+                {
+                    CustomerName = g.Key.TenKh ?? "Không xác định",
+                    OrderCount = g.Count(),
+                    TotalValue = g.Sum(o => o.CtDhs.Sum(ct => (decimal)(ct.SoLuong * ct.DonGia ?? 0)))
+                })
+                .OrderByDescending(x => x.TotalValue)
+                .Take(top)
+                .ToList();
         }
     }
 }

@@ -1,12 +1,16 @@
 using System;
 using System.Windows.Forms;
+using AceCook.Models;
+using AceCook.Repositories;
 
 namespace AceCook
 {
     public partial class ReportForm : Form
     {
-        public ReportForm()
+        private readonly AppDbContext _context;
+        public ReportForm(AppDbContext context)
         {
+            _context = context;
             InitializeUI();
         }
 
@@ -59,7 +63,8 @@ namespace AceCook
 
         private void OpenOrderReport()
         {
-            var form = new OrderReportForm();
+            var orderRepository = new OrderRepository(_context);
+            var form = new OrderReportForm(orderRepository);
             form.ShowDialog();
         }
     }
