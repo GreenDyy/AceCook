@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using AceCook.Models;
 using AceCook.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace AceCook
 {
@@ -426,39 +427,47 @@ namespace AceCook
 
         private async void BtnEdit_Click(object sender, EventArgs e)
         {
-            // Thay đổi cách lấy dữ liệu được chọn
             if (dataGridViewSuppliers.SelectedRows.Count > 0)
             {
-                // Lấy dữ liệu từ row được chọn
-                string maNcc = dataGridViewSuppliers.SelectedRows[0].Cells["MaNcc"].Value.ToString();
-                var selectedSupplier = _suppliers.FirstOrDefault(s => s.MaNcc == maNcc);
-                
-                if (selectedSupplier != null)
+                try
                 {
-                    var editForm = new SupplierAddEditForm(_context, selectedSupplier);
-                    if (editForm.ShowDialog() == DialogResult.OK)
+                    string maNcc = dataGridViewSuppliers.SelectedRows[0].Cells["MaNcc"].Value.ToString();
+                    var selectedSupplier = _suppliers.FirstOrDefault(s => s.MaNcc == maNcc);
+                    
+                    if (selectedSupplier != null)
                     {
-                        try
+                        var editForm = new SupplierAddEditForm(_context, selectedSupplier);
+                        if (editForm.ShowDialog() == DialogResult.OK)
                         {
-                            bool success = await _supplierRepository.UpdateSupplierAsync(editForm.Supplier);
-                            if (success)
+                            try
                             {
-                                MessageBox.Show("Cập nhật nhà cung cấp thành công!", "Thông báo", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                await LoadDataAsync();
+                                var updatedSupplier = editForm.Supplier;
+                                bool success = await _supplierRepository.UpdateSupplierAsync(updatedSupplier);
+                                
+                                if (success)
+                                {
+                                    await LoadDataAsync();
+                                    MessageBox.Show("Cập nhật nhà cung cấp thành công!", "Thông báo", 
+                                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
                             }
-                            else
+                            catch (DbUpdateException dbEx)
                             {
-                                MessageBox.Show("Lỗi khi cập nhật nhà cung cấp!", "Lỗi", 
+                                MessageBox.Show($"Lỗi cập nhật database: {dbEx.InnerException?.Message ?? dbEx.Message}", 
+                                    "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show($"Lỗi khi cập nhật: {ex.Message}", "Lỗi", 
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"Lỗi khi cập nhật nhà cung cấp: {ex.Message}", "Lỗi", 
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi không mong muốn: {ex.Message}", "Lỗi", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using AceCook.Models;
 using AceCook.Repositories;
+using System.Linq; // Added for FirstOrDefault
 
 namespace AceCook
 {
@@ -219,35 +220,26 @@ namespace AceCook
             }
         }
 
-        private async void BtnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             if (ValidateInput())
             {
-                _supplier.MaNcc = txtMaNcc.Text.Trim();
-                _supplier.TenNcc = txtTenNcc.Text.Trim();
-                _supplier.Sdtncc = txtSoDienThoai.Text.Trim();     // Changed from SoDienThoai to Sdtncc
-                _supplier.EmailNcc = txtEmail.Text.Trim();         // Changed from Email to EmailNcc
-                _supplier.DiaChiNcc = txtDiaChi.Text.Trim();       // Changed from DiaChi to DiaChiNcc
-                
                 try
                 {
-                    bool success = await _supplierRepository.AddSupplierAsync(_supplier);
-                    if (success)
-                    {
-                        MessageBox.Show("Thêm nhà cung cấp thành công!", "Thông báo", 
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        DialogResult = DialogResult.OK;
-                        Close();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Lỗi khi thêm nhà cung cấp!", "Lỗi", 
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    // Chỉ cập nhật thông tin cho đối tượng _supplier
+                    _supplier.MaNcc = txtMaNcc.Text.Trim();
+                    _supplier.TenNcc = txtTenNcc.Text.Trim();
+                    _supplier.Sdtncc = txtSoDienThoai.Text.Trim();
+                    _supplier.EmailNcc = txtEmail.Text.Trim();
+                    _supplier.DiaChiNcc = txtDiaChi.Text.Trim();
+
+                    // Trả về DialogResult.OK để form chính xử lý việc thêm/sửa
+                    DialogResult = DialogResult.OK;
+                    Close();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi thêm nhà cung cấp: {ex.Message}", "Lỗi", 
+                    MessageBox.Show($"Lỗi khi lưu thông tin: {ex.Message}", "Lỗi",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
