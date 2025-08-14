@@ -359,9 +359,9 @@
             // 
             // panel3
             // 
-            panel3.Location = new Point(12, 349);
+            panel3.Location = new Point(12, 450);
             panel3.Name = "panel3";
-            panel3.Size = new Size(632, 381);
+            panel3.Size = new Size(632, 453);
             panel3.TabIndex = 5;
             // 
             // panel4
@@ -463,7 +463,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1452, 803);
+            ClientSize = new Size(1452, 926);
             Controls.Add(panel1);
             Controls.Add(groupBox6);
             Controls.Add(panel3);

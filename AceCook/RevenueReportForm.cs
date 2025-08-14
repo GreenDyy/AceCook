@@ -26,52 +26,58 @@ namespace AceCook
         {
             // Biểu đồ doanh thu theo ngày
             dailyRevenueChart = new Chart();
-            dailyRevenueChart.Dock = DockStyle.Fill; // Để chart lấp đầy panel
-            
+            dailyRevenueChart.Dock = DockStyle.Fill;
+
             ChartArea dailyChartArea = new ChartArea();
             dailyRevenueChart.ChartAreas.Add(dailyChartArea);
-            
+
             Series dailySeries = new Series();
             dailySeries.ChartType = SeriesChartType.Column;
             dailySeries.Name = "Doanh thu";
-            dailySeries.Color = Color.FromArgb(107, 111, 213); // Màu cột giống thiết kế
+            dailySeries.Color = Color.FromArgb(107, 111, 213);
             dailyRevenueChart.Series.Add(dailySeries);
-            
-            // Cấu hình trục và tiêu đề
+
+            // Cấu hình trục và tiêu đề cho biểu đồ ngày
             dailyChartArea.AxisX.Title = "Ngày";
             dailyChartArea.AxisY.Title = "Doanh thu (VNĐ)";
             dailyChartArea.AxisY.LabelStyle.Format = "N0";
             dailyChartArea.BackColor = Color.White;
-            
-            // Thêm lưới
+            dailyChartArea.AxisX.Minimum = 1;
+            dailyChartArea.AxisX.Maximum = 31;
+            dailyChartArea.AxisX.Interval = 5;
             dailyChartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
             dailyChartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
-            
+
+            // Thêm biểu đồ vào panel3
+            panel3.Controls.Clear();
             panel3.Controls.Add(dailyRevenueChart);
 
             // Biểu đồ doanh thu theo tháng
             monthlyRevenueChart = new Chart();
-            monthlyRevenueChart.Dock = DockStyle.Fill; // Để chart lấp đầy panel
-            
+            monthlyRevenueChart.Dock = DockStyle.Fill;
+
             ChartArea monthlyChartArea = new ChartArea();
             monthlyRevenueChart.ChartAreas.Add(monthlyChartArea);
-            
+
             Series monthlySeries = new Series();
             monthlySeries.ChartType = SeriesChartType.Column;
             monthlySeries.Name = "Doanh thu";
-            monthlySeries.Color = Color.FromArgb(107, 111, 213); // Màu cột giống thiết kế
+            monthlySeries.Color = Color.FromArgb(107, 111, 213);
             monthlyRevenueChart.Series.Add(monthlySeries);
-            
-            // Cấu hình trục và tiêu đề
+
+            // Cấu hình trục và tiêu đề cho biểu đồ tháng
             monthlyChartArea.AxisX.Title = "Tháng";
             monthlyChartArea.AxisY.Title = "Doanh thu (VNĐ)";
             monthlyChartArea.AxisY.LabelStyle.Format = "N0";
             monthlyChartArea.BackColor = Color.White;
-            
-            // Thêm lưới
+            monthlyChartArea.AxisX.Minimum = 1;
+            monthlyChartArea.AxisX.Maximum = 12;
+            monthlyChartArea.AxisX.Interval = 1;
             monthlyChartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
             monthlyChartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
-            
+
+            // Thêm biểu đồ vào panel4 (nằm trong groupBox7)
+            panel4.Controls.Clear();
             panel4.Controls.Add(monthlyRevenueChart);
 
             // Load dữ liệu mẫu
@@ -102,10 +108,10 @@ namespace AceCook
         {
             DateTime startDate = dateTimePicker1.Value;
             DateTime endDate = dateTimePicker2.Value;
-            
+
             // Tạm thời load lại dữ liệu mẫu
             LoadSampleData();
-            
+
             // Cập nhật label thời gian
             label14.Text = $"Thống kê doanh thu từ {startDate:d} đến {endDate:d}";
         }
@@ -161,6 +167,11 @@ namespace AceCook
         }
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel3_Paint(object sender, PaintEventArgs e)
         {
 
         }
