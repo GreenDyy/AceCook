@@ -238,30 +238,34 @@ namespace AceCook
             btnAdd.FlatAppearance.BorderSize = 0;
             btnAdd.Click += BtnAdd_Click;
 
-            btnEdit = new Button
+           btnEdit = new Button
             {
-                Text = "✏️ Chỉnh sửa",  // Thêm icon
-                Size = new Size(120, 40),  // Tăng width để chứa icon
-                Location = new Point(240, 10),  // Điều chỉnh vị trí theo nút Add
+                Text = "✎ Chỉnh sửa",  // Đổi sang icon pencil đơn giản hơn
+                Size = new Size(120, 35),
+                Location = new Point(270, 0),
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(241, 196, 15),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand  // Thêm con trỏ tay
+                Cursor = Cursors.Hand,
+                TextAlign = ContentAlignment.MiddleCenter,  // Căn giữa text
+                Padding = new Padding(0)  // Reset padding
             };
             btnEdit.FlatAppearance.BorderSize = 0;
             btnEdit.Click += BtnEdit_Click;
 
             btnDelete = new Button
             {
-                Text = "🗑️ Xóa",  // Thêm icon
-                Size = new Size(100, 40),
-                Location = new Point(380, 10),  // Điều chỉnh vị trí theo nút Edit
+                Text = "⌫ Xóa",  // Đổi sang icon đơn giản hơn
+                Size = new Size(100, 35),
+                Location = new Point(410, 0),
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(231, 76, 60),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand  // Thêm con trỏ tay
+                Cursor = Cursors.Hand,
+                TextAlign = ContentAlignment.MiddleCenter,  // Căn giữa text
+                Padding = new Padding(0)  // Reset padding
             };
             btnDelete.FlatAppearance.BorderSize = 0;
             btnDelete.Click += BtnDelete_Click;
