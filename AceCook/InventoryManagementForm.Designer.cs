@@ -209,7 +209,6 @@
             this.btnExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExport.Margin = new System.Windows.Forms.Padding(0, 5, 10, 0);
             this.btnExport.FlatAppearance.BorderSize = 0;
-            this.btnExport.Click += new System.EventHandler(this.BtnExport_Click);
 
             pnlFilters.Controls.AddRange(new System.Windows.Forms.Control[] { 
                 lblSearch, this.txtSearch, lblWarehouse, this.cboWarehouseFilter,

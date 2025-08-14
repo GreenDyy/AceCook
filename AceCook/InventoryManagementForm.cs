@@ -29,15 +29,10 @@ namespace AceCook
         {
             try
             {
-                // Load data in parallel for better performance
-                var inventoryTask = _inventoryRepository.GetAllInventoryAsync();
-                var warehouseTask = LoadWarehouseData();
-                var productTypeTask = LoadProductTypeData();
-
-                // Wait for all tasks to complete
-                var inventory = await inventoryTask;
-                await warehouseTask;
-                await productTypeTask;
+                // Load data sequentially to avoid DbContext conflicts
+                var inventory = await _inventoryRepository.GetAllInventoryAsync();
+                await LoadWarehouseData();
+                await LoadProductTypeData();
 
                 RefreshDataGridView(inventory);
                 await UpdateSummary(inventory);
@@ -58,7 +53,7 @@ namespace AceCook
                 cboWarehouseFilter.Items.Add("Tất cả kho");
                 foreach (var warehouse in warehouses)
                 {
-                    cboWarehouseFilter.Items.Add(warehouse.TenKho);
+                    cboWarehouseFilter.Items.Add(warehouse?.TenKho);
                 }
                 cboWarehouseFilter.SelectedIndex = 0;
             }
@@ -237,99 +232,6 @@ namespace AceCook
             {
                 MessageBox.Show($"Lỗi khi mở form xem chi tiết: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private async void BtnExport_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                // Sử dụng dữ liệu đã được lọc thay vì tải lại tất cả
-                if (_currentInventory == null || _currentInventory.Count == 0)
-                {
-                    MessageBox.Show("Không có dữ liệu để xuất!", "Thông báo",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
-                var saveFileDialog = new SaveFileDialog
-                {
-                    Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*",
-                    FileName = $"BaoCaoTonKho_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
-                };
-
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    await ExportToCSV(_currentInventory, saveFileDialog.FileName);
-                    MessageBox.Show($"Xuất báo cáo thành công! Đã xuất {_currentInventory.Count} sản phẩm.", "Thành công",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi xuất báo cáo: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private async Task ExportToCSV(List<CtTon> inventory, string filePath)
-        {
-            try
-            {
-                // Sử dụng Repository method để lấy dữ liệu báo cáo
-                var reportData = await _inventoryRepository.GetInventoryReportDataAsync(inventory);
-                
-                var lines = new List<string>
-                {
-                    "Mã SP,Tên sản phẩm,Loại,Mã kho,Tên kho,Vị trí,Số lượng tồn,Đơn giá,Thành tiền,Trạng thái"
-                };
-
-                foreach (dynamic item in reportData)
-                {
-                    var line = $"{item.MaSp}," +
-                              $"\"{item.TenSp}\"," +
-                              $"\"{item.Loai}\"," +
-                              $"{item.MaKho}," +
-                              $"\"{item.TenKho}\"," +
-                              $"\"{item.ViTri}\"," +
-                              $"{item.SoLuongTon}," +
-                              $"{item.DonGia}," +
-                              $"{item.ThanhTien}," +
-                              $"\"{item.TrangThai}\"";
-                    
-                    lines.Add(line);
-                }
-
-                await System.IO.File.WriteAllLinesAsync(filePath, lines);
-            }
-            catch (Exception ex)
-            {
-                // Fallback to original method if repository fails
-                var lines = new List<string>
-                {
-                    "Mã SP,Tên sản phẩm,Loại,Mã kho,Tên kho,Vị trí,Số lượng tồn,Đơn giá,Thành tiền,Trạng thái"
-                };
-
-                foreach (var item in inventory)
-                {
-                    var status = GetStockStatus(item.SoLuongTonKho ?? 0);
-                    var thanhTien = (item.SoLuongTonKho ?? 0) * (item.MaSpNavigation?.Gia ?? 0);
-                    
-                    var line = $"{item.MaSp}," +
-                              $"\"{item.MaSpNavigation?.TenSp ?? ""}\"," +
-                              $"\"{item.MaSpNavigation?.Loai ?? ""}\"," +
-                              $"{item.MaKho}," +
-                              $"\"{item.MaKhoNavigation?.TenKho ?? ""}\"," +
-                              $"\"{item.MaKhoNavigation?.ViTri ?? ""}\"," +
-                              $"{item.SoLuongTonKho ?? 0}," +
-                              $"{item.MaSpNavigation?.Gia ?? 0}," +
-                              $"{thanhTien}," +
-                              $"\"{status}\"";
-                    
-                    lines.Add(line);
-                }
-
-                await System.IO.File.WriteAllLinesAsync(filePath, lines);
             }
         }
 

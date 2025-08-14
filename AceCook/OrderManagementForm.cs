@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using AceCook.Models;
 using AceCook.Repositories;
+using System.Globalization;
 
 namespace AceCook
 {
@@ -205,7 +206,10 @@ namespace AceCook
             var btnEditOrder = CreateActionButton("✏️ Chỉnh sửa đơn hàng", Color.FromArgb(255, 193, 7));
             btnEditOrder.Click += BtnEditOrder_Click;
 
-            pnlActions.Controls.AddRange(new Control[] { btnCreateOrder, btnRefresh, btnEditOrder });
+            var btnDeleteOrder = CreateActionButton("🗑️ Xóa đơn hàng", Color.FromArgb(231, 76, 60));
+            btnDeleteOrder.Click += BtnDeleteOrder_Click;
+
+            pnlActions.Controls.AddRange(new Control[] { btnCreateOrder, btnRefresh, btnEditOrder, btnDeleteOrder });
 
             // DataGridView
             dataGridViewOrders = new DataGridView
@@ -261,12 +265,22 @@ namespace AceCook
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine("Loading orders...");
                 var orders = await _orderRepository.GetAllOrdersAsync();
+                System.Diagnostics.Debug.WriteLine($"Loaded {orders?.Count ?? 0} orders");
+                
+                if (orders == null)
+                {
+                    MessageBox.Show("Không thể tải danh sách đơn hàng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                
                 RefreshDataGridView(orders);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu đơn hàng: {ex.Message}", "Lỗi",
+                System.Diagnostics.Debug.WriteLine($"Error in LoadOrders: {ex.Message}");
+                MessageBox.Show($"Lỗi khi tải dữ liệu đơn hàng: {ex.Message}\n\nChi tiết: {ex.StackTrace}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -329,44 +343,50 @@ namespace AceCook
             dataGridViewOrders.Columns.Add(new DataGridViewButtonColumn
             {
                 Name = "ViewDetails",
-                HeaderText = "Xem chi tiết",
+                HeaderText = "Hành động",
                 Width = 100,
                 Text = "👁️ Xem",
-                UseColumnTextForButtonValue = true
-            });
-
-            dataGridViewOrders.Columns.Add(new DataGridViewButtonColumn
-            {
-                Name = "DeleteOrder",
-                HeaderText = "Xóa đơn",
-                Width = 100,
-                Text = "🗑️ Xóa",
                 UseColumnTextForButtonValue = true
             });
 
             // Populate data
             foreach (var order in orders)
             {
-                var rowIndex = dataGridViewOrders.Rows.Add();
-                var row = dataGridViewOrders.Rows[rowIndex];
-
-                row.Cells["MaDdh"].Value = order.MaDdh;
-                row.Cells["CustomerInfo"].Value = $"{order.MaKhNavigation?.TenKh ?? "N/A"}\n{order.MaKhNavigation?.Sdtkh ?? "N/A"}";
-                row.Cells["NgayDat"].Value = order.NgayDat?.ToString("dd/MM/yyyy");
-                row.Cells["NgayGiao"].Value = order.NgayGiao?.ToString("dd/MM/yyyy") ?? "Chưa giao";
-                row.Cells["EmployeeInfo"].Value = order.MaNvNavigation?.HoTenNv ?? "N/A";
-                row.Cells["TrangThai"].Value = order.TrangThai ?? "Chờ xử lý";
-                
-                // Calculate total amount
-                decimal totalAmount = 0;
-                if (order.CtDhs != null)
+                try
                 {
-                    totalAmount = order.CtDhs.Sum(ct => (decimal)((ct.SoLuong ?? 0) * (ct.DonGia ?? 0)));
-                }
-                row.Cells["TotalAmount"].Value = totalAmount.ToString("N0") + " VNĐ";
+                    var rowIndex = dataGridViewOrders.Rows.Add();
+                    var row = dataGridViewOrders.Rows[rowIndex];
 
-                // Style status column
-                StyleStatusCell(row.Cells["TrangThai"], order.TrangThai);
+                    row.Cells["MaDdh"].Value = order.MaDdh ?? "N/A";
+                    
+                    // Xử lý thông tin khách hàng an toàn
+                    var customerName = order.MaKhNavigation?.TenKh ?? "N/A";
+                    var customerPhone = order.MaKhNavigation?.Sdtkh ?? "N/A";
+                    row.Cells["CustomerInfo"].Value = $"{customerName}\n{customerPhone}";
+                    
+                    row.Cells["NgayDat"].Value = order.NgayDat?.ToString("dd/MM/yyyy") ?? "N/A";
+                    row.Cells["NgayGiao"].Value = order.NgayGiao?.ToString("dd/MM/yyyy") ?? "Chưa giao";
+                    
+                    // Xử lý thông tin nhân viên an toàn
+                    row.Cells["EmployeeInfo"].Value = order.MaNvNavigation?.HoTenNv ?? "N/A";
+                    row.Cells["TrangThai"].Value = order.TrangThai ?? "Chờ xử lý";
+                    
+                    // Calculate total amount an toàn
+                    decimal totalAmount = 0;
+                    if (order.CtDhs != null && order.CtDhs.Any())
+                    {
+                        totalAmount = order.CtDhs.Sum(ct => (decimal)((ct.SoLuong ?? 0) * (ct.DonGia ?? 0)));
+                    }
+                    row.Cells["TotalAmount"].Value = totalAmount.ToString("N0") + " VNĐ";
+
+                    // Style status column
+                    StyleStatusCell(row.Cells["TrangThai"], order.TrangThai);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error processing order {order.MaDdh}: {ex.Message}");
+                    // Bỏ qua dòng lỗi và tiếp tục
+                }
             }
 
             // Handle button clicks
@@ -405,6 +425,14 @@ namespace AceCook
                 try
                 {
                     _isProcessing = true;
+                    
+                    // Kiểm tra dữ liệu trước khi xử lý
+                    if (dataGridViewOrders.Rows[e.RowIndex].Cells["MaDdh"].Value == null)
+                    {
+                        MessageBox.Show("Không thể đọc mã đơn hàng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    
                     var orderId = dataGridViewOrders.Rows[e.RowIndex].Cells["MaDdh"].Value.ToString();
                     
                     if (e.ColumnIndex == dataGridViewOrders.Columns["ViewDetails"].Index)
@@ -414,19 +442,15 @@ namespace AceCook
                         {
                             ViewOrderDetails(order);
                         }
-                    }
-                    else if (e.ColumnIndex == dataGridViewOrders.Columns["DeleteOrder"].Index)
-                    {
-                        var order = await _orderRepository.GetOrderByIdAsync(orderId);
-                        if (order != null)
+                        else
                         {
-                            DeleteOrder(order);
+                            MessageBox.Show($"Không thể tải thông tin đơn hàng {orderId}!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi xử lý thao tác: {ex.Message}", "Lỗi",
+                    MessageBox.Show($"Lỗi khi xử lý thao tác: {ex.Message}\n\nChi tiết: {ex.StackTrace}", "Lỗi",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally
@@ -440,12 +464,25 @@ namespace AceCook
         {
             try
             {
+                // Kiểm tra dữ liệu trước khi mở form
+                if (order == null)
+                {
+                    MessageBox.Show("Không thể tải thông tin đơn hàng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Kiểm tra các navigation properties
+                if (order.CtDhs == null)
+                {
+                    order.CtDhs = new List<CtDh>();
+                }
+
                 var viewForm = new OrderAddEditForm(order, true); // true = view mode
                 viewForm.ShowDialog();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi mở form xem chi tiết: {ex.Message}", "Lỗi",
+                MessageBox.Show($"Lỗi khi mở form xem chi tiết: {ex.Message}\n\nChi tiết: {ex.StackTrace}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -525,12 +562,73 @@ namespace AceCook
         }
 
 
+        private System.Windows.Forms.Timer _searchTimer;
+        private bool _isSearching = false;
 
-        private async void TxtSearch_TextChanged(object sender, EventArgs e)
+        private void TxtSearch_TextChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtSearch.Text))
+            try
             {
-                LoadOrders();
+                // Tạo timer để tránh tìm kiếm quá nhiều lần
+                if (_searchTimer == null)
+                {
+                    _searchTimer = new System.Windows.Forms.Timer();
+                    _searchTimer.Interval = 500; // Delay 500ms
+                    _searchTimer.Tick += async (s, args) =>
+                    {
+                        _searchTimer.Stop();
+                        if (!_isSearching)
+                        {
+                            await ApplySearchOnly();
+                        }
+                    };
+                }
+                
+                // Reset timer
+                _searchTimer.Stop();
+                _searchTimer.Start();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in TxtSearch_TextChanged: {ex.Message}");
+            }
+        }
+
+        private async Task ApplySearchOnly()
+        {
+            if (_isSearching) return;
+            
+            try
+            {
+                _isSearching = true;
+                string searchText = txtSearch.Text.Trim();
+                
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    // Sử dụng SearchOrdersAsync method đã có sẵn
+                    var filteredOrders = await _orderRepository.SearchOrdersAsync(searchText);
+                    RefreshDataGridView(filteredOrders);
+                    
+                    // Update title với số lượng kết quả
+                    var resultCount = filteredOrders.Count;
+                    this.Text = $"Quản lý Đơn hàng - Tìm thấy {resultCount} đơn hàng";
+                }
+                else
+                {
+                    // Nếu không có text tìm kiếm, load lại tất cả đơn hàng
+                    LoadOrders();
+                    this.Text = "Quản lý Đơn hàng";
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in ApplySearchOnly: {ex.Message}");
+                MessageBox.Show($"Lỗi khi tìm kiếm: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                _isSearching = false;
             }
         }
 
@@ -546,23 +644,38 @@ namespace AceCook
 
         private async void BtnReset_Click(object sender, EventArgs e)
         {
-            txtSearch.Text = "";
-            cboStatusFilter.SelectedIndex = 0;
-            dtpStartDate.Value = DateTime.Now.AddDays(-30);
-            dtpEndDate.Value = DateTime.Now;
-            await ApplyFilters();
+            try
+            {
+                // Reset tất cả filters
+                txtSearch.Text = "";
+                cboStatusFilter.SelectedIndex = 0;
+                dtpStartDate.Value = DateTime.Now.AddDays(-30);
+                dtpEndDate.Value = DateTime.Now;
+                
+                // Reset title
+                this.Text = "Quản lý Đơn hàng";
+                
+                // Load lại tất cả đơn hàng
+                LoadOrders();
+                
+                MessageBox.Show("Đã reset bộ lọc và tải lại dữ liệu!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi reset bộ lọc: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private async void BtnRefresh_Click(object sender, EventArgs e)
         {
             LoadOrders();
+            MessageBox.Show("Đã tải lại dữ liệu!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private async void DataGridViewOrders_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && 
-                e.ColumnIndex != dataGridViewOrders.Columns["ViewDetails"].Index && 
-                e.ColumnIndex != dataGridViewOrders.Columns["DeleteOrder"].Index)
+                e.ColumnIndex != dataGridViewOrders.Columns["ViewDetails"].Index)
             {
                 try
                 {
@@ -583,28 +696,72 @@ namespace AceCook
 
         private async Task ApplyFilters()
         {
+            if (_isSearching) return;
+            
             try
             {
                 // Get filter values
                 var searchTerm = txtSearch.Text.Trim();
                 var status = cboStatusFilter.SelectedIndex > 0 ? cboStatusFilter.SelectedItem.ToString() : null;
-                var startDate = dtpStartDate.Value <= dtpEndDate.Value ? DateOnly.FromDateTime(dtpStartDate.Value) : (DateOnly?)null;
-                var endDate = dtpStartDate.Value <= dtpEndDate.Value ? DateOnly.FromDateTime(dtpEndDate.Value) : (DateOnly?)null;
+                
+                // Validation ngày tháng
+                if (dtpStartDate.Value > dtpEndDate.Value)
+                {
+                    MessageBox.Show("Ngày bắt đầu không thể lớn hơn ngày kết thúc!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                
+                // Sử dụng DateTime thay vì DateOnly để tránh lỗi LINQ translation
+                var startDate = dtpStartDate.Value.Date;
+                var endDate = dtpEndDate.Value.Date.AddDays(1).AddSeconds(-1); // Đến cuối ngày
 
-                // Get filtered orders from repository
-                var orders = await _orderRepository.GetFilteredOrdersAsync(searchTerm, status, startDate, endDate);
+                // Hiển thị thông báo đang tìm kiếm
+                this.Cursor = Cursors.WaitCursor;
+                btnSearch.Enabled = false;
+                btnSearch.Text = "Đang tìm...";
+
+                // Get filtered orders from repository - sử dụng method có sẵn
+                var orders = await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate);
+                
+                // Nếu có search term, filter thêm theo text
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    orders = orders.Where(d => 
+                        d.MaDdh.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                        (d.MaKhNavigation?.TenKh?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) == true) ||
+                        (d.TrangThai?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) == true)
+                    ).ToList();
+                }
+                
+                // Nếu có status filter, filter thêm theo status
+                if (!string.IsNullOrEmpty(status))
+                {
+                    orders = orders.Where(d => d.TrangThai == status).ToList();
+                }
 
                 RefreshDataGridView(orders);
                 
                 // Show result count
                 var resultCount = orders.Count;
-                var totalCount = await _orderRepository.GetTotalOrdersAsync(DateTime.MinValue, DateTime.MaxValue);
-                this.Text = $"Quản lý Đơn hàng - Hiển thị {resultCount}/{totalCount} đơn hàng";
+                this.Text = $"Quản lý Đơn hàng - Hiển thị {resultCount} đơn hàng";
+                
+                // Hiển thị thông báo kết quả
+                if (resultCount == 0)
+                {
+                    MessageBox.Show("Không tìm thấy đơn hàng nào phù hợp với điều kiện tìm kiếm!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi áp dụng bộ lọc: {ex.Message}", 
                     "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                // Khôi phục trạng thái
+                this.Cursor = Cursors.Default;
+                btnSearch.Enabled = true;
+                btnSearch.Text = "🔍 Tìm kiếm";
             }
         }
 
@@ -668,6 +825,46 @@ namespace AceCook
             else
             {
                 MessageBox.Show("Vui lòng chọn đơn hàng cần chỉnh sửa!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private async void BtnDeleteOrder_Click(object sender, EventArgs e)
+        {
+            if (_isProcessing) return;
+
+            if (dataGridViewOrders.SelectedRows.Count > 0)
+            {
+                try
+                {
+                    _isProcessing = true;
+                    var selectedRow = dataGridViewOrders.SelectedRows[0];
+                    var orderId = selectedRow.Cells["MaDdh"].Value.ToString();
+                    var order = await _orderRepository.GetOrderByIdAsync(orderId);
+
+                    if (order != null)
+                    {
+                        DeleteOrder(order);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không thể tải thông tin đơn hàng để xóa!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi tải thông tin đơn hàng để xóa: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    _isProcessing = false;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn đơn hàng cần xóa!", "Thông báo",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
@@ -757,6 +954,16 @@ namespace AceCook
                 var newStatus = cboNewStatus.SelectedItem.ToString();
                 _ = ChangeOrderStatus(order.MaDdh, newStatus);
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _searchTimer?.Dispose();
+                _context?.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

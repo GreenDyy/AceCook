@@ -88,24 +88,24 @@ namespace AceCook
             };
             txtSearch.TextChanged += TxtSearch_TextChanged;
 
-            var btnSearch = new Button
-            {
-                Text = "🔍 Tìm kiếm",
-                Width = 120,
-                Height = 35,
-                Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                BackColor = Color.FromArgb(52, 152, 219),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Margin = new Padding(0, 5, 10, 0)
-            };
-            btnSearch.FlatAppearance.BorderSize = 0;
-            btnSearch.Click += BtnSearch_Click;
+            //var btnSearch = new Button
+            //{
+            //    Text = "🔍 Tìm kiếm",
+            //    Width = 120,
+            //    Height = 35,
+            //    Font = new Font("Segoe UI", 9, FontStyle.Bold),
+            //    BackColor = Color.FromArgb(52, 152, 219),
+            //    ForeColor = Color.White,
+            //    FlatStyle = FlatStyle.Flat,
+            //    Margin = new Padding(0, 5, 10, 0)
+            //};
+            //btnSearch.FlatAppearance.BorderSize = 0;
+            //btnSearch.Click += BtnSearch_Click;
 
             var btnReset = new Button
             {
                 Text = "🔄 Làm mới",
-                Width = 100,
+                Width = 200,
                 Height = 35,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(95, 95, 95),
@@ -117,7 +117,7 @@ namespace AceCook
             btnReset.Click += BtnReset_Click;
 
             pnlSearch.Controls.AddRange(new Control[] {
-                lblSearch, txtSearch, btnSearch, btnReset
+                lblSearch, txtSearch, btnReset
             });
 
             // Actions Panel

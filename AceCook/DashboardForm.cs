@@ -115,7 +115,7 @@ namespace AceCook
             treeViewMenu.Nodes.Clear();
 
             // Dashboard
-            var dashboardNode = CreateMenuNode("📊 Dashboard", "dashboard", Color.FromArgb(52, 152, 219));
+            //var dashboardNode = CreateMenuNode("📊 Dashboard", "dashboard", Color.FromArgb(52, 152, 219));
 
             // Kinh doanh
             var businessNode = CreateMenuNode("💼 Kinh doanh", "business", Color.FromArgb(46, 204, 113));
@@ -136,22 +136,22 @@ namespace AceCook
             reportNode.Nodes.Add(CreateMenuNode("📊 Báo cáo tồn kho", "inventory_report", Color.FromArgb(231, 76, 60)));
             reportNode.Nodes.Add(CreateMenuNode("📋 Báo cáo đơn hàng", "order_report", Color.FromArgb(231, 76, 60)));
 
-            // Cài đặt
-            var settingsNode = CreateMenuNode("⚙️ Cài đặt", "settings", Color.FromArgb(149, 165, 166));
+            // Đăng xuất
+            var logoutNode = CreateMenuNode("🚪 Đăng xuất", "logout", Color.FromArgb(220, 53, 69));
 
             // Thêm nodes vào TreeView
-            treeViewMenu.Nodes.Add(dashboardNode);
+            //treeViewMenu.Nodes.Add(dashboardNode);
             treeViewMenu.Nodes.Add(businessNode);
             treeViewMenu.Nodes.Add(warehouseNode);
             treeViewMenu.Nodes.Add(supplierNode);
             treeViewMenu.Nodes.Add(reportNode);
-            treeViewMenu.Nodes.Add(settingsNode);
+            treeViewMenu.Nodes.Add(logoutNode);
 
             // Mở rộng tất cả nodes
             treeViewMenu.ExpandAll();
 
             // Chọn Dashboard mặc định
-            treeViewMenu.SelectedNode = dashboardNode;
+            treeViewMenu.SelectedNode = businessNode.LastNode;
         }
 
         private TreeNode CreateMenuNode(string text, string tag, Color color)
@@ -162,6 +162,13 @@ namespace AceCook
                 ForeColor = color,
                 NodeFont = new Font("Segoe UI", 10, FontStyle.Regular)
             };
+            
+            // Thêm tooltip cho nút đăng xuất
+            if (tag == "logout")
+            {
+                node.ToolTipText = "Đăng xuất khỏi hệ thống và quay về màn hình đăng nhập";
+            }
+            
             return node;
         }
 
@@ -207,8 +214,8 @@ namespace AceCook
                 case "order_report":
                     LoadOrderReport();
                     break;
-                case "settings":
-                    LoadSettings();
+                case "logout":
+                    PerformLogout();
                     break;
             }
         }
@@ -364,9 +371,47 @@ namespace AceCook
             }
         }
 
-        private void LoadSettings()
+        private void PerformLogout()
         {
-            ShowComingSoonContent("Cài đặt hệ thống");
+            try
+            {
+                var result = MessageBox.Show(
+                    "Bạn có chắc chắn muốn đăng xuất?",
+                    "Xác nhận đăng xuất",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    // Ẩn form hiện tại thay vì đóng
+                    this.Hide();
+
+                    // Mở lại form đăng nhập
+                    var loginForm = new LoginForm();
+                    loginForm.ShowDialog(); // Sử dụng ShowDialog để form đăng nhập chạy ở chế độ modal
+
+                    // Sau khi form đăng nhập đóng, kiểm tra kết quả
+                    // Nếu người dùng đăng nhập thành công
+                    if (loginForm.DialogResult == DialogResult.OK)
+                    {
+                        // Hiển thị lại form hiện tại
+                        this.Show();
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi đăng xuất: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Bên trong LoginForm, sau khi đăng nhập thành công
+        private void btnLogin_Click(object sender, EventArgs e)
+        {
+            // ... logic đăng nhập thành công
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
 
         private void ShowComingSoonContent(string title)

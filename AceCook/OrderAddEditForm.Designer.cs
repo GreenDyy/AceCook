@@ -52,6 +52,8 @@
             btnCancel = new Button();
             grpOrderInfo = new GroupBox();
             grpOrderItems = new GroupBox();
+            label1 = new Label();
+            txtInventory = new TextBox();
             grpProductSelection.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numQuantity).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrderItems).BeginInit();
@@ -158,6 +160,8 @@
             // 
             // grpProductSelection
             // 
+            grpProductSelection.Controls.Add(txtInventory);
+            grpProductSelection.Controls.Add(label1);
             grpProductSelection.Controls.Add(lblStockInfo);
             grpProductSelection.Controls.Add(btnAddProduct);
             grpProductSelection.Controls.Add(btnRemoveProduct);
@@ -169,7 +173,7 @@
             grpProductSelection.Margin = new Padding(6);
             grpProductSelection.Name = "grpProductSelection";
             grpProductSelection.Padding = new Padding(6);
-            grpProductSelection.Size = new Size(1300, 213);
+            grpProductSelection.Size = new Size(1300, 304);
             grpProductSelection.TabIndex = 10;
             grpProductSelection.TabStop = false;
             grpProductSelection.Text = "Chọn sản phẩm";
@@ -333,6 +337,22 @@
             grpOrderItems.TabStop = false;
             grpOrderItems.Text = "Danh sách sản phẩm";
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(38, 214);
+            label1.Name = "label1";
+            label1.Size = new Size(107, 32);
+            label1.TabIndex = 12;
+            label1.Text = "Tồn kho:";
+            // 
+            // txtInventory
+            // 
+            txtInventory.Location = new Point(223, 211);
+            txtInventory.Name = "txtInventory";
+            txtInventory.Size = new Size(200, 39);
+            txtInventory.TabIndex = 13;
+            // 
             // OrderAddEditForm
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
@@ -387,5 +407,7 @@
         private System.Windows.Forms.GroupBox grpOrderInfo;
         private System.Windows.Forms.GroupBox grpOrderItems;
         private System.Windows.Forms.Label lblStockInfo;
+        private TextBox txtInventory;
+        private Label label1;
     }
 }
