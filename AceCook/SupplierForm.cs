@@ -164,7 +164,8 @@ namespace AceCook
             {
                 Size = new Size(1140, 60),
                 Location = new Point(30, 290),
-                BackColor = Color.Transparent
+                BackColor = Color.FromArgb(255, 200, 200), // Tạm thời đổi màu panel để dễ nhìn
+                Visible = true
             };
 
             btnAdd = new Button
@@ -180,6 +181,13 @@ namespace AceCook
             };
             btnAdd.FlatAppearance.BorderSize = 0;
             btnAdd.Click += BtnAdd_Click;
+
+            // Đảm bảo button được thêm vào panel
+            buttonPanel.Controls.Clear();
+            buttonPanel.Controls.Add(btnAdd);
+
+            // Đảm bảo panel được thêm vào form
+            this.Controls.Add(buttonPanel);
 
             btnEdit = new Button
             {
@@ -379,6 +387,7 @@ namespace AceCook
 
         private async void BtnAdd_Click(object sender, EventArgs e)
         {
+            MessageBox.Show("Button clicked!"); // Thêm dòng này để test
             using (var addForm = new SupplierAddEditForm(_context, null))  // Truyền null cho supplier khi thêm mới
             {
                 if (addForm.ShowDialog() == DialogResult.OK)
