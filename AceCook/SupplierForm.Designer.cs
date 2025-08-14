@@ -6,24 +6,12 @@ namespace AceCook
 {
     public partial class SupplierForm : Form
     {
-        private Label lblTitle;
         private Button btnAddSupplier;
 
         private void InitializeComponent()
         {
-            lblTitle = new Label();
             btnAddSupplier = new Button();
             SuspendLayout();
-            // 
-            // lblTitle
-            // 
-            lblTitle.AutoSize = true;
-            lblTitle.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
-            lblTitle.Location = new Point(20, 19);
-            lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(363, 46);
-            lblTitle.TabIndex = 0;
-            lblTitle.Text = "Quản lý nhà cung cấp";
             // 
             // btnAddSupplier
             // 
@@ -41,7 +29,6 @@ namespace AceCook
             // SupplierForm
             // 
             ClientSize = new Size(1400, 800);
-            Controls.Add(lblTitle);
             Controls.Add(btnAddSupplier);
             Name = "SupplierForm";
             StartPosition = FormStartPosition.CenterScreen;
