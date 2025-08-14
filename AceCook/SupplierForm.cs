@@ -304,13 +304,6 @@ namespace AceCook
                 Width = 300
             });
 
-            dataGridViewSuppliers.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "SoNguyenLieu",
-                HeaderText = "Số nguyên liệu",
-                Width = 120
-            });
-
             // Populate data
             foreach (var supplier in suppliers)
             {
@@ -322,7 +315,6 @@ namespace AceCook
                 row.Cells["Sdtncc"].Value = supplier.Sdtncc ?? "N/A";
                 row.Cells["EmailNcc"].Value = supplier.EmailNcc ?? "N/A";
                 row.Cells["DiaChiNcc"].Value = supplier.DiaChiNcc ?? "N/A";
-                row.Cells["SoNguyenLieu"].Value = supplier.Nguyenlieus?.Count ?? 0;
             }
         }
 
