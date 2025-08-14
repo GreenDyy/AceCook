@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 using AceCook.Models;
 using AceCook.Repositories;
@@ -186,6 +187,7 @@ namespace AceCook
             // dgvInventory
             // 
             dgvInventory = new DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(dgvInventory)).BeginInit();
             dgvInventory.Location = new Point(12, 200); // Below the panel2
             dgvInventory.Size = new Size(1563, 750);
             dgvInventory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -257,6 +259,7 @@ namespace AceCook
             panel2.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(dgvInventory)).EndInit();
             ResumeLayout(false);
         }
 
@@ -285,6 +288,11 @@ namespace AceCook
                 MessageBox.Show($"Lỗi khi tạo báo cáo: {ex.Message}", 
                     "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            BtnGenerate_Click(sender, e); // Reuse the same logic as Generate button
         }
     }
 }
