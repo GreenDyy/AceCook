@@ -125,7 +125,7 @@ namespace AceCook
 
             txtSearch = new TextBox
             {
-                Size = new Size(250, 30),
+                Size = new Size(350, 30),
                 Location = new Point(110, 12),
                 Font = new Font("Segoe UI", 10),
                 PlaceholderText = "Mã NCC, tên NCC, SĐT..."
