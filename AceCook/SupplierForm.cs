@@ -105,8 +105,7 @@ namespace AceCook
                 lblActiveSuppliersTitle, lblActiveSuppliers
             });
 
-            // Search Panel
-                        // Search Panel
+                    // Search Panel
             var searchPanel = new Panel
             {
                 Size = new Size(1140, 80),
@@ -120,14 +119,14 @@ namespace AceCook
                 Text = "Tìm kiếm:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 Size = new Size(80, 25),
-                Location = new Point(20, 25),  // Điều chỉnh vị trí dọc
+                Location = new Point(20, 25),
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
             txtSearch = new TextBox
             {
                 Size = new Size(350, 30),
-                Location = new Point(120, 22),  // Điều chỉnh vị trí để căn chỉnh với label
+                Location = new Point(150, 22),  // Tăng khoảng cách với label
                 Font = new Font("Segoe UI", 10),
                 PlaceholderText = "Mã NCC, tên NCC, SĐT..."
             };
@@ -136,8 +135,8 @@ namespace AceCook
             btnClearFilter = new Button
             {
                 Text = "🔄 Xóa bộ lọc",
-                Size = new Size(120, 35),  // Giảm kích thước nút
-                Location = new Point(490, 20),  // Điều chỉnh vị trí
+                Size = new Size(120, 35),
+                Location = new Point(520, 20),  // Điều chỉnh vị trí theo TextBox mới
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(149, 165, 166),
                 ForeColor = Color.White,
@@ -150,8 +149,8 @@ namespace AceCook
             btnRefresh = new Button
             {
                 Text = "🔄 Làm mới",
-                Size = new Size(120, 35),  // Giảm kích thước nút
-                Location = new Point(630, 20),  // Điều chỉnh vị trí
+                Size = new Size(120, 35),
+                Location = new Point(660, 20),  // Điều chỉnh vị trí theo nút Xóa bộ lọc
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(52, 152, 219),
                 ForeColor = Color.White,
@@ -164,7 +163,6 @@ namespace AceCook
             searchPanel.Controls.AddRange(new Control[] { 
                 lblSearch, txtSearch, btnClearFilter, btnRefresh 
             });
-
             // Actions Panel
             var pnlActions = new Panel
             {
