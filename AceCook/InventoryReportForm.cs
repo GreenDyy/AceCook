@@ -22,6 +22,7 @@ namespace AceCook
         private Label label2;
         private Label label1;
         private Button btnGenerate;
+        private DataGridView dgvInventory;
 
         public InventoryReportForm()
         {
@@ -182,6 +183,66 @@ namespace AceCook
             label1.TabIndex = 0;
             label1.Text = "Báo cáo Tồn kho";
             // 
+            // dgvInventory
+            // 
+            dgvInventory = new DataGridView();
+            dgvInventory.Location = new Point(12, 200); // Below the panel2
+            dgvInventory.Size = new Size(1563, 750);
+            dgvInventory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvInventory.AllowUserToAddRows = false;
+            dgvInventory.AllowUserToDeleteRows = false;
+            dgvInventory.ReadOnly = true;
+            dgvInventory.BackgroundColor = Color.White;
+
+            // Add columns
+            dgvInventory.Columns.AddRange(new DataGridViewColumn[] {
+                new DataGridViewTextBoxColumn 
+                { 
+                    Name = "MaSP",
+                    HeaderText = "MÃ SP",
+                    DataPropertyName = "MaSP"
+                },
+                new DataGridViewTextBoxColumn 
+                { 
+                    Name = "TenSanPham",
+                    HeaderText = "TÊN SẢN PHẨM",
+                    DataPropertyName = "TenSanPham"
+                },
+                new DataGridViewTextBoxColumn 
+                { 
+                    Name = "Loai",
+                    HeaderText = "LOẠI",
+                    DataPropertyName = "Loai"
+                },
+                new DataGridViewTextBoxColumn 
+                { 
+                    Name = "Gia",
+                    HeaderText = "GIÁ",
+                    DataPropertyName = "Gia"
+                },
+                new DataGridViewTextBoxColumn 
+                { 
+                    Name = "TonKho",
+                    HeaderText = "TỒN KHO",
+                    DataPropertyName = "TonKho"
+                },
+                new DataGridViewTextBoxColumn 
+                { 
+                    Name = "GiaTri",
+                    HeaderText = "GIÁ TRỊ",
+                    DataPropertyName = "GiaTri"
+                },
+                new DataGridViewTextBoxColumn 
+                { 
+                    Name = "ChiTietTheoKho",
+                    HeaderText = "CHI TIẾT THEO KHO",
+                    DataPropertyName = "ChiTietTheoKho"
+                }
+            });
+
+            // Add DataGridView to form controls
+            Controls.Add(dgvInventory);
+
             // InventoryReportForm
             // 
             ClientSize = new Size(1587, 1003);
@@ -203,15 +264,21 @@ namespace AceCook
         {
             try
             {
-                // Use an existing method, e.g., GetOrderReport or GetRevenueReport
-                var report = _reportRepository.GetOrderReport(dtpFromDate.Value, dtpToDate.Value);
-                dgvReport.DataSource = report; // Adjust as needed for the report type
+                var fromDate = dateTimePicker1.Value;
+                var toDate = dateTimePicker2.Value;
+                
+                // Get inventory report data from repository
+                var report = _reportRepository.GetInventoryReport(fromDate, toDate);
+                dgvInventory.DataSource = report;
 
-                // If you want to show a property like TotalValue, ensure it's a property of the report object
-                // and accessible here.
-                // Example:
-                // MessageBox.Show($"Tổng giá trị tồn kho: {report.TotalValue:N0} VNĐ", 
-                //     "Thông tin", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // Format currency columns
+                dgvInventory.Columns["Gia"].DefaultCellStyle.Format = "N0";
+                dgvInventory.Columns["GiaTri"].DefaultCellStyle.Format = "N0";
+                
+                // Right-align numeric columns
+                dgvInventory.Columns["Gia"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                dgvInventory.Columns["TonKho"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                dgvInventory.Columns["GiaTri"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             }
             catch (Exception ex)
             {
