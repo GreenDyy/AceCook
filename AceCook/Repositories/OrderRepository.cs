@@ -55,18 +55,33 @@ namespace AceCook.Repositories
 
         public async Task<List<Dondathang>> GetOrdersByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
-            var startDateOnly = DateOnly.FromDateTime(startDate);
-            var endDateOnly = DateOnly.FromDateTime(endDate);
-            
-            return await _context.Dondathangs
+            // Lấy tất cả đơn hàng để debug
+            var allOrders = await _context.Dondathangs
                 .Include(d => d.MaKhNavigation)
                 .Include(d => d.MaNvNavigation)
                 .Include(d => d.CtDhs)
-                .Where(d => d.NgayDat.HasValue &&
-                            d.NgayDat.Value >= startDateOnly &&
-                            d.NgayDat.Value <= endDateOnly)
-                .OrderByDescending(d => d.NgayDat)
                 .ToListAsync();
+
+            // In ra số lượng và ngày đặt của tất cả đơn hàng
+            var orderDates = string.Join(", ", allOrders.Select(o => o.NgayDat?.ToString() ?? "null"));
+            System.Windows.Forms.MessageBox.Show($"Tất cả đơn hàng ({allOrders.Count}): {orderDates}");
+
+            var startDateOnly = DateOnly.FromDateTime(startDate);
+            var endDateOnly = DateOnly.FromDateTime(endDate);
+            
+            // In ra khoảng thời gian tìm kiếm
+            System.Windows.Forms.MessageBox.Show($"Tìm từ {startDateOnly} đến {endDateOnly}");
+
+            var filteredOrders = allOrders.Where(d => d.NgayDat.HasValue &&
+                                                     d.NgayDat.Value >= startDateOnly &&
+                                                     d.NgayDat.Value <= endDateOnly)
+                                        .OrderByDescending(d => d.NgayDat)
+                                        .ToList();
+
+            // In ra số lượng đơn hàng tìm được
+            System.Windows.Forms.MessageBox.Show($"Tìm được {filteredOrders.Count} đơn hàng");
+
+            return filteredOrders;
         }
 
         public async Task<List<Dondathang>> GetOrdersByStatusAsync(string status)

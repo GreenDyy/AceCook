@@ -45,6 +45,7 @@ namespace AceCook
                 MessageBox.Show("Đang load dữ liệu...");  // Debug message
                 var startDate = dateTimePicker1.Value.Date;
                 var endDate = dateTimePicker2.Value.Date.AddDays(1).AddTicks(-1); // Cuối ngày
+                MessageBox.Show($"Tìm đơn hàng từ {startDate:dd/MM/yyyy} đến {endDate:dd/MM/yyyy}");
 
                 // Lấy tất cả đơn hàng trong khoảng thời gian
                 var orders = await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate);
