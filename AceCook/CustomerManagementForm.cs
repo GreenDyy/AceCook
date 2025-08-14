@@ -141,8 +141,8 @@ namespace AceCook
             // DataGridView
             dataGridViewCustomers = new DataGridView
             {
-                Size = new Size(960, 350),
-                Location = new Point(20, 200),
+                Size = new Size(1140, 350),
+                Location = new Point(30, 370),
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -150,10 +150,22 @@ namespace AceCook
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 MultiSelect = false,
                 BackgroundColor = Color.White,
-                BorderStyle = BorderStyle.None,
+                BorderStyle = BorderStyle.FixedSingle,
                 GridColor = Color.LightGray,
-                RowHeadersVisible = false
+                RowHeadersVisible = false,
+                CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
+                ColumnHeadersHeight = 50,
+                RowTemplate = { Height = 50 }
             };
+
+            // Style the DataGridView
+            dataGridViewCustomers.DefaultCellStyle.Font = new Font("Segoe UI", 9);
+            dataGridViewCustomers.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            dataGridViewCustomers.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
+            dataGridViewCustomers.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dataGridViewCustomers.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCustomers.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
+            dataGridViewCustomers.DefaultCellStyle.SelectionForeColor = Color.White;
 
             // Add controls to form
             this.Controls.Add(lblTitle);

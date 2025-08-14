@@ -473,44 +473,23 @@ namespace AceCook
 
         private void ViewOrderDetails(Dondathang order)
         {
-            var details = $"=== CHI TIẾT ĐƠN HÀNG ===\n\n" +
-                         $"Mã đơn hàng: {order.MaDdh}\n" +
-                         $"Khách hàng: {order.MaKhNavigation?.TenKh ?? "N/A"}\n" +
-                         $"SĐT: {order.MaKhNavigation?.Sdtkh ?? "N/A"}\n" +
-                         $"Địa chỉ: {order.MaKhNavigation?.DiaChiKh ?? "N/A"}\n" +
-                         $"Ngày đặt: {order.NgayDat:dd/MM/yyyy}\n" +
-                         $"Ngày giao: {(order.NgayGiao?.ToString("dd/MM/yyyy") ?? "Chưa giao")}\n" +
-                         $"Nhân viên: {order.MaNvNavigation?.HoTenNv ?? "N/A"}\n" +
-                         $"Trạng thái: {order.TrangThai ?? "Chờ xử lý"}\n\n" +
-                         $"=== CHI TIẾT SẢN PHẨM ===\n";
-
-            if (order.CtDhs != null && order.CtDhs.Any())
+            try
             {
-                decimal totalAmount = 0;
-                foreach (var ct in order.CtDhs)
-                {
-                    var amount = (ct.SoLuong ?? 0) * (ct.DonGia ?? 0);
-                    totalAmount += (decimal)amount;
-                    details += $"\n{ct.MaSpNavigation?.TenSp ?? "N/A"}\n" +
-                              $"  Số lượng: {ct.SoLuong}\n" +
-                              $"  Đơn giá: {ct.DonGia:N0} VNĐ\n" +
-                              $"  Thành tiền: {amount:N0} VNĐ\n";
-                }
-                details += $"\n=== TỔNG TIỀN: {totalAmount:N0} VNĐ ===";
+                var viewForm = new OrderAddEditForm(_context, order, true); // true = view mode
+                viewForm.ShowDialog();
             }
-            else
+            catch (Exception ex)
             {
-                details += "\nKhông có sản phẩm nào trong đơn hàng.";
+                MessageBox.Show($"Lỗi khi mở form xem chi tiết: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            MessageBox.Show(details, "Chi tiết đơn hàng", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void EditOrder(Dondathang order)
         {
             try
             {
-                var editForm = new OrderAddEditForm(_context, order);
+                var editForm = new OrderAddEditForm(_context, order, false); // false = edit mode
                 if (editForm.ShowDialog() == DialogResult.OK)
                 {
                     LoadOrders(); // Reload data after edit
@@ -695,7 +674,7 @@ namespace AceCook
             try
             {
                 _isProcessing = true;
-                var addForm = new OrderAddEditForm(_context);
+                var addForm = new OrderAddEditForm(_context, null, false); // null = new order, false = not view mode
                 if (addForm.ShowDialog() == DialogResult.OK)
                 {
                     LoadOrders(); // Reload data after adding

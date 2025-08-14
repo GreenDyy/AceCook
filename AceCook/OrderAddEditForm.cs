@@ -16,6 +16,7 @@ namespace AceCook
         private readonly OrderRepository _orderRepository;
         private readonly Dondathang _order;
         private readonly bool _isEditMode;
+        private readonly bool _isViewMode;
 
         // Controls
         private TextBox txtOrderId;
@@ -38,15 +39,20 @@ namespace AceCook
         private List<Sanpham> _products;
         private List<CtDh> _orderDetails;
 
-        public OrderAddEditForm(AppDbContext context, Dondathang order = null)
+        public OrderAddEditForm(AppDbContext context, Dondathang order = null, bool isViewMode = false)
         {
             _context = context;
             _orderRepository = new OrderRepository(context);
             _order = order ?? new Dondathang();
-            _isEditMode = order != null;
+            _isEditMode = order != null && !isViewMode;
+            _isViewMode = isViewMode;
             _orderDetails = new List<CtDh>();
 
             if (_isEditMode && order.CtDhs != null)
+            {
+                _orderDetails = order.CtDhs.ToList();
+            }
+            else if (_isViewMode && order.CtDhs != null)
             {
                 _orderDetails = order.CtDhs.ToList();
             }
@@ -60,7 +66,15 @@ namespace AceCook
         {
             this.SuspendLayout();
             
-            this.Text = _isEditMode ? "Chỉnh sửa đơn hàng" : "Thêm đơn hàng mới";
+            if (_isViewMode)
+            {
+                this.Text = "Xem chi tiết đơn hàng";
+            }
+            else
+            {
+                this.Text = _isEditMode ? "Chỉnh sửa đơn hàng" : "Thêm đơn hàng mới";
+            }
+            
             this.Size = new Size(1000, 700);
             this.StartPosition = FormStartPosition.CenterParent;
             this.BackColor = Color.FromArgb(248, 249, 250);
@@ -384,7 +398,7 @@ namespace AceCook
                 // Load products
                 _products = await _orderRepository.GetAllProductsAsync();
 
-                if (_isEditMode)
+                if (_isEditMode || _isViewMode)
                 {
                     // Load existing order data
                     txtOrderId.Text = _order.MaDdh;
@@ -406,6 +420,9 @@ namespace AceCook
 
                 RefreshOrderDetailsGrid();
                 CalculateTotalAmount();
+                
+                // Apply edit restrictions based on order status
+                ApplyEditRestrictions();
             }
             catch (Exception ex)
             {
@@ -434,6 +451,64 @@ namespace AceCook
         {
             decimal total = _orderDetails.Sum(d => (decimal)((d.SoLuong ?? 0) * (d.DonGia ?? 0)));
             txtTotalAmount.Text = total.ToString("N0") + " VNĐ";
+        }
+
+        private void ApplyEditRestrictions()
+        {
+            if (_isViewMode)
+            {
+                // Disable all editing controls in view mode
+                DisableAllControls();
+                return;
+            }
+
+            // Check if order is completed and disable editing
+            var orderStatus = _order.TrangThai?.ToLower();
+            bool isCompleted = orderStatus == "hoàn thành" || orderStatus == "đã giao" || orderStatus == "đã hủy";
+            
+            if (isCompleted)
+            {
+                DisableAllControls();
+                MessageBox.Show("Đơn hàng này đã hoàn thành và không thể chỉnh sửa!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void DisableAllControls()
+        {
+            // Disable input controls
+            cboCustomer.Enabled = false;
+            cboEmployee.Enabled = false;
+            dtpOrderDate.Enabled = false;
+            dtpDeliveryDate.Enabled = false;
+            cboStatus.Enabled = false;
+            
+            // Disable order details editing
+            dgvOrderDetails.ReadOnly = true;
+            dgvOrderDetails.EditMode = DataGridViewEditMode.EditProgrammatically;
+            
+            // Disable action buttons
+            btnAddProduct.Enabled = false;
+            btnRemoveProduct.Enabled = false;
+            btnSave.Enabled = false;
+            
+            // Change save button text
+            btnSave.Text = "🔒 Chỉ xem";
+            btnSave.BackColor = Color.FromArgb(149, 165, 166);
+            
+            // Disable view summary button in view mode
+            if (_isViewMode)
+            {
+                // Find the view summary button by its text
+                foreach (Control control in this.Controls)
+                {
+                    if (control is Button button && button.Text.Contains("Xem tổng quan"))
+                    {
+                        button.Enabled = false;
+                        break;
+                    }
+                }
+            }
         }
 
         private void BtnAddProduct_Click(object sender, EventArgs e)
@@ -535,6 +610,14 @@ namespace AceCook
 
         private async void BtnSave_Click(object sender, EventArgs e)
         {
+            // If in view mode, just close the form
+            if (_isViewMode)
+            {
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+                return;
+            }
+
             try
             {
                 if (!ValidateForm())
@@ -631,7 +714,14 @@ namespace AceCook
 
         private void BtnCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
+            if (_isViewMode)
+            {
+                this.DialogResult = DialogResult.OK;
+            }
+            else
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
             this.Close();
         }
 

@@ -18,7 +18,9 @@ namespace AceCook.Repositories
 
         public async Task<List<Nhacungcap>> GetAllSuppliersAsync()
         {
-            return await _context.Nhacungcaps.ToListAsync();
+            return await _context.Nhacungcaps
+                .Include(n => n.Nguyenlieus)
+                .ToListAsync();
         }
 
         public async Task<Nhacungcap?> GetSupplierByIdAsync(string maNCC)

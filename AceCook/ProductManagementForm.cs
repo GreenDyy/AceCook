@@ -27,8 +27,7 @@ namespace AceCook
         {
             _productRepository = new ProductRepository(context);
             SetupUI();
-            LoadProducts();
-            LoadCategories();
+            _ = LoadDataAsync(); // Sử dụng async method để load dữ liệu
         }
 
         private void SetupUI()
@@ -178,8 +177,8 @@ namespace AceCook
             // DataGridView
             dataGridViewProducts = new DataGridView
             {
-                Size = new Size(960, 350),
-                Location = new Point(20, 200),
+                Size = new Size(1140, 350),
+                Location = new Point(30, 370),
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -187,10 +186,22 @@ namespace AceCook
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 MultiSelect = false,
                 BackgroundColor = Color.White,
-                BorderStyle = BorderStyle.None,
+                BorderStyle = BorderStyle.FixedSingle,
                 GridColor = Color.LightGray,
-                RowHeadersVisible = false
+                RowHeadersVisible = false,
+                CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
+                ColumnHeadersHeight = 50,
+                RowTemplate = { Height = 50 }
             };
+
+            // Style the DataGridView
+            dataGridViewProducts.DefaultCellStyle.Font = new Font("Segoe UI", 9);
+            dataGridViewProducts.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            dataGridViewProducts.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
+            dataGridViewProducts.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dataGridViewProducts.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewProducts.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
+            dataGridViewProducts.DefaultCellStyle.SelectionForeColor = Color.White;
 
             // Add controls to form
             this.Controls.Add(lblTitle);
@@ -209,7 +220,68 @@ namespace AceCook
             };
         }
 
-        private async void LoadProducts()
+        private async Task LoadDataAsync()
+        {
+            try
+            {
+                // Load products first
+                _products = await _productRepository.GetAllProductsAsync();
+                RefreshDataGridView(_products);
+                
+                // Then load categories
+                await LoadCategories();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task LoadCategories()
+        {
+            try
+            {
+                var categories = await _productRepository.GetProductCategoriesAsync();
+                
+                // Update UI trên main thread
+                if (this.InvokeRequired)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        UpdateCategoryComboBox(categories);
+                    });
+                }
+                else
+                {
+                    UpdateCategoryComboBox(categories);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải danh sách loại sản phẩm: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void UpdateCategoryComboBox(List<string> categories)
+        {
+            cboCategory.Items.Clear();
+            cboCategory.Items.Add("Tất cả");
+            if (categories != null)
+            {
+                foreach (var category in categories)
+                {
+                    if (!string.IsNullOrEmpty(category))
+                    {
+                        cboCategory.Items.Add(category);
+                    }
+                }
+            }
+            cboCategory.SelectedIndex = 0;
+        }
+
+        private async Task LoadProducts()
         {
             try
             {
@@ -218,39 +290,33 @@ namespace AceCook
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu sản phẩm: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tải danh sách sản phẩm: {ex.Message}", "Lỗi", 
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private async void LoadCategories()
+        private void RefreshDataGridView(List<Sanpham> products)
         {
-            try
+            if (this.InvokeRequired)
             {
-                var categories = await _productRepository.GetProductCategoriesAsync();
-
-                cboCategory.Items.Clear();
-                cboCategory.Items.Add("Tất cả");
-                cboCategory.Items.AddRange(categories.ToArray());
-                cboCategory.SelectedIndex = 0;
+                this.Invoke((MethodInvoker)delegate
+                {
+                    RefreshDataGridView(products);
+                });
+                return;
             }
-            catch (Exception ex)
+
+            if (products != null)
             {
-                MessageBox.Show($"Lỗi khi tải danh mục: {ex.Message}", "Lỗi", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                dataGridViewProducts.DataSource = null;
+                dataGridViewProducts.DataSource = products;
             }
-        }
-
-        private void RefreshDataGridView(System.Collections.Generic.List<Sanpham> products)
-        {
-            dataGridViewProducts.DataSource = null;
-            dataGridViewProducts.DataSource = products;
 
             // Configure columns
             if (dataGridViewProducts.Columns.Count > 0)
             {
                 dataGridViewProducts.Columns["MaSp"].HeaderText = "Mã SP";
-                dataGridViewProducts.Columns["TenSP"].HeaderText = "Tên Sản Phẩm";
+                dataGridViewProducts.Columns["TenSp"].HeaderText = "Tên Sản Phẩm";
                 dataGridViewProducts.Columns["MoTa"].HeaderText = "Mô Tả";
                 dataGridViewProducts.Columns["Gia"].HeaderText = "Giá";
                 dataGridViewProducts.Columns["DVTSP"].HeaderText = "Đơn Vị";
@@ -261,6 +327,14 @@ namespace AceCook
                 {
                     dataGridViewProducts.Columns["Gia"].DefaultCellStyle.Format = "N0";
                 }
+
+                // Ẩn 3 cột cuối
+                if (dataGridViewProducts.Columns["CtDhs"] != null)
+                    dataGridViewProducts.Columns["CtDhs"].Visible = false;
+                if (dataGridViewProducts.Columns["CtTons"] != null)
+                    dataGridViewProducts.Columns["CtTons"].Visible = false;
+                if (dataGridViewProducts.Columns["DinhMucs"] != null)
+                    dataGridViewProducts.Columns["DinhMucs"].Visible = false;
             }
         }
 
@@ -304,10 +378,9 @@ namespace AceCook
             cboCategory.SelectedIndex = 0;
         }
 
-        private void BtnRefresh_Click(object sender, EventArgs e)
+        private async void BtnRefresh_Click(object sender, EventArgs e)
         {
-            LoadProducts();
-            LoadCategories();
+            await LoadDataAsync();
         }
 
         private async void BtnAdd_Click(object sender, EventArgs e)
