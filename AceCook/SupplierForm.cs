@@ -61,12 +61,11 @@ namespace AceCook
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle
             };
-
             var lblTotalSuppliersTitle = new Label
             {
                 Text = "Tổng số nhà cung cấp:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(200, 25),
+                Size = new Size(150, 25),
                 Location = new Point(20, 15),
                 TextAlign = ContentAlignment.MiddleLeft
             };
@@ -76,8 +75,8 @@ namespace AceCook
                 Text = "0",
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 ForeColor = Color.FromArgb(52, 152, 219),
-                Size = new Size(100, 25),
-                Location = new Point(210, 15),
+                Size = new Size(50, 25),
+                Location = new Point(170, 15),  // Điều chỉnh theo width mới của lblTotalSuppliersTitle
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
@@ -85,8 +84,8 @@ namespace AceCook
             {
                 Text = "Nhà cung cấp đang hoạt động:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(250, 25),
-                Location = new Point(20, 45),
+                Size = new Size(200, 25),
+                Location = new Point(300, 15),  // Di chuyển sang phải và cùng hàng với label trên
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
@@ -95,8 +94,8 @@ namespace AceCook
                 Text = "0",
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 ForeColor = Color.FromArgb(46, 204, 113),
-                Size = new Size(100, 25),
-                Location = new Point(230, 45),
+                Size = new Size(50, 25),
+                Location = new Point(500, 15),  // Điều chỉnh theo vị trí mới của lblActiveSuppliersTitle
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
