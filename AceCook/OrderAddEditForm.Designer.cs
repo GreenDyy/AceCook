@@ -97,7 +97,6 @@
             cboCustomer.Name = "cboCustomer";
             cboCustomer.Size = new Size(461, 40);
             cboCustomer.TabIndex = 3;
-            cboCustomer.SelectedIndexChanged += CboCustomer_SelectedIndexChanged;
             // 
             // lblOrderDate
             // 

@@ -2,3 +2,5 @@
 
 //update lại schema
 Scaffold-DbContext "Server=14.161.21.15,1433;Database=QLBH_ACECOOK;User Id=sa;Password=Ezin@123;TrustServerCertificate=true;MultipleActiveResultSets=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context AppDbContext -DataAnnotations -Force
+//LOCAL
+Scaffold-DbContext "Data Source=LAPTOP-B5CJR15K;Initial Catalog=acecook;Integrated Security=True;Encrypt=True;Trust Server Certificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context AppDbContext -DataAnnotations -Force

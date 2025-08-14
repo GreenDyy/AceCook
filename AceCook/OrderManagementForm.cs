@@ -205,10 +205,7 @@ namespace AceCook
             var btnEditOrder = CreateActionButton("✏️ Chỉnh sửa đơn hàng", Color.FromArgb(255, 193, 7));
             btnEditOrder.Click += BtnEditOrder_Click;
 
-            var btnChangeStatus = CreateActionButton("🔄 Thay đổi trạng thái", Color.FromArgb(155, 89, 182));
-            btnChangeStatus.Click += BtnChangeStatus_Click;
-
-            pnlActions.Controls.AddRange(new Control[] { btnCreateOrder, btnRefresh, btnEditOrder, btnChangeStatus });
+            pnlActions.Controls.AddRange(new Control[] { btnCreateOrder, btnRefresh, btnEditOrder });
 
             // DataGridView
             dataGridViewOrders = new DataGridView
@@ -671,46 +668,6 @@ namespace AceCook
             else
             {
                 MessageBox.Show("Vui lòng chọn đơn hàng cần chỉnh sửa!", "Thông báo",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-        private async void BtnChangeStatus_Click(object sender, EventArgs e)
-        {
-            if (_isProcessing) return;
-            
-            if (dataGridViewOrders.SelectedRows.Count > 0)
-            {
-                try
-                {
-                    _isProcessing = true;
-                    var selectedRow = dataGridViewOrders.SelectedRows[0];
-                    var orderId = selectedRow.Cells["MaDdh"].Value.ToString();
-                    var order = await _orderRepository.GetOrderByIdAsync(orderId);
-                    
-                    if (order != null)
-                    {
-                        ShowStatusChangeDialog(order);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Không thể tải thông tin đơn hàng!", "Lỗi",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Lỗi khi tải thông tin đơn hàng: {ex.Message}", "Lỗi",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    _isProcessing = false;
-                }
-            }
-            else
-            {
-                MessageBox.Show("Vui lòng chọn đơn hàng cần thay đổi trạng thái!", "Thông báo",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }

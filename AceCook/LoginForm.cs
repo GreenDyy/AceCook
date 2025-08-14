@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 
 namespace AceCook
 {
@@ -45,7 +46,6 @@ namespace AceCook
             label2.Text = "Mật khẩu:";
             label3.Text = "HỆ THỐNG QUẢN LÝ NHÀ HÀNG ACECOOK";
             label3.Font = new Font(label3.Font.FontFamily, 18, FontStyle.Bold);
-            label3.ForeColor = Color.FromArgb(64, 64, 64);
 
             // Cập nhật checkbox
             checkBoxShowPass.Text = "Hiển thị mật khẩu";
@@ -139,6 +139,11 @@ namespace AceCook
                 _isLoading = true;
                 btnLogin.Enabled = false;
                 btnLogin.Text = "ĐANG XỬ LÝ...";
+                //check connect string
+
+                //var context = new AppDbContext();
+                //var conn = context.Database.GetDbConnection().ConnectionString;
+                //MessageBox.Show(conn);
 
                 var (success, account, employee, permission) = await _authRepository.AuthenticateAsync(
                     txtUsername.Text.Trim(),
