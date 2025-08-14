@@ -66,7 +66,7 @@ namespace AceCook
             {
                 Text = "Tổng số nhà cung cấp:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(180, 25),
+                Size = new Size(200, 25),
                 Location = new Point(20, 15),
                 TextAlign = ContentAlignment.MiddleLeft
             };
@@ -85,7 +85,7 @@ namespace AceCook
             {
                 Text = "Nhà cung cấp đang hoạt động:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(200, 25),
+                Size = new Size(250, 25),
                 Location = new Point(20, 45),
                 TextAlign = ContentAlignment.MiddleLeft
             };
