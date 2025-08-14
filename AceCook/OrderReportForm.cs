@@ -395,7 +395,7 @@ namespace AceCook
 
             lblTotalOrders.Text = $"Tổng đơn hàng: {totalOrders}";
             lblCompletedOrders.Text = $"Đã hoàn thành: {completedOrders}";
-            lblPendingOrders.Text = $"Đang xử lý: {pendingOrders}";
+            lblPendingOrders.Text = $"Đơn hàng mới: {pendingOrders}";
             lblTotalRevenue.Text = $"Tổng doanh thu: {totalRevenue:N0} VNĐ";
 
             // Refresh detailed report
