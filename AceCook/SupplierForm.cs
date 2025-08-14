@@ -389,6 +389,8 @@ namespace AceCook
                     if (dialogResult == DialogResult.OK)
                     {
                         var newSupplier = addForm.Supplier;
+                        
+                        // Kiểm tra dữ liệu đầu vào
                         if (string.IsNullOrWhiteSpace(newSupplier.MaNcc))
                         {
                             MessageBox.Show("Mã nhà cung cấp không được để trống!", "Lỗi", 
@@ -396,6 +398,7 @@ namespace AceCook
                             return;
                         }
 
+                        // Kiểm tra trùng mã
                         var existingSupplier = _suppliers.FirstOrDefault(s => s.MaNcc == newSupplier.MaNcc);
                         if (existingSupplier != null)
                         {
@@ -404,22 +407,20 @@ namespace AceCook
                             return;
                         }
 
+                        // Chuẩn bị dữ liệu
                         newSupplier.TenNcc = newSupplier.TenNcc ?? "";
                         newSupplier.Sdtncc = newSupplier.Sdtncc ?? "";
                         newSupplier.EmailNcc = newSupplier.EmailNcc ?? "";
                         newSupplier.DiaChiNcc = newSupplier.DiaChiNcc ?? "";
                         
+                        // Thêm nhà cung cấp
                         bool success = await _supplierRepository.AddSupplierAsync(newSupplier);
+                        
                         if (success)
                         {
+                            await LoadDataAsync(); // Cập nhật dữ liệu trước khi hiển thị thông báo
                             MessageBox.Show("Thêm nhà cung cấp thành công!", "Thông báo", 
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            await LoadDataAsync();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Lỗi khi thêm nhà cung cấp! Vui lòng kiểm tra lại thông tin.", 
-                                "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
