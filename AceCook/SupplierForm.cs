@@ -448,22 +448,12 @@ namespace AceCook
                         {
                             try
                             {
-                                // Lấy thông tin đã cập nhật
                                 var updatedSupplier = editForm.Supplier;
-
-                                // Debug: In ra thông tin trước khi cập nhật
-                                Console.WriteLine($"Cập nhật NCC: {updatedSupplier.MaNcc}");
-                                Console.WriteLine($"Tên: {updatedSupplier.TenNcc}");
-                                Console.WriteLine($"SĐT: {updatedSupplier.Sdtncc}");
-                                Console.WriteLine($"Email: {updatedSupplier.EmailNcc}");
-                                Console.WriteLine($"Địa chỉ: {updatedSupplier.DiaChiNcc}");
-
-                                // Thực hiện cập nhật
                                 bool success = await _supplierRepository.UpdateSupplierAsync(updatedSupplier);
                                 
                                 if (success)
                                 {
-                                    await LoadDataAsync(); // Cập nhật UI trước
+                                    await LoadDataAsync(); // Cập nhật UI
                                     MessageBox.Show("Cập nhật nhà cung cấp thành công!", "Thông báo", 
                                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 }
@@ -475,9 +465,8 @@ namespace AceCook
                             }
                             catch (Exception ex)
                             {
-                                // Hiển thị chi tiết lỗi để debug
-                                MessageBox.Show($"Chi tiết lỗi khi cập nhật:\n{ex.Message}\n\nStack Trace:\n{ex.StackTrace}", 
-                                    "Lỗi Cập Nhật", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBox.Show($"Lỗi khi cập nhật: {ex.Message}", "Lỗi", 
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
                     }
