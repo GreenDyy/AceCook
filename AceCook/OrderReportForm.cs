@@ -280,7 +280,7 @@ namespace AceCook
             // Main DataGridView for detailed report
             dataGridViewOrderReport = new DataGridView
             {
-                Size = new Size(1340, 300),
+                Size = new Size(1340, 250), // Giảm từ 300 xuống 250
                 Location = new Point(30, 370),
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
@@ -300,8 +300,8 @@ namespace AceCook
             // Summary DataGridView for statistics (existing)
             dataGridViewOrderSummary = new DataGridView
             {
-                Size = new Size(1340, 120),
-                Location = new Point(30, 690),
+                Size = new Size(1340, 100), // Giảm từ 120 xuống 100
+                Location = new Point(30, 640), // Điều chỉnh vị trí: 370 + 250 + 20 = 640
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -317,11 +317,11 @@ namespace AceCook
                 RowTemplate = { Height = 40 }
             };
 
-            // New Statistics DataGridView with 4 columns
+            // New Statistics DataGridView - Top Customers
             dataGridViewOrderStatistics = new DataGridView
             {
-                Size = new Size(1340, 200), // Tăng từ 100 lên 200
-                Location = new Point(30, 830), // Below the existing summary table
+                Size = new Size(1340, 150), // Giảm từ 200 xuống 150
+                Location = new Point(30, 760), // Điều chỉnh vị trí: 640 + 100 + 20 = 760
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -333,8 +333,8 @@ namespace AceCook
                 GridColor = Color.LightGray,
                 RowHeadersVisible = false,
                 CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
-                ColumnHeadersHeight = 40,
-                RowTemplate = { Height = 40 }
+                ColumnHeadersHeight = 35, // Giảm từ 40 xuống 35
+                RowTemplate = { Height = 35 } // Giảm từ 40 xuống 35
             };
 
             // Style the DataGridViews
@@ -348,8 +348,8 @@ namespace AceCook
                 dataGridViewOrderReport, dataGridViewOrderSummary, dataGridViewOrderStatistics // Add new table
             });
 
-            // Increase form height to accommodate larger table
-            this.Size = new Size(1400, 1080); // Tăng từ 980 lên 1080
+            // Adjust form height to fit screen better
+            this.Size = new Size(1400, 950); // Giảm từ 1080 xuống 950
         }
 
         private void StyleDataGridView(DataGridView dgv)
