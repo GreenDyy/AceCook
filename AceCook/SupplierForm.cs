@@ -385,7 +385,8 @@ namespace AceCook
             {
                 using (var addForm = new SupplierAddEditForm(_context, null))
                 {
-                    if (addForm.ShowDialog() == DialogResult.OK)
+                    var dialogResult = addForm.ShowDialog();
+                    if (dialogResult == DialogResult.OK)
                     {
                         var newSupplier = addForm.Supplier;
                         if (string.IsNullOrWhiteSpace(newSupplier.MaNcc))
@@ -403,45 +404,29 @@ namespace AceCook
                             return;
                         }
 
-                        try
+                        newSupplier.TenNcc = newSupplier.TenNcc ?? "";
+                        newSupplier.Sdtncc = newSupplier.Sdtncc ?? "";
+                        newSupplier.EmailNcc = newSupplier.EmailNcc ?? "";
+                        newSupplier.DiaChiNcc = newSupplier.DiaChiNcc ?? "";
+                        
+                        bool success = await _supplierRepository.AddSupplierAsync(newSupplier);
+                        if (success)
                         {
-                            newSupplier.TenNcc = newSupplier.TenNcc ?? "";
-                            newSupplier.Sdtncc = newSupplier.Sdtncc ?? "";
-                            newSupplier.EmailNcc = newSupplier.EmailNcc ?? "";
-                            newSupplier.DiaChiNcc = newSupplier.DiaChiNcc ?? "";
-                            
-                            bool success = await _supplierRepository.AddSupplierAsync(newSupplier);
-                            if (success)
-                            {
-                                // Thêm nhà cung cấp mới vào danh sách local
-                                _suppliers.Add(newSupplier);
-                                
-                                // Cập nhật lại DataGridView
-                                await LoadDataAsync();
-                                
-                                MessageBox.Show("Thêm nhà cung cấp thành công!", "Thông báo", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                
-                                // Thoát khỏi phương thức sau khi thành công
-                                return;
-                            }
-                            else
-                            {
-                                MessageBox.Show("Lỗi khi thêm nhà cung cấp! Vui lòng kiểm tra lại thông tin.", 
-                                    "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
+                            MessageBox.Show("Thêm nhà cung cấp thành công!", "Thông báo", 
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadDataAsync();
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            MessageBox.Show($"Lỗi khi thêm nhà cung cấp: {ex.Message}", "Lỗi", 
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("Lỗi khi thêm nhà cung cấp! Vui lòng kiểm tra lại thông tin.", 
+                                "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi không mong muốn: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi thêm nhà cung cấp: {ex.Message}", "Lỗi", 
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
