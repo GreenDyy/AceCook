@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using AceCook.Models;
 using AceCook.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace AceCook
 {
@@ -453,15 +454,15 @@ namespace AceCook
                                 
                                 if (success)
                                 {
-                                    await LoadDataAsync(); // Cập nhật UI
+                                    await LoadDataAsync();
                                     MessageBox.Show("Cập nhật nhà cung cấp thành công!", "Thông báo", 
                                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 }
-                                else
-                                {
-                                    MessageBox.Show("Lỗi khi cập nhật nhà cung cấp! Vui lòng thử lại.", "Lỗi", 
-                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }
+                            }
+                            catch (DbUpdateException dbEx)
+                            {
+                                MessageBox.Show($"Lỗi cập nhật database: {dbEx.InnerException?.Message ?? dbEx.Message}", 
+                                    "Lỗi Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                             catch (Exception ex)
                             {
