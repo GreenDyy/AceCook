@@ -333,7 +333,7 @@ namespace AceCook
         {
             try
             {
-                var inventoryReportForm = new InventoryReportForm();
+                var inventoryReportForm = new InventoryReportForm(_context);
                 inventoryReportForm.TopLevel = false;
                 inventoryReportForm.FormBorderStyle = FormBorderStyle.None;
                 inventoryReportForm.Dock = DockStyle.Fill;
