@@ -42,19 +42,20 @@ namespace AceCook
         {
             try
             {
+                MessageBox.Show("Đang load dữ liệu...");  // Debug message
                 var startDate = dateTimePicker1.Value.Date;
                 var endDate = dateTimePicker2.Value.Date.AddDays(1).AddTicks(-1); // Cuối ngày
 
                 // Lấy tất cả đơn hàng trong khoảng thời gian
                 var orders = await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate);
+                MessageBox.Show($"Số đơn hàng lấy được: {orders.Count}");  // Debug message
 
                 // Thống kê đơn hàng theo trạng thái (chỉ Mới/Hoàn thành như ASP.NET)
                 var statusStats = orders
-                    .Where(dh => dh.TrangThai == "Mới" || dh.TrangThai == "Hoàn thành")
-                    .GroupBy(dh => dh.TrangThai)
+                    .GroupBy(dh => dh.TrangThai ?? "Không xác định")
                     .Select(g => new
                     {
-                        Status = g.Key ?? "Không xác định",
+                        Status = g.Key,
                         Count = g.Count(),
                         TotalValue = g.SelectMany(dh => dh.CtDhs)
                                    .Sum(ct => (decimal)((ct.SoLuong ?? 0) * (ct.DonGia ?? 0)))
@@ -62,15 +63,25 @@ namespace AceCook
                     .OrderByDescending(x => x.Count)
                     .ToList();
 
+                MessageBox.Show($"Số trạng thái khác nhau: {statusStats.Count}, Danh sách trạng thái: {string.Join(", ", statusStats.Select(s => s.Status))}");  // Debug message
+
                 // Cập nhật bảng thống kê trạng thái
                 dgvOrderStatus.Rows.Clear();
                 foreach (var stat in statusStats)
                 {
-                    dgvOrderStatus.Rows.Add(
-                        stat.Status,
-                        stat.Count,
-                        string.Format("{0:N0}đ", stat.TotalValue)
-                    );
+                    try 
+                    {
+                        var rowIndex = dgvOrderStatus.Rows.Add(
+                            stat.Status,
+                            stat.Count,
+                            string.Format("{0:N0}đ", stat.TotalValue)
+                        );
+                        MessageBox.Show($"Đã thêm dòng {rowIndex}: {stat.Status}, {stat.Count}, {string.Format("{0:N0}đ", stat.TotalValue)}");  // Debug message
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Lỗi khi thêm dòng: {ex.Message}");  // Debug message
+                    }
                 }
 
                 // Top khách hàng theo logic ASP.NET
