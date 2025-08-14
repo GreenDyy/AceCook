@@ -61,7 +61,7 @@ namespace AceCook
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle
             };
-                        var lblTotalSuppliersTitle = new Label
+                      
                       var lblTotalSuppliersTitle = new Label
             {
                 Text = "Tổng số nhà cung cấp:",
