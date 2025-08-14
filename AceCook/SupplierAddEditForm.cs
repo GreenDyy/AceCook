@@ -224,17 +224,24 @@ namespace AceCook
         {
             if (ValidateInput())
             {
-                // Cập nhật thông tin cho supplier
-                _supplier.MaNcc = txtMaNcc.Text.Trim();
-                _supplier.TenNcc = txtTenNcc.Text.Trim();
-                _supplier.Sdtncc = txtSoDienThoai.Text.Trim();
-                _supplier.EmailNcc = txtEmail.Text.Trim();
-                _supplier.DiaChiNcc = txtDiaChi.Text.Trim();
+                try
+                {
+                    // Chỉ cập nhật thông tin cho đối tượng _supplier
+                    _supplier.MaNcc = txtMaNcc.Text.Trim();
+                    _supplier.TenNcc = txtTenNcc.Text.Trim();
+                    _supplier.Sdtncc = txtSoDienThoai.Text.Trim();
+                    _supplier.EmailNcc = txtEmail.Text.Trim();
+                    _supplier.DiaChiNcc = txtDiaChi.Text.Trim();
 
-                // Chỉ cần set DialogResult và đóng form
-                // Form chính sẽ xử lý việc thêm mới hoặc cập nhật
-                DialogResult = DialogResult.OK;
-                Close();
+                    // Trả về DialogResult.OK để form chính xử lý việc thêm/sửa
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi lưu thông tin: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
