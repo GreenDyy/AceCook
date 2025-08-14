@@ -31,12 +31,16 @@ namespace AceCook
             _suppliers = new List<Nhacungcap>();
             InitializeComponent();
             SetupUI();
-            _ = LoadDataAsync();
+            LoadDataAsync();
         }
 
-    
         private void SetupUI()
         {
+            this.Text = "Quản lý Nhà cung cấp";
+            this.Size = new Size(1200, 800);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.BackColor = Color.FromArgb(248, 249, 250);
+
             // Title
             var lblTitle = new Label
             {
@@ -47,7 +51,6 @@ namespace AceCook
                 Location = new Point(30, 20),
                 TextAlign = ContentAlignment.MiddleLeft
             };
-            this.Controls.Add(lblTitle);
 
             // Summary Panel
             pnlSummary = new Panel
@@ -210,16 +213,12 @@ namespace AceCook
             btnDelete.FlatAppearance.BorderSize = 0;
             btnDelete.Click += BtnDelete_Click;
 
-            // Add buttons to actions panel
             pnlActions.Controls.AddRange(new Control[] { btnAdd, btnEdit, btnDelete });
-
-            // Add panels to form
-            this.Controls.Add(pnlActions);
 
             // DataGridView
             dataGridViewSuppliers = new DataGridView
             {
-                Size = new Size(1140, 300),
+                Size = new Size(1140, 350),
                 Location = new Point(30, 370),
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
@@ -247,7 +246,7 @@ namespace AceCook
 
             // Add controls to form
             this.Controls.AddRange(new Control[] { 
-                pnlSummary, searchPanel, dataGridViewSuppliers 
+                lblTitle, pnlSummary, searchPanel, pnlActions, dataGridViewSuppliers 
             });
         }
 
@@ -384,7 +383,6 @@ namespace AceCook
 
         private async void BtnAdd_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Button clicked!"); // Thêm dòng này để test
             using (var addForm = new SupplierAddEditForm(_context, null))  // Truyền null cho supplier khi thêm mới
             {
                 if (addForm.ShowDialog() == DialogResult.OK)
