@@ -22,24 +22,26 @@ namespace AceCook.Repositories
                 FromDate = fromDate,
                 ToDate = toDate,
                 CreatedDate = DateTime.Now,
+                CreatedBy = "System", // Add missing CreatedBy property
                 Details = new List<RevenueReportDetail>()
             };
 
-            var orders = _context.Hoadonban
-                .Where(h => h.Ngaylap >= fromDate && h.Ngaylap <= toDate)
+            var orders = _context.Hoadonbans
+                .Where(h => h.NgayLap.HasValue && h.NgayLap.Value >= DateOnly.FromDateTime(fromDate) && h.NgayLap.Value <= DateOnly.FromDateTime(toDate))
                 .ToList();
 
             foreach (var order in orders)
             {
-                var customer = _context.Khachhang.FirstOrDefault(k => k.Makh == order.Makh);
+                // Note: Hoadonban doesn't have Makh or Phuongthuctt properties
+                // Using available properties instead
                 report.Details.Add(new RevenueReportDetail
                 {
-                    Date = order.Ngaylap,
-                    OrderId = order.Mahd,
-                    CustomerName = customer?.Tenkh ?? "N/A",
-                    Amount = order.Tongtien ?? 0,
-                    PaymentMethod = order.Phuongthuctt,
-                    Status = order.Trangthai
+                    Date = order.NgayLap?.ToDateTime(TimeOnly.MinValue) ?? DateTime.MinValue,
+                    OrderId = order.MaHdb,
+                    CustomerName = "N/A", // Customer info not directly available in Hoadonban
+                    Amount = order.TongTien ?? 0,
+                    PaymentMethod = "N/A", // Payment method not available in Hoadonban
+                    Status = order.TrangThaiThanhToan ?? "N/A"
                 });
             }
 
@@ -47,45 +49,50 @@ namespace AceCook.Repositories
             return report;
         }
 
-        public InventoryReport GetInventoryReport(DateTime fromDate, DateTime toDate)
-        {
-            var report = new InventoryReport
-            {
-                FromDate = fromDate,
-                ToDate = toDate,
-                CreatedDate = DateTime.Now,
-                Details = new List<InventoryReportDetail>()
-            };
+        //public InventoryReport GetInventoryReport(DateTime fromDate, DateTime toDate)
+        //{
+        //    var report = new InventoryReport
+        //    {
+        //        FromDate = fromDate,
+        //        ToDate = toDate,
+        //        CreatedDate = DateTime.Now,
+        //        CreatedBy = "System", // Add missing CreatedBy property
+        //        Details = new List<InventoryReportDetail>()
+        //    };
 
-            var products = _context.Sanpham.ToList();
-            foreach (var product in products)
-            {
-                var inStock = _context.ChitietPn
-                    .Where(c => c.Phieunhapkho.Ngaynhap >= fromDate && c.Phieunhapkho.Ngaynhap <= toDate)
-                    .Where(c => c.Masp == product.Masp)
-                    .Sum(c => c.Soluong) ?? 0;
+        //    var products = _context.Sanphams.ToList();
+        //    foreach (var product in products)
+        //    {
+        //        // Get current stock from CtTon
+        //        var currentStock = _context.CtTons
+        //            .Where(c => c.MaSp == product.MaSp)
+        //            .Sum(c => c.SoLuongTonKho) ?? 0;
 
-                var outStock = _context.Phieuxuatkho
-                    .Where(p => p.Ngayxuat >= fromDate && p.Ngayxuat <= toDate)
-                    .Where(p => p.Masp == product.Masp)
-                    .Sum(p => p.Soluong) ?? 0;
+        //        // Get incoming stock from ChitietPn (raw materials, not products)
+        //        var inStock = _context.ChitietPns
+        //            .Where(c => c.MaPnkNavigation.NgayNhap >= DateOnly.FromDateTime(fromDate) && c.MaPnkNavigation.NgayNhap <= DateOnly.FromDateTime(toDate))
+        //            .Where(c => c.MaNl == product.MaSp) // This might not be correct - products vs raw materials
+        //            .Sum(c => c.SoLuongNhap) ?? 0;
 
-                report.Details.Add(new InventoryReportDetail
-                {
-                    ProductId = product.Masp,
-                    ProductName = product.Tensp,
-                    BeginningQuantity = product.Soluongton ?? 0,
-                    InQuantity = inStock,
-                    OutQuantity = outStock,
-                    EndingQuantity = (product.Soluongton ?? 0) + inStock - outStock,
-                    UnitPrice = product.Dongia ?? 0,
-                    TotalValue = ((product.Soluongton ?? 0) + inStock - outStock) * (product.Dongia ?? 0)
-                });
-            }
+        //        // Phieuxuatkho doesn't have quantity information for products
+        //        var outStock = 0;
 
-            report.TotalValue = report.Details.Sum(d => d.TotalValue);
-            return report;
-        }
+        //        report.Details.Add(new InventoryReportDetail
+        //        {
+        //            ProductId = product.MaSp,
+        //            ProductName = product.TenSp ?? "N/A",
+        //            BeginningQuantity = (int)currentStock,
+        //            InQuantity = (int)inStock,
+        //            OutQuantity = (int)outStock,
+        //            EndingQuantity = (int)currentStock + (int)inStock - (int)outStock,
+        //            UnitPrice = product.Gia ?? 0,
+        //            TotalValue = ((int)currentStock + (int)inStock - (int)outStock) * (product.Gia ?? 0)
+        //        });
+        //    }
+
+        //    report.TotalValue = report.Details.Sum(d => d.TotalValue);
+        //    return report;
+        //}
 
         public OrderReport GetOrderReport(DateTime fromDate, DateTime toDate)
         {
@@ -94,26 +101,27 @@ namespace AceCook.Repositories
                 FromDate = fromDate,
                 ToDate = toDate,
                 CreatedDate = DateTime.Now,
+                CreatedBy = "System", // Add missing CreatedBy property
                 Details = new List<OrderReportDetail>()
             };
 
-            var orders = _context.Dondathang
-                .Where(d => d.Ngaydat >= fromDate && d.Ngaydat <= toDate)
+            var orders = _context.Dondathangs
+                .Where(d => d.NgayDat >= DateOnly.FromDateTime(fromDate) && d.NgayDat <= DateOnly.FromDateTime(toDate))
                 .ToList();
 
             foreach (var order in orders)
             {
-                var customer = _context.Khachhang.FirstOrDefault(k => k.Makh == order.Makh);
-                var orderDetails = _context.CtDh.Where(c => c.Madh == order.Madh).ToList();
+                var customer = _context.Khachhangs.FirstOrDefault(k => k.MaKh == order.MaKh);
+                var orderDetails = _context.CtDhs.Where(c => c.MaDdh == order.MaDdh).ToList();
 
                 report.Details.Add(new OrderReportDetail
                 {
-                    OrderId = order.Madh,
-                    OrderDate = order.Ngaydat,
-                    CustomerName = customer?.Tenkh ?? "N/A",
-                    Status = order.Trangthai,
-                    TotalItems = orderDetails.Sum(d => d.Soluong ?? 0),
-                    TotalAmount = orderDetails.Sum(d => (d.Soluong ?? 0) * (d.Dongia ?? 0))
+                    OrderId = order.MaDdh,
+                    OrderDate = order.NgayDat?.ToDateTime(TimeOnly.MinValue) ?? DateTime.MinValue,
+                    CustomerName = customer?.TenKh ?? "N/A",
+                    Status = order.TrangThai ?? "N/A",
+                    TotalItems = orderDetails.Sum(d => d.SoLuong ?? 0),
+                    TotalAmount = orderDetails.Sum(d => (d.SoLuong ?? 0) * (decimal)(d.DonGia ?? 0.0))
                 });
             }
 

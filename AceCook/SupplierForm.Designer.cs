@@ -10,11 +10,6 @@ namespace AceCook
         private Button btnAddSupplier;
         private DataGridView dgvSuppliers;
 
-        public SupplierForm()
-        {
-            InitializeComponent();
-        }
-
         private void InitializeComponent()
         {
             lblTitle = new Label();

@@ -7,7 +7,6 @@ namespace AceCook
     {
         public ReportForm()
         {
-            InitializeComponent();
             InitializeUI();
         }
 

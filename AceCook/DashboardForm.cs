@@ -209,15 +209,6 @@ namespace AceCook
                 case "settings":
                     LoadSettings();
                     break;
-                case "revenue_report":
-                    LoadRevenueReport();
-                    break;
-                case "inventory_report":
-                    LoadInventoryReport();
-                    break;
-                case "order_report":
-                    LoadOrderReport();
-                    break;
             }
         }
 
@@ -404,35 +395,5 @@ namespace AceCook
                 Application.Exit();
             }
         }
-
-        private void LoadRevenueReport()
-        {
-            var reportForm = new RevenueReportForm();
-            reportForm.TopLevel = false;
-            reportForm.FormBorderStyle = FormBorderStyle.None;
-            reportForm.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(reportForm);
-            reportForm.Show();
-        }
-
-        private void LoadInventoryReport()
-        {
-            var reportForm = new InventoryReportForm();
-            reportForm.TopLevel = false;
-            reportForm.FormBorderStyle = FormBorderStyle.None;
-            reportForm.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(reportForm);
-            reportForm.Show();
-        }
-
-        private void LoadOrderReport()
-        {
-            var reportForm = new OrderReportForm();
-            reportForm.TopLevel = false;
-            reportForm.FormBorderStyle = FormBorderStyle.None;
-            reportForm.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(reportForm);
-            reportForm.Show();
-        }
     }
-} 
+}

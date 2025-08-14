@@ -17,7 +17,6 @@ namespace AceCook
         {
             InitializeComponent();
             _reportRepository = new ReportRepository(new AppDbContext());
-            InitializeUI();
         }
 
         private void InitializeComponent()

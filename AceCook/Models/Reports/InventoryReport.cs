@@ -5,14 +5,19 @@ namespace AceCook.Models.Reports
 {
     public class InventoryReport : ReportBase
     {
+        public InventoryReport()
+        {
+            Details = new List<InventoryReportDetail>();
+        }
+        
         public decimal TotalValue { get; set; }
         public List<InventoryReportDetail> Details { get; set; }
     }
 
     public class InventoryReportDetail
     {
-        public string ProductId { get; set; }
-        public string ProductName { get; set; }
+        public string ProductId { get; set; } = string.Empty;
+        public string ProductName { get; set; } = string.Empty;
         public int BeginningQuantity { get; set; }
         public int InQuantity { get; set; }
         public int OutQuantity { get; set; }

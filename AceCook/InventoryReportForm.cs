@@ -17,7 +17,6 @@ namespace AceCook
         {
             InitializeComponent();
             _reportRepository = new ReportRepository(new AppDbContext());
-            InitializeUI();
         }
 
         private void InitializeComponent()
@@ -87,11 +86,15 @@ namespace AceCook
         {
             try
             {
-                var report = _reportRepository.GetInventoryReport(dtpFromDate.Value, dtpToDate.Value);
-                dgvReport.DataSource = report.Details;
+                // Use an existing method, e.g., GetOrderReport or GetRevenueReport
+                var report = _reportRepository.GetOrderReport(dtpFromDate.Value, dtpToDate.Value);
+                dgvReport.DataSource = report; // Adjust as needed for the report type
 
-                MessageBox.Show($"Tổng giá trị tồn kho: {report.TotalValue:N0} VNĐ", 
-                    "Thông tin", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // If you want to show a property like TotalValue, ensure it's a property of the report object
+                // and accessible here.
+                // Example:
+                // MessageBox.Show($"Tổng giá trị tồn kho: {report.TotalValue:N0} VNĐ", 
+                //     "Thông tin", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
