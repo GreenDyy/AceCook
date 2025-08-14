@@ -7,185 +7,83 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting; // Thêm namespace này
 
 namespace AceCook
 {
     public partial class RevenueReportForm : Form
     {
-        private Chart dailyRevenueChart;
-        private Chart monthlyRevenueChart;
-
         public RevenueReportForm()
         {
             InitializeComponent();
-            InitializeCharts();
-        }
-
-        private void InitializeCharts()
-        {
-            // Biểu đồ doanh thu theo ngày
-            dailyRevenueChart = new Chart();
-            dailyRevenueChart.Dock = DockStyle.Fill;
-
-            ChartArea dailyChartArea = new ChartArea();
-            dailyRevenueChart.ChartAreas.Add(dailyChartArea);
-
-            Series dailySeries = new Series();
-            dailySeries.ChartType = SeriesChartType.Column;
-            dailySeries.Name = "Doanh thu";
-            dailySeries.Color = Color.FromArgb(107, 111, 213);
-            dailyRevenueChart.Series.Add(dailySeries);
-
-            // Cấu hình trục và tiêu đề cho biểu đồ ngày
-            dailyChartArea.AxisX.Title = "Ngày";
-            dailyChartArea.AxisY.Title = "Doanh thu (VNĐ)";
-            dailyChartArea.AxisY.LabelStyle.Format = "N0";
-            dailyChartArea.BackColor = Color.White;
-            dailyChartArea.AxisX.Minimum = 1;
-            dailyChartArea.AxisX.Maximum = 31;
-            dailyChartArea.AxisX.Interval = 5;
-            dailyChartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
-            dailyChartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
-
-            // Thêm biểu đồ vào panel3
-            panel3.Controls.Clear();
-            panel3.Controls.Add(dailyRevenueChart);
-
-            // Biểu đồ doanh thu theo tháng
-            monthlyRevenueChart = new Chart();
-            monthlyRevenueChart.Dock = DockStyle.Fill;
-
-            ChartArea monthlyChartArea = new ChartArea();
-            monthlyRevenueChart.ChartAreas.Add(monthlyChartArea);
-
-            Series monthlySeries = new Series();
-            monthlySeries.ChartType = SeriesChartType.Column;
-            monthlySeries.Name = "Doanh thu";
-            monthlySeries.Color = Color.FromArgb(107, 111, 213);
-            monthlyRevenueChart.Series.Add(monthlySeries);
-
-            // Cấu hình trục và tiêu đề cho biểu đồ tháng
-            monthlyChartArea.AxisX.Title = "Tháng";
-            monthlyChartArea.AxisY.Title = "Doanh thu (VNĐ)";
-            monthlyChartArea.AxisY.LabelStyle.Format = "N0";
-            monthlyChartArea.BackColor = Color.White;
-            monthlyChartArea.AxisX.Minimum = 1;
-            monthlyChartArea.AxisX.Maximum = 12;
-            monthlyChartArea.AxisX.Interval = 1;
-            monthlyChartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
-            monthlyChartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
-
-            // Tạo một panel mới để chứa biểu đồ tháng
-            Panel chartPanel = new Panel();
-            chartPanel.Dock = DockStyle.Fill;
-            chartPanel.Controls.Add(monthlyRevenueChart);
-
-            // Xóa các controls cũ trong panel1 và thêm groupBox7 và chartPanel mới
-            panel1.Controls.Clear();
-            
-            // Thêm lại groupBox7 vào đầu panel1
-            groupBox7.Dock = DockStyle.Top;
-            panel1.Controls.Add(groupBox7);
-            
-            // Thêm panel chứa biểu đồ vào phần còn lại của panel1
-            chartPanel.Dock = DockStyle.Fill;
-            panel1.Controls.Add(chartPanel);
-
-            // Load dữ liệu mẫu
             LoadSampleData();
         }
 
         private void LoadSampleData()
         {
-            // Dữ liệu mẫu cho biểu đồ theo ngày
-            dailyRevenueChart.Series["Doanh thu"].Points.Clear();
+            dataGridViewDetails.Rows.Clear();
             Random rnd = new Random();
-            for (int day = 1; day <= 31; day++)
-            {
-                double value = rnd.Next(1000000, 10000000);
-                dailyRevenueChart.Series["Doanh thu"].Points.AddXY(day, value);
-            }
 
-            // Dữ liệu mẫu cho biểu đồ theo tháng
-            monthlyRevenueChart.Series["Doanh thu"].Points.Clear();
-            for (int month = 1; month <= 12; month++)
+            DateTime startDate = dateTimePickerFrom.Value.Date;
+            DateTime endDate = dateTimePickerTo.Value.Date;
+
+            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
             {
-                double value = rnd.Next(2000000, 10000000);
-                monthlyRevenueChart.Series["Doanh thu"].Points.AddXY(month, value);
+                int soHoaDon = rnd.Next(1, 20);
+                decimal tongTien = rnd.Next(1000000, 10000000);
+                decimal trungBinh = tongTien / soHoaDon;
+
+                dataGridViewDetails.Rows.Add(
+                    date.ToString("dd/MM/yyyy"),
+                    soHoaDon,
+                    tongTien.ToString("N0") + " ₫",
+                    trungBinh.ToString("N0") + " ₫"
+                );
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFilter_Click(object sender, EventArgs e)
         {
-            DateTime startDate = dateTimePicker1.Value;
-            DateTime endDate = dateTimePicker2.Value;
+            DateTime startDate = dateTimePickerFrom.Value;
+            DateTime endDate = dateTimePickerTo.Value;
 
-            // Tạm thời load lại dữ liệu mẫu
+            if (startDate > endDate)
+            {
+                MessageBox.Show("Ngày bắt đầu không thể lớn hơn ngày kết thúc!", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Update period label
+            lblPeriod.Text = $"Thống kê doanh thu từ {startDate:dd/MM/yyyy} đến {endDate:dd/MM/yyyy}";
+
+            // Reload data
             LoadSampleData();
 
-            // Cập nhật label thời gian
-            label14.Text = $"Thống kê doanh thu từ {startDate:d} đến {endDate:d}";
+            MessageBox.Show("Đã cập nhật báo cáo theo khoảng thời gian đã chọn!", "Thông báo", 
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        private void btnExportExcel_Click(object sender, EventArgs e)
         {
-
+            MessageBox.Show("Chức năng xuất Excel sẽ được triển khai sau!", "Thông báo", 
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void label2_Click(object sender, EventArgs e)
+        private void btnPrint_Click(object sender, EventArgs e)
         {
-
+            MessageBox.Show("Chức năng in báo cáo sẽ được triển khai sau!", "Thông báo", 
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
+        private void RevenueReportForm_Load(object sender, EventArgs e)
         {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label9_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label10_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label11_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label13_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void groupBox3_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panel3_Paint(object sender, PaintEventArgs e)
-        {
-
+            // Set default date range (current month)
+            dateTimePickerFrom.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            dateTimePickerTo.Value = DateTime.Now;
+            
+            lblPeriod.Text = $"Thống kê doanh thu từ {dateTimePickerFrom.Value:dd/MM/yyyy} đến {dateTimePickerTo.Value:dd/MM/yyyy}";
+            
+            LoadSampleData();
         }
     }
 }

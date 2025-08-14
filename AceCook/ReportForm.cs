@@ -57,7 +57,8 @@ namespace AceCook
 
         private void OpenInventoryReport()
         {
-            var form = new InventoryReportForm();
+            using var context = new AppDbContext();
+            var form = new InventoryReportForm(context);
             form.ShowDialog();
         }
 
