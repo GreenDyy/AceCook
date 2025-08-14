@@ -965,7 +965,7 @@ namespace AceCook
             // Bây giờ mới set SelectedIndex sau khi controls đã được thêm vào form
             if (products.Count > 0)
             {
-                git pcboProduct.SelectedIndex = 0;
+                cboProduct.SelectedIndex = 0;
             }
         }
 
