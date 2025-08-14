@@ -379,7 +379,7 @@ namespace AceCook
 
         private async void BtnAdd_Click(object sender, EventArgs e)
         {
-            using (var addForm = new SupplierAddEditForm(_context))
+            using (var addForm = new SupplierAddEditForm(_context, null))  // Truyền null cho supplier khi thêm mới
             {
                 if (addForm.ShowDialog() == DialogResult.OK)
                 {
@@ -414,7 +414,7 @@ namespace AceCook
                 var selectedSupplier = dataGridViewSuppliers.SelectedRows[0].DataBoundItem as Nhacungcap;
                 if (selectedSupplier != null)
                 {
-                    var editForm = new SupplierAddEditForm(selectedSupplier);
+                    var editForm = new SupplierAddEditForm(_context, selectedSupplier);  // Truyền cả context và supplier
                     if (editForm.ShowDialog() == DialogResult.OK)
                     {
                         try
