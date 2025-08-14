@@ -27,16 +27,16 @@ namespace AceCook
             // 
             // btnAddSupplier
             // 
-            btnAddSupplier.BackColor = Color.MediumSeaGreen;
-            btnAddSupplier.FlatStyle = FlatStyle.Flat;
-            btnAddSupplier.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnAddSupplier.ForeColor = Color.White;
-            btnAddSupplier.Location = new Point(1150, 25);
-            btnAddSupplier.Name = "btnAddSupplier";
-            btnAddSupplier.Size = new Size(200, 40);
-            btnAddSupplier.TabIndex = 1;
-            btnAddSupplier.Text = "+ Thêm nhà cung cấp";
-            btnAddSupplier.UseVisualStyleBackColor = false;
+            // btnAddSupplier.BackColor = Color.MediumSeaGreen;
+            // btnAddSupplier.FlatStyle = FlatStyle.Flat;
+            // btnAddSupplier.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            // btnAddSupplier.ForeColor = Color.White;
+            // btnAddSupplier.Location = new Point(1150, 25);
+            // btnAddSupplier.Name = "btnAddSupplier";
+            // btnAddSupplier.Size = new Size(200, 40);
+            // btnAddSupplier.TabIndex = 1;
+            // btnAddSupplier.Text = "+ Thêm nhà cung cấp";
+            // btnAddSupplier.UseVisualStyleBackColor = false;
             // 
             // SupplierForm
             // 
