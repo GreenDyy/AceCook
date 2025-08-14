@@ -187,28 +187,26 @@ namespace AceCook
 
             btnEdit = new Button
             {
-                Text = "✏️ Chỉnh sửa",
-                Size = new Size(120, 40),
+                Text = "Chỉnh sửa",
+                Size = new Size(100, 35),
                 Location = new Point(270, 10),
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(241, 196, 15),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
+                FlatStyle = FlatStyle.Flat
             };
             btnEdit.FlatAppearance.BorderSize = 0;
             btnEdit.Click += BtnEdit_Click;
 
             btnDelete = new Button
             {
-                Text = "🗑️ Xóa",
-                Size = new Size(120, 40),
+                Text = "Xóa",
+                Size = new Size(100, 35),
                 Location = new Point(410, 10),
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(231, 76, 60),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
+                FlatStyle = FlatStyle.Flat
             };
             btnDelete.FlatAppearance.BorderSize = 0;
             btnDelete.Click += BtnDelete_Click;
