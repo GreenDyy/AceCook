@@ -15,28 +15,28 @@ namespace AceCook
         private readonly AppDbContext _context;
         private readonly OrderRepository _orderRepository;
         private readonly ReportRepository _reportRepository;
-        private DataGridView dataGridViewOrderReport;
-        private DataGridView dataGridViewOrderSummary;
-        private DataGridView dataGridViewOrderStatistics; // Bảng mới
-        private TextBox txtSearch;
-        private ComboBox cboStatusFilter;
-        private DateTimePicker dtpStartDate;
-        private DateTimePicker dtpEndDate;
-        private Button btnSearch;
-        private Button btnReset;
-        private Button btnExportReport;
-        private Button btnRefresh;
-        private Label lblTitle;
-        private Label lblSearch;
-        private Label lblStatusFilter;
-        private Label lblDateRange;
-        private Label lblTotalOrders;
-        private Label lblTotalRevenue;
-        private Label lblCompletedOrders;
-        private Label lblPendingOrders;
-        private Panel pnlFilters;
-        private Panel pnlSummary;
-        private Panel pnlActions;
+        private DataGridView dataGridViewOrderReport = null!;
+        private DataGridView dataGridViewOrderSummary = null!;
+        private DataGridView dataGridViewOrderStatistics = null!; // Bảng mới
+        private TextBox txtSearch = null!;
+        private ComboBox cboStatusFilter = null!;
+        private DateTimePicker dtpStartDate = null!;
+        private DateTimePicker dtpEndDate = null!;
+        private Button btnSearch = null!;
+        private Button btnReset = null!;
+        private Button btnExportReport = null!;
+        private Button btnRefresh = null!;
+        private Label lblTitle = null!;
+        private Label lblSearch = null!;
+        private Label lblStatusFilter = null!;
+        private Label lblDateRange = null!;
+        private Label lblTotalOrders = null!;
+        private Label lblTotalRevenue = null!;
+        private Label lblCompletedOrders = null!;
+        private Label lblPendingOrders = null!;
+        private Panel pnlFilters = null!;
+        private Panel pnlSummary = null!;
+        private Panel pnlActions = null!;
 
         public OrderReportForm(OrderRepository orderRepository)
         {
@@ -377,7 +377,7 @@ namespace AceCook
             }
         }
 
-        private async Task RefreshReportData(List<Dondathang> orders)
+        private Task RefreshReportData(List<Dondathang> orders)
         {
             // Update summary statistics
             var totalOrders = orders.Count;
@@ -406,6 +406,8 @@ namespace AceCook
             
             // Refresh new statistics report
             RefreshStatisticsReport(orders);
+            
+            return Task.CompletedTask;
         }
 
         private void RefreshDetailedReport(List<Dondathang> orders)
@@ -487,7 +489,7 @@ namespace AceCook
                 row.Cells["ItemCount"].Value = itemCount;
 
                 // Style status column
-                StyleStatusCell(row.Cells["TrangThai"], order.TrangThai);
+                StyleStatusCell(row.Cells["TrangThai"], order.TrangThai ?? "Đơn hàng mới");
             }
         }
 
@@ -576,7 +578,7 @@ namespace AceCook
             }
         }
 
-        private async void TxtSearch_TextChanged(object sender, EventArgs e)
+        private void TxtSearch_TextChanged(object? sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtSearch.Text))
             {
@@ -584,17 +586,17 @@ namespace AceCook
             }
         }
 
-        private async void CboStatusFilter_SelectedIndexChanged(object sender, EventArgs e)
+        private async void CboStatusFilter_SelectedIndexChanged(object? sender, EventArgs e)
         {
             await ApplyFilters();
         }
 
-        private async void BtnSearch_Click(object sender, EventArgs e)
+        private async void BtnSearch_Click(object? sender, EventArgs e)
         {
             await ApplyFilters();
         }
 
-        private async void BtnReset_Click(object sender, EventArgs e)
+        private async void BtnReset_Click(object? sender, EventArgs e)
         {
             txtSearch.Text = "";
             cboStatusFilter.SelectedIndex = 0;
@@ -603,12 +605,12 @@ namespace AceCook
             await ApplyFilters();
         }
 
-        private async void BtnRefresh_Click(object sender, EventArgs e)
+        private void BtnRefresh_Click(object? sender, EventArgs e)
         {
             LoadReportData();
         }
 
-        private async void BtnExportReport_Click(object sender, EventArgs e)
+        private void BtnExportReport_Click(object? sender, EventArgs e)
         {
             try
             {
@@ -632,8 +634,15 @@ namespace AceCook
                 // Apply status filter
                 if (cboStatusFilter.SelectedIndex > 0)
                 {
-                    var status = cboStatusFilter.SelectedItem.ToString();
-                    orders = await _orderRepository.GetOrdersByStatusAsync(status);
+                    var status = cboStatusFilter.SelectedItem?.ToString();
+                    if (!string.IsNullOrEmpty(status))
+                    {
+                        orders = await _orderRepository.GetOrdersByStatusAsync(status);
+                    }
+                    else
+                    {
+                        orders = await _orderRepository.GetAllOrdersAsync();
+                    }
                 }
                 else
                 {
@@ -715,7 +724,7 @@ namespace AceCook
                 .Where(o => o.MaKhNavigation != null) // Only orders with customer info
                 .GroupBy(o => new { 
                     MaKH = o.MaKh, 
-                    TenKH = o.MaKhNavigation.TenKh ?? "Khách hàng không xác định" 
+                    TenKH = o.MaKhNavigation?.TenKh ?? "Khách hàng không xác định" 
                 })
                 .Select(g => new
                 {
