@@ -208,9 +208,9 @@ namespace AceCook
             {
                 txtMaNcc.Text = _supplier.MaNcc;
                 txtTenNcc.Text = _supplier.TenNcc;
-                txtSoDienThoai.Text = _supplier.SoDienThoai;
-                txtEmail.Text = _supplier.Email;
-                txtDiaChi.Text = _supplier.DiaChi;
+                txtSoDienThoai.Text = _supplier.Sdtncc;  // Changed from SoDienThoai to Sdtncc
+                txtEmail.Text = _supplier.EmailNcc;       // Changed from Email to EmailNcc
+                txtDiaChi.Text = _supplier.DiaChiNcc;     // Changed from DiaChi to DiaChiNcc
             }
         }
 
@@ -220,9 +220,9 @@ namespace AceCook
             {
                 _supplier.MaNcc = txtMaNcc.Text.Trim();
                 _supplier.TenNcc = txtTenNcc.Text.Trim();
-                _supplier.SoDienThoai = txtSoDienThoai.Text.Trim();
-                _supplier.Email = txtEmail.Text.Trim();
-                _supplier.DiaChi = txtDiaChi.Text.Trim();
+                _supplier.Sdtncc = txtSoDienThoai.Text.Trim();     // Changed from SoDienThoai to Sdtncc
+                _supplier.EmailNcc = txtEmail.Text.Trim();         // Changed from Email to EmailNcc
+                _supplier.DiaChiNcc = txtDiaChi.Text.Trim();       // Changed from DiaChi to DiaChiNcc
                 
                 DialogResult = DialogResult.OK;
                 Close();
