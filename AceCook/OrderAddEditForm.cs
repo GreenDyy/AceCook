@@ -969,6 +969,8 @@ namespace AceCook
             }
         }
 
+        // test
+
         private void CboProduct_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cboProduct.SelectedItem is Sanpham product)
