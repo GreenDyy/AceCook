@@ -436,39 +436,56 @@ namespace AceCook
         {
             if (dataGridViewSuppliers.SelectedRows.Count > 0)
             {
-                string maNcc = dataGridViewSuppliers.SelectedRows[0].Cells["MaNcc"].Value.ToString();
-                var selectedSupplier = _suppliers.FirstOrDefault(s => s.MaNcc == maNcc);
-                
-                if (selectedSupplier != null)
+                try
                 {
-                    var editForm = new SupplierAddEditForm(_context, selectedSupplier);
-                    if (editForm.ShowDialog() == DialogResult.OK)
+                    string maNcc = dataGridViewSuppliers.SelectedRows[0].Cells["MaNcc"].Value.ToString();
+                    var selectedSupplier = _suppliers.FirstOrDefault(s => s.MaNcc == maNcc);
+                    
+                    if (selectedSupplier != null)
                     {
-                        try
+                        var editForm = new SupplierAddEditForm(_context, selectedSupplier);
+                        if (editForm.ShowDialog() == DialogResult.OK)
                         {
-                            // Lấy supplier đã được cập nhật từ form
-                            var updatedSupplier = editForm.Supplier;
-                            
-                            // Gọi repository để cập nhật
-                            bool success = await _supplierRepository.UpdateSupplierAsync(updatedSupplier);
-                            if (success)
+                            try
                             {
-                                await LoadDataAsync(); // Cập nhật UI trước
-                                MessageBox.Show("Cập nhật nhà cung cấp thành công!", "Thông báo", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                // Lấy thông tin đã cập nhật
+                                var updatedSupplier = editForm.Supplier;
+
+                                // Debug: In ra thông tin trước khi cập nhật
+                                Console.WriteLine($"Cập nhật NCC: {updatedSupplier.MaNcc}");
+                                Console.WriteLine($"Tên: {updatedSupplier.TenNcc}");
+                                Console.WriteLine($"SĐT: {updatedSupplier.Sdtncc}");
+                                Console.WriteLine($"Email: {updatedSupplier.EmailNcc}");
+                                Console.WriteLine($"Địa chỉ: {updatedSupplier.DiaChiNcc}");
+
+                                // Thực hiện cập nhật
+                                bool success = await _supplierRepository.UpdateSupplierAsync(updatedSupplier);
+                                
+                                if (success)
+                                {
+                                    await LoadDataAsync(); // Cập nhật UI trước
+                                    MessageBox.Show("Cập nhật nhà cung cấp thành công!", "Thông báo", 
+                                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Lỗi khi cập nhật nhà cung cấp! Vui lòng thử lại.", "Lỗi", 
+                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                MessageBox.Show("Lỗi khi cập nhật nhà cung cấp!", "Lỗi", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                // Hiển thị chi tiết lỗi để debug
+                                MessageBox.Show($"Chi tiết lỗi khi cập nhật:\n{ex.Message}\n\nStack Trace:\n{ex.StackTrace}", 
+                                    "Lỗi Cập Nhật", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"Lỗi khi cập nhật nhà cung cấp: {ex.Message}", "Lỗi", 
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi không mong muốn: {ex.Message}", "Lỗi", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
