@@ -8,22 +8,11 @@ namespace AceCook
     {
         private Label lblTitle;
         private Button btnAddSupplier;
-        private DataGridView dgvSuppliers;
 
         private void InitializeComponent()
         {
             lblTitle = new Label();
             btnAddSupplier = new Button();
-            dgvSuppliers = new DataGridView();
-            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
-            colView = new DataGridViewButtonColumn();
-            colEdit = new DataGridViewButtonColumn();
-            colDelete = new DataGridViewButtonColumn();
-            ((System.ComponentModel.ISupportInitialize)dgvSuppliers).BeginInit();
             SuspendLayout();
             // 
             // lblTitle
@@ -49,94 +38,16 @@ namespace AceCook
             btnAddSupplier.Text = "+ Thêm nhà cung cấp";
             btnAddSupplier.UseVisualStyleBackColor = false;
             // 
-            // dgvSuppliers
-            // 
-            dgvSuppliers.AllowUserToAddRows = false;
-            dgvSuppliers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvSuppliers.ColumnHeadersHeight = 29;
-            dgvSuppliers.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, colView, colEdit, colDelete });
-            dgvSuppliers.Font = new Font("Segoe UI", 10F);
-            dgvSuppliers.Location = new Point(84, 141);
-            dgvSuppliers.Name = "dgvSuppliers";
-            dgvSuppliers.RowHeadersWidth = 51;
-            dgvSuppliers.RowTemplate.Height = 40;
-            dgvSuppliers.Size = new Size(1330, 600);
-            dgvSuppliers.TabIndex = 2;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            // dataGridViewTextBoxColumn1.HeaderText = "Mã NCC";
-            // dataGridViewTextBoxColumn1.MinimumWidth = 6;
-            // dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            // // 
-            // // dataGridViewTextBoxColumn2
-            // // 
-            // dataGridViewTextBoxColumn2.HeaderText = "Tên nhà cung cấp";
-            // dataGridViewTextBoxColumn2.MinimumWidth = 6;
-            // dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            // // 
-            // // dataGridViewTextBoxColumn3
-            // // 
-            // dataGridViewTextBoxColumn3.HeaderText = "Số điện thoại";
-            // dataGridViewTextBoxColumn3.MinimumWidth = 6;
-            // dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            // // 
-            // // dataGridViewTextBoxColumn4
-            // // 
-            // dataGridViewTextBoxColumn4.HeaderText = "Email";
-            // dataGridViewTextBoxColumn4.MinimumWidth = 6;
-            // dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            // // 
-            // // dataGridViewTextBoxColumn5
-            // // 
-            // dataGridViewTextBoxColumn5.HeaderText = "Địa chỉ";
-            // dataGridViewTextBoxColumn5.MinimumWidth = 6;
-            // dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-            // // 
-            // // colView
-            // // 
-            // colView.HeaderText = "Xem";
-            // colView.MinimumWidth = 6;
-            // colView.Name = "colView";
-            // colView.Text = "👁";
-            // colView.UseColumnTextForButtonValue = true;
-            // // 
-            // // colEdit
-            // // 
-            // colEdit.HeaderText = "Sửa";
-            // colEdit.MinimumWidth = 6;
-            // colEdit.Name = "colEdit";
-            // colEdit.Text = "✏";
-            // colEdit.UseColumnTextForButtonValue = true;
-            // // 
-            // // colDelete
-            // // 
-            // colDelete.HeaderText = "Xóa";
-            // colDelete.MinimumWidth = 6;
-            // colDelete.Name = "colDelete";
-            // colDelete.Text = "🗑";
-            // colDelete.UseColumnTextForButtonValue = true;
-            // // 
             // SupplierForm
             // 
             ClientSize = new Size(1400, 800);
             Controls.Add(lblTitle);
             Controls.Add(btnAddSupplier);
-            Controls.Add(dgvSuppliers);
             Name = "SupplierForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Quản lý nhà cung cấp";
-            ((System.ComponentModel.ISupportInitialize)dgvSuppliers).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
-        private DataGridViewButtonColumn colView;
-        private DataGridViewButtonColumn colEdit;
-        private DataGridViewButtonColumn colDelete;
     }
 }
