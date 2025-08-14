@@ -301,7 +301,19 @@ namespace AceCook
 
         private void LoadRevenueReport()
         {
-            ShowComingSoonContent("Báo cáo doanh thu");
+            try
+            {
+                var revenueReportForm = new RevenueReportForm();
+                revenueReportForm.TopLevel = false;
+                revenueReportForm.FormBorderStyle = FormBorderStyle.None;
+                revenueReportForm.Dock = DockStyle.Fill;
+                panelContent.Controls.Add(revenueReportForm);
+                revenueReportForm.Show();
+            }
+            catch (Exception ex)
+            {
+                ShowErrorContent("Báo cáo doanh thu", ex.Message);
+            }
         }
 
         private void LoadInventoryReport()
