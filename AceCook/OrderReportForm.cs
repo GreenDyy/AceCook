@@ -47,19 +47,7 @@ namespace AceCook
             LoadReportData();
         }
 
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-            
-            this.Text = "Báo cáo Đơn hàng";
-            this.Size = new Size(1400, 800);
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.BackColor = Color.FromArgb(248, 249, 250);
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            
-            this.ResumeLayout(false);
-        }
+
 
         private void SetupUI()
         {
