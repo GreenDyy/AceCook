@@ -411,12 +411,16 @@ namespace AceCook
 
         private async void BtnEdit_Click(object sender, EventArgs e)
         {
+            // Thay đổi cách lấy dữ liệu được chọn
             if (dataGridViewSuppliers.SelectedRows.Count > 0)
             {
-                var selectedSupplier = dataGridViewSuppliers.SelectedRows[0].DataBoundItem as Nhacungcap;
+                // Lấy dữ liệu từ row được chọn
+                string maNcc = dataGridViewSuppliers.SelectedRows[0].Cells["MaNcc"].Value.ToString();
+                var selectedSupplier = _suppliers.FirstOrDefault(s => s.MaNcc == maNcc);
+                
                 if (selectedSupplier != null)
                 {
-                    var editForm = new SupplierAddEditForm(_context, selectedSupplier);  // Truyền cả context và supplier
+                    var editForm = new SupplierAddEditForm(_context, selectedSupplier);
                     if (editForm.ShowDialog() == DialogResult.OK)
                     {
                         try
@@ -453,7 +457,10 @@ namespace AceCook
         {
             if (dataGridViewSuppliers.SelectedRows.Count > 0)
             {
-                var selectedSupplier = dataGridViewSuppliers.SelectedRows[0].DataBoundItem as Nhacungcap;
+                // Lấy dữ liệu từ row được chọn
+                string maNcc = dataGridViewSuppliers.SelectedRows[0].Cells["MaNcc"].Value.ToString();
+                var selectedSupplier = _suppliers.FirstOrDefault(s => s.MaNcc == maNcc);
+
                 if (selectedSupplier != null)
                 {
                     // Check if supplier has materials
