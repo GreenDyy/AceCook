@@ -37,6 +37,10 @@
             this.ClientSize = new System.Drawing.Size(1400, 800);
             this.Name = "OrderReportForm";
             this.Text = "Báo cáo Đơn hàng";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(249)))), ((int)(((byte)(250)))));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.ResumeLayout(false);
 
         }

@@ -37,11 +37,11 @@ namespace AceCook
         private Panel pnlSummary;
         private Panel pnlActions;
 
-        public OrderReportForm(AppDbContext context)
+        public OrderReportForm(OrderRepository orderRepository)
         {
-            _context = context;
-            _orderRepository = new OrderRepository(context);
-            _reportRepository = new ReportRepository(context);
+            _orderRepository = orderRepository;
+            _context = new AppDbContext();
+            _reportRepository = new ReportRepository(_context);
             InitializeComponent();
             SetupUI();
             LoadReportData();
