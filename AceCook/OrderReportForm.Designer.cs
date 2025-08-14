@@ -28,6 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            grbOrderStatus = new GroupBox();
+            grbTopCustomers = new GroupBox();
+            dgvOrderStatus = new DataGridView();
+            dgvTopCustomers = new DataGridView();
             panel2 = new Panel();
             button3 = new Button();
             button2 = new Button();
@@ -448,33 +452,32 @@
             panel3.Name = "panel3";
             panel3.Size = new Size(632, 453);
             panel3.TabIndex = 16;
-            // Khởi tạo controls mới
-            grbOrderStatus = new GroupBox();
-            grbTopCustomers = new GroupBox();
-            dgvOrderStatus = new DataGridView();
-            dgvTopCustomers = new DataGridView();
             // Cấu hình GroupBox thống kê trạng thái
             grbOrderStatus.Controls.Add(dgvOrderStatus);
             grbOrderStatus.Location = new Point(209, 457);
             grbOrderStatus.Size = new Size(632, 300);
             grbOrderStatus.Text = "Thống kê theo trạng thái";
+            grbOrderStatus.Name = "grbOrderStatus";
             // Cấu hình DataGridView thống kê trạng thái
             dgvOrderStatus.Dock = DockStyle.Fill;
             dgvOrderStatus.ReadOnly = true;
             dgvOrderStatus.AllowUserToAddRows = false;
             dgvOrderStatus.AllowUserToDeleteRows = false;
             dgvOrderStatus.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvOrderStatus.Name = "dgvOrderStatus";
             // Cấu hình GroupBox top khách hàng
             grbTopCustomers.Controls.Add(dgvTopCustomers);
             grbTopCustomers.Location = new Point(1087, 457);
             grbTopCustomers.Size = new Size(633, 300);
             grbTopCustomers.Text = "Top khách hàng";
+            grbTopCustomers.Name = "grbTopCustomers";
             // Cấu hình DataGridView top khách hàng
             dgvTopCustomers.Dock = DockStyle.Fill;
             dgvTopCustomers.ReadOnly = true;
             dgvTopCustomers.AllowUserToAddRows = false;
             dgvTopCustomers.AllowUserToDeleteRows = false;
             dgvTopCustomers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvTopCustomers.Name = "dgvTopCustomers";
             // Thêm controls vào form
             Controls.Add(grbOrderStatus);
             Controls.Add(grbTopCustomers);
