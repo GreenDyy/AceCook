@@ -62,6 +62,51 @@ namespace AceCook
                 BorderStyle = BorderStyle.FixedSingle
             };
                       
+            //             var lblTotalSuppliersTitle = new Label
+            // {
+            //     Text = "Tổng số nhà cung cấp:",
+            //     Font = new Font("Segoe UI", 10, FontStyle.Bold),
+            //     AutoSize = true,
+            //     Location = new Point(20, 15),
+            //     TextAlign = ContentAlignment.MiddleLeft
+            // };
+
+            // lblTotalSuppliers = new Label
+            // {
+            //     Text = "0",
+            //     Font = new Font("Segoe UI", 12, FontStyle.Bold),
+            //     ForeColor = Color.FromArgb(52, 152, 219),
+            //     Size = new Size(50, 25),
+            //     Location = new Point(200, 15),
+            //     TextAlign = ContentAlignment.MiddleLeft,
+            //     Padding = new Padding(5, 0, 0, 0)
+            // };
+
+            // var lblActiveSuppliersTitle = new Label
+            // {
+            //     Text = "Nhà cung cấp đang hoạt động:",
+            //     Font = new Font("Segoe UI", 10, FontStyle.Bold),
+            //     AutoSize = true,
+            //     Location = new Point(350, 15),  // Tăng khoảng cách với nhóm label đầu tiên
+            //     TextAlign = ContentAlignment.MiddleLeft
+            // };
+
+            // var lblActiveSuppliers = new Label
+            // {
+            //     Text = "0",
+            //     Font = new Font("Segoe UI", 12, FontStyle.Bold),
+            //     ForeColor = Color.FromArgb(46, 204, 113),
+            //     Size = new Size(50, 25),
+            //     Location = new Point(580, 15),  // Điều chỉnh theo vị trí mới của lblActiveSuppliersTitle
+            //     TextAlign = ContentAlignment.MiddleLeft,
+            //     Padding = new Padding(5, 0, 0, 0)
+            // };
+          
+            // pnlSummary.Controls.AddRange(new Control[] { 
+            //     lblTotalSuppliersTitle, lblTotalSuppliers,
+            //     lblActiveSuppliersTitle, lblActiveSuppliers
+            // });
+
                         var lblTotalSuppliersTitle = new Label
             {
                 Text = "Tổng số nhà cung cấp:",
@@ -87,7 +132,7 @@ namespace AceCook
                 Text = "Nhà cung cấp đang hoạt động:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 AutoSize = true,
-                Location = new Point(350, 15),  // Tăng khoảng cách với nhóm label đầu tiên
+                Location = new Point(350, 15),
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
@@ -97,14 +142,20 @@ namespace AceCook
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 ForeColor = Color.FromArgb(46, 204, 113),
                 Size = new Size(50, 25),
-                Location = new Point(580, 15),  // Điều chỉnh theo vị trí mới của lblActiveSuppliersTitle
+                Location = new Point(580, 15),
                 TextAlign = ContentAlignment.MiddleLeft,
                 Padding = new Padding(5, 0, 0, 0)
             };
-          
+
+            // Xóa tất cả controls hiện có trong panel
+            pnlSummary.Controls.Clear();
+            
+            // Thêm lại các controls theo thứ tự
             pnlSummary.Controls.AddRange(new Control[] { 
-                lblTotalSuppliersTitle, lblTotalSuppliers,
-                lblActiveSuppliersTitle, lblActiveSuppliers
+                lblTotalSuppliersTitle,
+                lblTotalSuppliers,
+                lblActiveSuppliersTitle,
+                lblActiveSuppliers
             });
 
                     // Search Panel
