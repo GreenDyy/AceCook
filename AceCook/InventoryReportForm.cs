@@ -1,5 +1,4 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 using AceCook.Models;
 using AceCook.Repositories;
@@ -22,6 +21,22 @@ namespace AceCook
         private Label label3;
         private Label label2;
         private Label label1;
+        private GroupBox groupBox5;
+        private PictureBox pictureBox3;
+        private Label label12;
+        private Label label11;
+        private GroupBox groupBox4;
+        private PictureBox pictureBox2;
+        private Label label10;
+        private Label label9;
+        private GroupBox groupBox3;
+        private PictureBox pictureBox5;
+        private Label label8;
+        private Label label7;
+        private GroupBox groupBox2;
+        private Label label6;
+        private Label label5;
+        private PictureBox pictureBox1;
         private Button btnGenerate;
         private DataGridView dgvInventory;
 
@@ -47,8 +62,34 @@ namespace AceCook
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
+            groupBox5 = new GroupBox();
+            pictureBox3 = new PictureBox();
+            label12 = new Label();
+            label11 = new Label();
+            groupBox4 = new GroupBox();
+            pictureBox2 = new PictureBox();
+            label10 = new Label();
+            label9 = new Label();
+            groupBox3 = new GroupBox();
+            pictureBox5 = new PictureBox();
+            label8 = new Label();
+            label7 = new Label();
+            groupBox2 = new GroupBox();
+            label6 = new Label();
+            label5 = new Label();
+            pictureBox1 = new PictureBox();
+            dgvInventory = new DataGridView();
             panel2.SuspendLayout();
             groupBox1.SuspendLayout();
+            groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
+            groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox5).BeginInit();
+            groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvInventory).BeginInit();
             SuspendLayout();
             // 
             // lblFromDate
@@ -184,19 +225,168 @@ namespace AceCook
             label1.TabIndex = 0;
             label1.Text = "Báo cáo Tồn kho";
             // 
+            // groupBox5
+            // 
+            groupBox5.Controls.Add(pictureBox3);
+            groupBox5.Controls.Add(label12);
+            groupBox5.Controls.Add(label11);
+            groupBox5.Location = new Point(1244, 226);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(233, 125);
+            groupBox5.TabIndex = 6;
+            groupBox5.TabStop = false;
+            groupBox5.Enter += groupBox5_Enter;
+            // 
+            // pictureBox3
+            // 
+            pictureBox3.Location = new Point(17, 37);
+            pictureBox3.Name = "pictureBox3";
+            pictureBox3.Size = new Size(50, 49);
+            pictureBox3.TabIndex = 7;
+            pictureBox3.TabStop = false;
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Location = new Point(84, 67);
+            label12.Name = "label12";
+            label12.Size = new Size(130, 20);
+            label12.TabIndex = 8;
+            label12.Text = "Ngày có giao dịch";
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label11.Location = new Point(95, 37);
+            label11.Name = "label11";
+            label11.Size = new Size(24, 28);
+            label11.TabIndex = 7;
+            label11.Text = "1";
+            // 
+            // groupBox4
+            // 
+            groupBox4.Controls.Add(pictureBox2);
+            groupBox4.Controls.Add(label10);
+            groupBox4.Controls.Add(label9);
+            groupBox4.Location = new Point(863, 226);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new Size(234, 125);
+            groupBox4.TabIndex = 8;
+            groupBox4.TabStop = false;
+            // 
+            // pictureBox2
+            // 
+            pictureBox2.Location = new Point(20, 38);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new Size(50, 49);
+            pictureBox2.TabIndex = 5;
+            pictureBox2.TabStop = false;
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(91, 66);
+            label10.Name = "label10";
+            label10.Size = new Size(140, 20);
+            label10.TabIndex = 6;
+            label10.Text = "Trung bình/hoá đơn";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label9.Location = new Point(91, 38);
+            label9.Name = "label9";
+            label9.Size = new Size(108, 28);
+            label9.TabIndex = 5;
+            label9.Text = "960,000 đ";
+            // 
+            // groupBox3
+            // 
+            groupBox3.Controls.Add(pictureBox5);
+            groupBox3.Controls.Add(label8);
+            groupBox3.Controls.Add(label7);
+            groupBox3.Location = new Point(468, 226);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(240, 125);
+            groupBox3.TabIndex = 7;
+            groupBox3.TabStop = false;
+            // 
+            // pictureBox5
+            // 
+            pictureBox5.Location = new Point(19, 38);
+            pictureBox5.Name = "pictureBox5";
+            pictureBox5.Size = new Size(50, 49);
+            pictureBox5.TabIndex = 3;
+            pictureBox5.TabStop = false;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(96, 67);
+            label8.Name = "label8";
+            label8.Size = new Size(102, 20);
+            label8.TabIndex = 4;
+            label8.Text = "Tổng hoá đơn";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label7.Location = new Point(96, 38);
+            label7.Name = "label7";
+            label7.Size = new Size(24, 28);
+            label7.TabIndex = 3;
+            label7.Text = "1";
+            // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(label6);
+            groupBox2.Controls.Add(label5);
+            groupBox2.Controls.Add(pictureBox1);
+            groupBox2.Location = new Point(76, 226);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(238, 125);
+            groupBox2.TabIndex = 5;
+            groupBox2.TabStop = false;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(87, 67);
+            label6.Name = "label6";
+            label6.Size = new Size(114, 20);
+            label6.TabIndex = 2;
+            label6.Text = "Tổng doanh thu";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label5.Location = new Point(87, 38);
+            label5.Name = "label5";
+            label5.Size = new Size(108, 28);
+            label5.TabIndex = 1;
+            label5.Text = "960,000 đ";
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Location = new Point(19, 38);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(50, 49);
+            pictureBox1.TabIndex = 0;
+            pictureBox1.TabStop = false;
+            // 
             // dgvInventory
             // 
-            dgvInventory = new DataGridView();
-            ((System.ComponentModel.ISupportInitialize)(dgvInventory)).BeginInit();
-            dgvInventory.Location = new Point(12, 200); // Below the panel2
+            dgvInventory.Location = new Point(12, 200);
             dgvInventory.Size = new Size(1563, 750);
             dgvInventory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvInventory.AllowUserToAddRows = false;
             dgvInventory.AllowUserToDeleteRows = false;
             dgvInventory.ReadOnly = true;
             dgvInventory.BackgroundColor = Color.White;
-
-            // Add columns
             dgvInventory.Columns.AddRange(new DataGridViewColumn[] {
                 new DataGridViewTextBoxColumn 
                 { 
@@ -241,16 +431,18 @@ namespace AceCook
                     DataPropertyName = "ChiTietTheoKho"
                 }
             });
-
-            // Add DataGridView to form controls
-            Controls.Add(dgvInventory);
-
+            // 
             // InventoryReportForm
             // 
             ClientSize = new Size(1587, 1003);
+            Controls.Add(dgvInventory);
+            Controls.Add(groupBox5);
             Controls.Add(panel2);
+            Controls.Add(groupBox4);
             Controls.Add(lblFromDate);
+            Controls.Add(groupBox3);
             Controls.Add(lblToDate);
+            Controls.Add(groupBox2);
             Controls.Add(btnGenerate);
             Name = "InventoryReportForm";
             StartPosition = FormStartPosition.CenterScreen;
@@ -259,7 +451,19 @@ namespace AceCook
             panel2.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(dgvInventory)).EndInit();
+            groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
+            groupBox4.ResumeLayout(false);
+            groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox5).EndInit();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvInventory).EndInit();
             ResumeLayout(false);
         }
 
@@ -290,9 +494,10 @@ namespace AceCook
             }
         }
 
-        private void Button1_Click(object sender, EventArgs e)
+        //groupbox5
+        private void groupBox5_Enter(object sender, EventArgs e)
         {
-            BtnGenerate_Click(sender, e); // Reuse the same logic as Generate button
+
         }
     }
 }
