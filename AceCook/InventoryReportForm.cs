@@ -17,24 +17,24 @@ namespace AceCook
         private DateTimePicker dtpToDate;
         private ComboBox cboWarehouse;
         private TextBox txtSearch;
-        private Button btnGenerate;
-        private Button btnExport;
-        private Button btnPrint;
-        private Button btnRefresh;
-        private Button btnClearFilter;
-        private Label lblTitle;
-        private Label lblTotalValue;
-        private Label lblTotalItems;
-        private Label lblOutOfStock;
-        private Label lblInStock;
-        private List<ReportRepository.InventoryReportItem> _inventoryData;
+        private Button btnGenerateReport;
+        private Button btnExportExcel;
+        private Button btnPrintReport;
+        private Button btnRefreshData;
+        private Button btnClearFilters;
+        private Label lblFormTitle;
+        private Label lblTotalValueAmount;
+        private Label lblTotalItemsCount;
+        private Label lblOutOfStockCount;
+        private Label lblInStockCount;
+        private List<ReportRepository.InventoryReportItem> _inventoryReportData;
 
         public InventoryReportForm(AppDbContext context)
         {
             _reportRepository = new ReportRepository(context);
             InitializeComponent();
-            SetupUI();
-            _ = LoadDataAsync();
+            SetupUserInterface();
+            _ = LoadInitialDataAsync();
         }
 
         private void InitializeComponent()
@@ -51,10 +51,10 @@ namespace AceCook
             this.ResumeLayout(false);
         }
 
-        private void SetupUI()
+        private void SetupUserInterface()
         {
             // Title
-            lblTitle = new Label
+            lblFormTitle = new Label
             {
                 Text = "BÁO CÁO TỒN KHO",
                 Font = new Font("Segoe UI", 20, FontStyle.Bold),
@@ -142,7 +142,7 @@ namespace AceCook
                 Size = new Size(150, 25),
                 PlaceholderText = "Mã SP, tên SP..."
             };
-            txtSearch.TextChanged += TxtSearch_TextChanged;
+            txtSearch.TextChanged += OnSearchTextChanged;
 
             var lblWarehouse = new Label
             {
@@ -159,9 +159,9 @@ namespace AceCook
                 Size = new Size(150, 25),
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            cboWarehouse.SelectedIndexChanged += CboWarehouse_SelectedIndexChanged;
+            cboWarehouse.SelectedIndexChanged += OnWarehouseSelectionChanged;
 
-            btnClearFilter = new Button
+            btnClearFilters = new Button
             {
                 Text = "🔄 Xóa bộ lọc",
                 Font = new Font("Segoe UI", 9),
@@ -171,29 +171,29 @@ namespace AceCook
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat
             };
-            btnClearFilter.FlatAppearance.BorderSize = 0;
-            btnClearFilter.Click += BtnClearFilter_Click;
+            btnClearFilters.FlatAppearance.BorderSize = 0;
+            btnClearFilters.Click += OnClearFiltersClick;
 
-            grpSearch.Controls.AddRange(new Control[] { lblSearch, txtSearch, lblWarehouse, cboWarehouse, btnClearFilter });
+            grpSearch.Controls.AddRange(new Control[] { lblSearch, txtSearch, lblWarehouse, cboWarehouse, btnClearFilters });
 
             // Action Buttons
-            btnGenerate = CreateActionButton("📊 Tạo báo cáo", Color.FromArgb(46, 204, 113));
-            btnGenerate.Location = new Point(800, 25);
-            btnGenerate.Click += BtnGenerate_Click;
+            btnGenerateReport = CreateStyledActionButton("📊 Tạo báo cáo", Color.FromArgb(46, 204, 113));
+            btnGenerateReport.Location = new Point(800, 25);
+            btnGenerateReport.Click += OnGenerateReportClick;
 
-            btnExport = CreateActionButton("📤 Xuất Excel", Color.FromArgb(52, 152, 219));
-            btnExport.Location = new Point(800, 60);
-            btnExport.Click += BtnExport_Click;
+            btnExportExcel = CreateStyledActionButton("📤 Xuất Excel", Color.FromArgb(52, 152, 219));
+            btnExportExcel.Location = new Point(800, 60);
+            btnExportExcel.Click += OnExportExcelClick;
 
-            btnPrint = CreateActionButton("🖨️ In báo cáo", Color.FromArgb(155, 89, 182));
-            btnPrint.Location = new Point(920, 25);
-            btnPrint.Click += BtnPrint_Click;
+            btnPrintReport = CreateStyledActionButton("🖨️ In báo cáo", Color.FromArgb(155, 89, 182));
+            btnPrintReport.Location = new Point(920, 25);
+            btnPrintReport.Click += OnPrintReportClick;
 
-            btnRefresh = CreateActionButton("🔄 Làm mới", Color.FromArgb(241, 196, 15));
-            btnRefresh.Location = new Point(920, 60);
-            btnRefresh.Click += BtnRefresh_Click;
+            btnRefreshData = CreateStyledActionButton("🔄 Làm mới", Color.FromArgb(241, 196, 15));
+            btnRefreshData.Location = new Point(920, 60);
+            btnRefreshData.Click += OnRefreshDataClick;
 
-            pnlFilter.Controls.AddRange(new Control[] { grpDateRange, grpSearch, btnGenerate, btnExport, btnPrint, btnRefresh });
+            pnlFilter.Controls.AddRange(new Control[] { grpDateRange, grpSearch, btnGenerateReport, btnExportExcel, btnPrintReport, btnRefreshData });
 
             // Statistics Panel
             var pnlStats = new FlowLayoutPanel
@@ -205,17 +205,17 @@ namespace AceCook
                 BackColor = Color.Transparent
             };
 
-            var statsCard1 = CreateStatsCard("Tổng giá trị tồn kho", "0 VNĐ", Color.FromArgb(46, 204, 113));
-            lblTotalValue = statsCard1.Controls.OfType<Label>().FirstOrDefault(l => l.Font.Bold);
+            var statsCard1 = CreateStatisticsCard("Tổng giá trị tồn kho", "0 VNĐ", Color.FromArgb(46, 204, 113));
+            lblTotalValueAmount = statsCard1.Controls.OfType<Label>().FirstOrDefault(l => l.Font.Bold);
 
-            var statsCard2 = CreateStatsCard("Tổng sản phẩm", "0", Color.FromArgb(52, 152, 219));
-            lblTotalItems = statsCard2.Controls.OfType<Label>().FirstOrDefault(l => l.Font.Bold);
+            var statsCard2 = CreateStatisticsCard("Tổng sản phẩm", "0", Color.FromArgb(52, 152, 219));
+            lblTotalItemsCount = statsCard2.Controls.OfType<Label>().FirstOrDefault(l => l.Font.Bold);
 
-            var statsCard3 = CreateStatsCard("Còn hàng", "0", Color.FromArgb(241, 196, 15));
-            lblInStock = statsCard3.Controls.OfType<Label>().FirstOrDefault(l => l.Font.Bold);
+            var statsCard3 = CreateStatisticsCard("Còn hàng", "0", Color.FromArgb(241, 196, 15));
+            lblInStockCount = statsCard3.Controls.OfType<Label>().FirstOrDefault(l => l.Font.Bold);
 
-            var statsCard4 = CreateStatsCard("Hết hàng", "0", Color.FromArgb(231, 76, 60));
-            lblOutOfStock = statsCard4.Controls.OfType<Label>().FirstOrDefault(l => l.Font.Bold);
+            var statsCard4 = CreateStatisticsCard("Hết hàng", "0", Color.FromArgb(231, 76, 60));
+            lblOutOfStockCount = statsCard4.Controls.OfType<Label>().FirstOrDefault(l => l.Font.Bold);
 
             pnlStats.Controls.AddRange(new Control[] { statsCard1, statsCard2, statsCard3, statsCard4 });
 
@@ -248,10 +248,10 @@ namespace AceCook
             dataGridViewInventory.DefaultCellStyle.SelectionForeColor = Color.White;
 
             // Add all to form
-            this.Controls.AddRange(new Control[] { dataGridViewInventory, pnlStats, pnlFilter, lblTitle });
+            this.Controls.AddRange(new Control[] { dataGridViewInventory, pnlStats, pnlFilter, lblFormTitle });
         }
 
-        private Button CreateActionButton(string text, Color backColor)
+        private Button CreateStyledActionButton(string text, Color backColor)
         {
             var btn = new Button
             {
@@ -268,7 +268,7 @@ namespace AceCook
             return btn;
         }
 
-        private Panel CreateStatsCard(string title, string value, Color accentColor)
+        private Panel CreateStatisticsCard(string title, string value, Color accentColor)
         {
             var card = new Panel
             {
@@ -309,12 +309,12 @@ namespace AceCook
             return card;
         }
 
-        private async Task LoadDataAsync()
+        private async Task LoadInitialDataAsync()
         {
             try
             {
-                await LoadWarehousesAsync();
-                await GenerateReportAsync();
+                await LoadWarehouseOptionsAsync();
+                await GenerateInventoryReportAsync();
             }
             catch (Exception ex)
             {
@@ -323,12 +323,10 @@ namespace AceCook
             }
         }
 
-        private async Task LoadWarehousesAsync()
+        private async Task LoadWarehouseOptionsAsync()
         {
             await Task.Run(() =>
             {
-                // Load warehouses from database
-                // For now, add default options
                 this.Invoke((MethodInvoker)delegate
                 {
                     cboWarehouse.Items.Clear();
@@ -340,7 +338,7 @@ namespace AceCook
             });
         }
 
-        private async Task GenerateReportAsync()
+        private async Task GenerateInventoryReportAsync()
         {
             try
             {
@@ -349,12 +347,12 @@ namespace AceCook
 
                 await Task.Run(() =>
                 {
-                    _inventoryData = _reportRepository.GetInventoryReport(fromDate, toDate);
+                    _inventoryReportData = _reportRepository.GetInventoryReport(fromDate, toDate);
                     
                     this.Invoke((MethodInvoker)delegate
                     {
-                        RefreshDataGridView(_inventoryData);
-                        UpdateStatistics(_inventoryData);
+                        RefreshInventoryDataGrid(_inventoryReportData);
+                        UpdateReportStatistics(_inventoryReportData);
                     });
                 });
             }
@@ -365,7 +363,7 @@ namespace AceCook
             }
         }
 
-        private void RefreshDataGridView(List<ReportRepository.InventoryReportItem> data)
+        private void RefreshInventoryDataGrid(List<ReportRepository.InventoryReportItem> data)
         {
             if (data == null) return;
 
@@ -455,7 +453,7 @@ namespace AceCook
             dataGridViewInventory.Columns["GiaTri"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
 
-        private void UpdateStatistics(List<ReportRepository.InventoryReportItem> data)
+        private void UpdateReportStatistics(List<ReportRepository.InventoryReportItem> data)
         {
             if (data == null || !data.Any()) return;
 
@@ -464,17 +462,17 @@ namespace AceCook
             var inStock = data.Count(d => d.TonKho > 0);
             var outOfStock = data.Count(d => d.TonKho == 0);
 
-            lblTotalValue.Text = totalValue.ToString("N0") + " VNĐ";
-            lblTotalItems.Text = totalItems.ToString();
-            lblInStock.Text = inStock.ToString();
-            lblOutOfStock.Text = outOfStock.ToString();
+            lblTotalValueAmount.Text = totalValue.ToString("N0") + " VNĐ";
+            lblTotalItemsCount.Text = totalItems.ToString();
+            lblInStockCount.Text = inStock.ToString();
+            lblOutOfStockCount.Text = outOfStock.ToString();
         }
 
-        private void ApplyFilters()
+        private void ApplyCurrentFilters()
         {
-            if (_inventoryData == null) return;
+            if (_inventoryReportData == null) return;
 
-            var filteredData = _inventoryData.AsEnumerable();
+            var filteredData = _inventoryReportData.AsEnumerable();
 
             // Apply search filter
             var searchText = txtSearch.Text.Trim().ToLower();
@@ -495,52 +493,52 @@ namespace AceCook
             }
 
             var result = filteredData.ToList();
-            RefreshDataGridView(result);
-            UpdateStatistics(result);
+            RefreshInventoryDataGrid(result);
+            UpdateReportStatistics(result);
         }
 
         // Event Handlers
-        private async void BtnGenerate_Click(object sender, EventArgs e)
+        private async void OnGenerateReportClick(object sender, EventArgs e)
         {
-            await GenerateReportAsync();
+            await GenerateInventoryReportAsync();
         }
 
-        private void BtnExport_Click(object sender, EventArgs e)
+        private void OnExportExcelClick(object sender, EventArgs e)
         {
             MessageBox.Show("Chức năng xuất Excel sẽ được phát triển trong phiên bản tiếp theo.", 
                 "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void BtnPrint_Click(object sender, EventArgs e)
+        private void OnPrintReportClick(object sender, EventArgs e)
         {
             MessageBox.Show("Chức năng in báo cáo sẽ được phát triển trong phiên bản tiếp theo.", 
                 "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private async void BtnRefresh_Click(object sender, EventArgs e)
+        private async void OnRefreshDataClick(object sender, EventArgs e)
         {
-            await LoadDataAsync();
+            await LoadInitialDataAsync();
         }
 
-        private void BtnClearFilter_Click(object sender, EventArgs e)
+        private void OnClearFiltersClick(object sender, EventArgs e)
         {
             txtSearch.Clear();
             cboWarehouse.SelectedIndex = 0;
-            if (_inventoryData != null)
+            if (_inventoryReportData != null)
             {
-                RefreshDataGridView(_inventoryData);
-                UpdateStatistics(_inventoryData);
+                RefreshInventoryDataGrid(_inventoryReportData);
+                UpdateReportStatistics(_inventoryReportData);
             }
         }
 
-        private void TxtSearch_TextChanged(object sender, EventArgs e)
+        private void OnSearchTextChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+            ApplyCurrentFilters();
         }
 
-        private void CboWarehouse_SelectedIndexChanged(object sender, EventArgs e)
+        private void OnWarehouseSelectionChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+            ApplyCurrentFilters();
         }
     }
 }
