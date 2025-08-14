@@ -135,7 +135,7 @@ namespace AceCook
             btnClearFilter = new Button
             {
                 Text = "🔄 Xóa bộ lọc",
-                Size = new Size(100, 35),
+                Size = new Size(200, 35),
                 Location = new Point(380, 12),
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(149, 165, 166),
@@ -149,7 +149,7 @@ namespace AceCook
             btnRefresh = new Button
             {
                 Text = "🔄 Làm mới",
-                Size = new Size(100, 35),
+                Size = new Size(200, 35),
                 Location = new Point(500, 12),
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(52, 152, 219),
