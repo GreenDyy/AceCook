@@ -224,11 +224,11 @@ namespace AceCook
                 BackColor = Color.Transparent
             };
 
-            btnAdd = new Button
+                     btnAdd = new Button
             {
                 Text = "➕ Thêm nhà cung cấp mới",
-                Size = new Size(280, 35),
-                Location = new Point(0, 0),
+                Size = new Size(200, 40),  // Điều chỉnh kích thước phù hợp hơn
+                Location = new Point(20, 10),  // Thêm padding bên trái
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(46, 204, 113),
                 ForeColor = Color.White,
@@ -240,26 +240,28 @@ namespace AceCook
 
             btnEdit = new Button
             {
-                Text = "Chỉnh sửa",
-                Size = new Size(100, 35),
-                Location = new Point(420, 10),
+                Text = "✏️ Chỉnh sửa",  // Thêm icon
+                Size = new Size(120, 40),  // Tăng width để chứa icon
+                Location = new Point(240, 10),  // Điều chỉnh vị trí theo nút Add
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(241, 196, 15),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand  // Thêm con trỏ tay
             };
             btnEdit.FlatAppearance.BorderSize = 0;
             btnEdit.Click += BtnEdit_Click;
 
             btnDelete = new Button
             {
-                Text = "Xóa",
-                Size = new Size(100, 35),
-                Location = new Point(560, 10),
+                Text = "🗑️ Xóa",  // Thêm icon
+                Size = new Size(100, 40),
+                Location = new Point(380, 10),  // Điều chỉnh vị trí theo nút Edit
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(231, 76, 60),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand  // Thêm con trỏ tay
             };
             btnDelete.FlatAppearance.BorderSize = 0;
             btnDelete.Click += BtnDelete_Click;
