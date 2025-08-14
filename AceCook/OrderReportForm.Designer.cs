@@ -144,6 +144,7 @@
             button1.TabIndex = 4;
             button1.Text = "Lọc";
             button1.UseVisualStyleBackColor = false;
+            button1.Click += new EventHandler(button1_Click);
             // 
             // dateTimePicker2
             // 
@@ -454,8 +455,8 @@
             panel3.TabIndex = 16;
             // Cấu hình GroupBox thống kê trạng thái
             grbOrderStatus.Controls.Add(dgvOrderStatus);
-            grbOrderStatus.Location = new Point(209, 457);
-            grbOrderStatus.Size = new Size(632, 300);
+            grbOrderStatus.Location = new Point(12, 457);
+            grbOrderStatus.Size = new Size(900, 400);
             grbOrderStatus.Text = "Thống kê theo trạng thái";
             grbOrderStatus.Name = "grbOrderStatus";
             // Cấu hình DataGridView thống kê trạng thái
@@ -467,8 +468,8 @@
             dgvOrderStatus.Name = "dgvOrderStatus";
             // Cấu hình GroupBox top khách hàng
             grbTopCustomers.Controls.Add(dgvTopCustomers);
-            grbTopCustomers.Location = new Point(1087, 457);
-            grbTopCustomers.Size = new Size(633, 300);
+            grbTopCustomers.Location = new Point(927, 457);
+            grbTopCustomers.Size = new Size(900, 400);
             grbTopCustomers.Text = "Top khách hàng";
             grbTopCustomers.Name = "grbTopCustomers";
             // Cấu hình DataGridView top khách hàng
@@ -486,7 +487,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1839, 890);
+            ClientSize = new Size(1839, 900);
             Controls.Add(groupBox6);
             Controls.Add(panel3);
             Controls.Add(groupBox7);
