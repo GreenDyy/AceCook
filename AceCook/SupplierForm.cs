@@ -169,10 +169,10 @@ namespace AceCook
 
             btnAdd = new Button
             {
-                Text = "➕ Thêm mới",
-                Size = new Size(120, 40),
-                Location = new Point(0, 10),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Text = "➕ Thêm nhà cung cấp mới",
+                Size = new Size(250, 60),
+                Location = new Point(0, 0),
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
                 BackColor = Color.FromArgb(46, 204, 113),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
@@ -379,28 +379,30 @@ namespace AceCook
 
         private async void BtnAdd_Click(object sender, EventArgs e)
         {
-            var addForm = new SupplierAddEditForm();
-            if (addForm.ShowDialog() == DialogResult.OK)
+            using (var addForm = new SupplierAddEditForm())
             {
-                try
+                if (addForm.ShowDialog() == DialogResult.OK)
                 {
-                    bool success = await _supplierRepository.AddSupplierAsync(addForm.Supplier);
-                    if (success)
+                    try
                     {
-                        MessageBox.Show("Thêm nhà cung cấp thành công!", "Thông báo", 
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        await LoadDataAsync();
+                        bool success = await _supplierRepository.AddSupplierAsync(addForm.Supplier);
+                        if (success)
+                        {
+                            MessageBox.Show("Thêm nhà cung cấp thành công!", "Thông báo", 
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            await LoadDataAsync();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Lỗi khi thêm nhà cung cấp!", "Lỗi", 
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        MessageBox.Show("Lỗi khi thêm nhà cung cấp!", "Lỗi", 
+                        MessageBox.Show($"Lỗi khi thêm nhà cung cấp: {ex.Message}", "Lỗi", 
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Lỗi khi thêm nhà cung cấp: {ex.Message}", "Lỗi", 
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
