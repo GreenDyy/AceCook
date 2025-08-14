@@ -227,7 +227,7 @@ namespace AceCook
             btnAdd = new Button
             {
                 Text = "➕ Thêm nhà cung cấp mới",
-                Size = new Size(250, 60),
+                Size = new Size(280, 60),
                 Location = new Point(0, 0),
                 Font = new Font("Segoe UI", 11, FontStyle.Bold),
                 BackColor = Color.FromArgb(46, 204, 113),
