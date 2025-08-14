@@ -413,9 +413,17 @@ namespace AceCook
                             bool success = await _supplierRepository.AddSupplierAsync(newSupplier);
                             if (success)
                             {
+                                // Thêm nhà cung cấp mới vào danh sách local
+                                _suppliers.Add(newSupplier);
+                                
+                                // Cập nhật lại DataGridView
+                                await LoadDataAsync();
+                                
                                 MessageBox.Show("Thêm nhà cung cấp thành công!", "Thông báo", 
                                     MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                await LoadDataAsync();
+                                
+                                // Thoát khỏi phương thức sau khi thành công
+                                return;
                             }
                             else
                             {
