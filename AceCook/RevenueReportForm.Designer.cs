@@ -19,6 +19,7 @@
             }
             base.Dispose(disposing);
         }
+        //cmt test
 
         #region Windows Form Designer generated code
 
@@ -65,6 +66,7 @@
             pictureBox6 = new PictureBox();
             label15 = new Label();
             label16 = new Label();
+            panel1 = new Panel();
             panel2.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -89,14 +91,14 @@
             panel2.Controls.Add(groupBox1);
             panel2.Controls.Add(label2);
             panel2.Controls.Add(label1);
-            panel2.Location = new Point(241, 12);
+            panel2.Location = new Point(12, 12);
             panel2.Name = "panel2";
-            panel2.Size = new Size(1172, 175);
+            panel2.Size = new Size(1428, 175);
             panel2.TabIndex = 1;
             // 
             // button3
             // 
-            button3.Location = new Point(985, 100);
+            button3.Location = new Point(1168, 98);
             button3.Name = "button3";
             button3.Size = new Size(122, 29);
             button3.TabIndex = 4;
@@ -105,7 +107,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(985, 37);
+            button2.Location = new Point(1168, 35);
             button2.Name = "button2";
             button2.Size = new Size(122, 29);
             button2.TabIndex = 3;
@@ -121,7 +123,7 @@
             groupBox1.Controls.Add(label3);
             groupBox1.Location = new Point(392, 12);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(515, 135);
+            groupBox1.Size = new Size(685, 135);
             groupBox1.TabIndex = 2;
             groupBox1.TabStop = false;
             // 
@@ -129,9 +131,9 @@
             // 
             button1.BackColor = Color.Blue;
             button1.ForeColor = Color.White;
-            button1.Location = new Point(395, 56);
+            button1.Location = new Point(558, 37);
             button1.Name = "button1";
-            button1.Size = new Size(94, 29);
+            button1.Size = new Size(94, 53);
             button1.TabIndex = 4;
             button1.Text = "Lọc";
             button1.UseVisualStyleBackColor = false;
@@ -139,18 +141,19 @@
             // 
             // dateTimePicker2
             // 
-            dateTimePicker2.Location = new Point(94, 81);
+            dateTimePicker2.Location = new Point(166, 81);
             dateTimePicker2.Name = "dateTimePicker2";
-            dateTimePicker2.Size = new Size(250, 27);
+            dateTimePicker2.Size = new Size(317, 27);
             dateTimePicker2.TabIndex = 3;
             dateTimePicker2.ValueChanged += dateTimePicker2_ValueChanged;
             // 
             // dateTimePicker1
             // 
-            dateTimePicker1.Location = new Point(94, 25);
+            dateTimePicker1.Location = new Point(166, 26);
             dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(250, 27);
+            dateTimePicker1.Size = new Size(317, 27);
             dateTimePicker1.TabIndex = 2;
+            dateTimePicker1.ValueChanged += dateTimePicker1_ValueChanged;
             // 
             // label4
             // 
@@ -202,7 +205,7 @@
             groupBox2.Controls.Add(label6);
             groupBox2.Controls.Add(label5);
             groupBox2.Controls.Add(pictureBox1);
-            groupBox2.Location = new Point(241, 206);
+            groupBox2.Location = new Point(12, 206);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(238, 125);
             groupBox2.TabIndex = 2;
@@ -241,11 +244,12 @@
             groupBox3.Controls.Add(pictureBox5);
             groupBox3.Controls.Add(label8);
             groupBox3.Controls.Add(label7);
-            groupBox3.Location = new Point(555, 206);
+            groupBox3.Location = new Point(404, 206);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(240, 125);
             groupBox3.TabIndex = 3;
             groupBox3.TabStop = false;
+            groupBox3.Enter += groupBox3_Enter;
             // 
             // pictureBox5
             // 
@@ -279,7 +283,7 @@
             groupBox4.Controls.Add(pictureBox2);
             groupBox4.Controls.Add(label10);
             groupBox4.Controls.Add(label9);
-            groupBox4.Location = new Point(869, 206);
+            groupBox4.Location = new Point(799, 206);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(234, 125);
             groupBox4.TabIndex = 4;
@@ -355,14 +359,14 @@
             // 
             // panel3
             // 
-            panel3.Location = new Point(241, 360);
+            panel3.Location = new Point(12, 450);
             panel3.Name = "panel3";
-            panel3.Size = new Size(554, 381);
+            panel3.Size = new Size(632, 453);
             panel3.TabIndex = 5;
             // 
             // panel4
             // 
-            panel4.Location = new Point(869, 441);
+            panel4.Location = new Point(0, 93);
             panel4.Name = "panel4";
             panel4.Size = new Size(544, 300);
             panel4.TabIndex = 6;
@@ -372,9 +376,9 @@
             groupBox6.Controls.Add(pictureBox4);
             groupBox6.Controls.Add(label14);
             groupBox6.Controls.Add(label13);
-            groupBox6.Location = new Point(241, 360);
+            groupBox6.Location = new Point(12, 347);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(554, 95);
+            groupBox6.Size = new Size(632, 95);
             groupBox6.TabIndex = 0;
             groupBox6.TabStop = false;
             // 
@@ -411,10 +415,11 @@
             // 
             groupBox7.Controls.Add(pictureBox6);
             groupBox7.Controls.Add(label15);
+            groupBox7.Controls.Add(panel4);
             groupBox7.Controls.Add(label16);
-            groupBox7.Location = new Point(869, 360);
+            groupBox7.Location = new Point(780, 347);
             groupBox7.Name = "groupBox7";
-            groupBox7.Size = new Size(544, 93);
+            groupBox7.Size = new Size(633, 93);
             groupBox7.TabIndex = 3;
             groupBox7.TabStop = false;
             // 
@@ -446,14 +451,21 @@
             label16.TabIndex = 0;
             label16.Text = "Doanh thu theo tháng";
             // 
+            // panel1
+            // 
+            panel1.Location = new Point(780, 450);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(633, 453);
+            panel1.TabIndex = 6;
+            // 
             // RevenueReportForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1452, 803);
+            ClientSize = new Size(1452, 926);
             Controls.Add(groupBox7);
+            Controls.Add(panel1);
             Controls.Add(groupBox6);
-            Controls.Add(panel4);
             Controls.Add(panel3);
             Controls.Add(groupBox5);
             Controls.Add(groupBox4);
@@ -526,5 +538,6 @@
         private PictureBox pictureBox6;
         private Label label15;
         private Label label16;
+        private Panel panel1;
     }
 }

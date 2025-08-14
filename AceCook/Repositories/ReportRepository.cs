@@ -49,50 +49,57 @@ namespace AceCook.Repositories
             return report;
         }
 
-        //public InventoryReport GetInventoryReport(DateTime fromDate, DateTime toDate)
-        //{
-        //    var report = new InventoryReport
-        //    {
-        //        FromDate = fromDate,
-        //        ToDate = toDate,
-        //        CreatedDate = DateTime.Now,
-        //        CreatedBy = "System", // Add missing CreatedBy property
-        //        Details = new List<InventoryReportDetail>()
-        //    };
+        public class InventoryReportItem
+        {
+            public string MaSP { get; set; }
+            public string TenSanPham { get; set; }
+            public string Loai { get; set; }
+            public decimal Gia { get; set; }
+            public int TonKho { get; set; }
+            public decimal GiaTri { get; set; }
+            public string ChiTietTheoKho { get; set; }
+        }
 
-        //    var products = _context.Sanphams.ToList();
-        //    foreach (var product in products)
-        //    {
-        //        // Get current stock from CtTon
-        //        var currentStock = _context.CtTons
-        //            .Where(c => c.MaSp == product.MaSp)
-        //            .Sum(c => c.SoLuongTonKho) ?? 0;
+        public List<InventoryReportItem> GetInventoryReport(DateTime fromDate, DateTime toDate)
+        {
+            var result = new List<InventoryReportItem>();
+            
+            var products = _context.Sanphams.ToList();
+            foreach (var product in products)
+            {
+                // Lấy thông tin tồn kho theo từng kho
+                var stockByWarehouse = _context.CtTons
+                    .Where(c => c.MaSp == product.MaSp)
+                    .Join(_context.Khohangs,
+                        ct => ct.MaKho,
+                        kh => kh.MaKho,
+                        (ct, kh) => new { 
+                            Warehouse = kh.TenKho, 
+                            Quantity = ct.SoLuongTonKho ?? 0
+                        })
+                    .ToList();
 
-        //        // Get incoming stock from ChitietPn (raw materials, not products)
-        //        var inStock = _context.ChitietPns
-        //            .Where(c => c.MaPnkNavigation.NgayNhap >= DateOnly.FromDateTime(fromDate) && c.MaPnkNavigation.NgayNhap <= DateOnly.FromDateTime(toDate))
-        //            .Where(c => c.MaNl == product.MaSp) // This might not be correct - products vs raw materials
-        //            .Sum(c => c.SoLuongNhap) ?? 0;
+                // Tính tổng tồn kho
+                var totalStock = stockByWarehouse.Sum(s => s.Quantity);
 
-        //        // Phieuxuatkho doesn't have quantity information for products
-        //        var outStock = 0;
+                // Tạo chuỗi chi tiết theo kho
+                var warehouseDetails = string.Join(", ", 
+                    stockByWarehouse.Select(s => $"{s.Warehouse}: {s.Quantity}"));
 
-        //        report.Details.Add(new InventoryReportDetail
-        //        {
-        //            ProductId = product.MaSp,
-        //            ProductName = product.TenSp ?? "N/A",
-        //            BeginningQuantity = (int)currentStock,
-        //            InQuantity = (int)inStock,
-        //            OutQuantity = (int)outStock,
-        //            EndingQuantity = (int)currentStock + (int)inStock - (int)outStock,
-        //            UnitPrice = product.Gia ?? 0,
-        //            TotalValue = ((int)currentStock + (int)inStock - (int)outStock) * (product.Gia ?? 0)
-        //        });
-        //    }
+                result.Add(new InventoryReportItem
+                {
+                    MaSP = product.MaSp,
+                    TenSanPham = product.TenSp ?? "N/A",
+                    Loai = product.Loai ?? "N/A",
+                    Gia = product.Gia ?? 0,
+                    TonKho = (int)totalStock,
+                    GiaTri = totalStock * (product.Gia ?? 0),
+                    ChiTietTheoKho = warehouseDetails
+                });
+            }
 
-        //    report.TotalValue = report.Details.Sum(d => d.TotalValue);
-        //    return report;
-        //}
+            return result;
+        }
 
         public OrderReport GetOrderReport(DateTime fromDate, DateTime toDate)
         {
