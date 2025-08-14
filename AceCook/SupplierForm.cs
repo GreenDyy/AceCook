@@ -224,48 +224,50 @@ namespace AceCook
                 BackColor = Color.Transparent
             };
 
-                     btnAdd = new Button
+                         btnAdd = new Button
             {
-                Text = "➕ Thêm nhà cung cấp mới",
-                Size = new Size(200, 40),  // Điều chỉnh kích thước phù hợp hơn
-                Location = new Point(20, 10),  // Thêm padding bên trái
+                Text = "+ Thêm nhà cung cấp",  // Đổi sang dấu + đơn giản và bỏ bớt từ "mới"
+                Size = new Size(200, 35),  // Giảm height xuống bằng các nút khác
+                Location = new Point(20, 0),  // Căn theo các nút khác
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnAdd.FlatAppearance.BorderSize = 0;
-            btnAdd.Click += BtnAdd_Click;
-
-           btnEdit = new Button
-            {
-                Text = "✎ Chỉnh sửa",  // Đổi sang icon pencil đơn giản hơn
-                Size = new Size(120, 35),
-                Location = new Point(270, 0),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(241, 196, 15),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand,
                 TextAlign = ContentAlignment.MiddleCenter,  // Căn giữa text
                 Padding = new Padding(0)  // Reset padding
+            };
+            btnAdd.FlatAppearance.BorderSize = 0;
+            btnAdd.Click += BtnAdd_Click;
+
+            btnEdit = new Button
+            {
+                Text = "✎ Chỉnh sửa",
+                Size = new Size(120, 35),
+                Location = new Point(240, 0),  // Điều chỉnh khoảng cách
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                BackColor = Color.FromArgb(241, 196, 15),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Padding = new Padding(0)
             };
             btnEdit.FlatAppearance.BorderSize = 0;
             btnEdit.Click += BtnEdit_Click;
 
             btnDelete = new Button
             {
-                Text = "⌫ Xóa",  // Đổi sang icon đơn giản hơn
+                Text = "✕ Xóa",  // Đổi sang dấu x đơn giản
                 Size = new Size(100, 35),
-                Location = new Point(410, 0),
+                Location = new Point(380, 0),  // Điều chỉnh khoảng cách
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(231, 76, 60),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand,
-                TextAlign = ContentAlignment.MiddleCenter,  // Căn giữa text
-                Padding = new Padding(0)  // Reset padding
+                TextAlign = ContentAlignment.MiddleCenter,
+                Padding = new Padding(0)
             };
             btnDelete.FlatAppearance.BorderSize = 0;
             btnDelete.Click += BtnDelete_Click;
