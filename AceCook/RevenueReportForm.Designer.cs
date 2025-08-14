@@ -19,6 +19,7 @@
             }
             base.Dispose(disposing);
         }
+        //cmt test
 
         #region Windows Form Designer generated code
 
@@ -454,7 +455,7 @@
             // 
             panel1.Location = new Point(780, 450);
             panel1.Name = "panel1";
-            panel1.Size = new Size(614, 453);
+            panel1.Size = new Size(633, 453);
             panel1.TabIndex = 6;
             // 
             // RevenueReportForm
