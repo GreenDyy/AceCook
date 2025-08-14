@@ -320,7 +320,7 @@ namespace AceCook
             // New Statistics DataGridView with 4 columns
             dataGridViewOrderStatistics = new DataGridView
             {
-                Size = new Size(1340, 100),
+                Size = new Size(1340, 200), // Tăng từ 100 lên 200
                 Location = new Point(30, 830), // Below the existing summary table
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
@@ -348,8 +348,8 @@ namespace AceCook
                 dataGridViewOrderReport, dataGridViewOrderSummary, dataGridViewOrderStatistics // Add new table
             });
 
-            // Increase form height to accommodate new table
-            this.Size = new Size(1400, 980);
+            // Increase form height to accommodate larger table
+            this.Size = new Size(1400, 1080); // Tăng từ 980 lên 1080
         }
 
         private void StyleDataGridView(DataGridView dgv)
