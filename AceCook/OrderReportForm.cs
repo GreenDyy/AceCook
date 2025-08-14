@@ -674,93 +674,111 @@ namespace AceCook
             }
         }
 
-        // New method to populate the statistics table with 4 columns
+        // Method to populate the statistics table with Top Customers (3 columns)
         private void RefreshStatisticsReport(List<Dondathang> orders)
         {
             dataGridViewOrderStatistics.DataSource = null;
             dataGridViewOrderStatistics.Columns.Clear();
 
-            // Create 4 columns for the new statistics table
+            // Create 3 columns for Top Customers table
             dataGridViewOrderStatistics.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "TrangThai",
-                HeaderText = "Trạng thái",
-                Width = 335
+                Name = "TenKhachHang",
+                HeaderText = "Khách hàng",
+                Width = 447  // 1340/3 ≈ 447
             });
 
             dataGridViewOrderStatistics.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "SoLuong",
-                HeaderText = "Số lượng",
-                Width = 335
+                Name = "SoDonHang",
+                HeaderText = "Số đơn hàng",
+                Width = 447
             });
 
             dataGridViewOrderStatistics.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "TyLe",
-                HeaderText = "Tỷ lệ (%)",
-                Width = 335
+                Name = "TongGiaTri",
+                HeaderText = "Tổng giá trị",
+                Width = 446
             });
 
-            dataGridViewOrderStatistics.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "DoanhThu",
-                HeaderText = "Doanh thu",
-                Width = 335
-            });
+            // Apply date range filter (using the current date picker values)
+            var startDate = dtpStartDate.Value.Date;
+            var endDate = dtpEndDate.Value.Date.AddDays(1).AddSeconds(-1);
+            
+            var filteredOrders = orders.Where(o => o.NgayDat.HasValue &&
+                o.NgayDat.Value.ToDateTime(TimeOnly.MinValue) >= startDate &&
+                o.NgayDat.Value.ToDateTime(TimeOnly.MinValue) <= endDate).ToList();
 
-            // Group orders by status and populate data
-            var statusGroups = orders.GroupBy(o => o.TrangThai ?? "Đơn hàng mới");
-            var totalOrders = orders.Count;
+            // Group orders by customer and calculate statistics
+            var topCustomers = filteredOrders
+                .Where(o => o.MaKhNavigation != null) // Only orders with customer info
+                .GroupBy(o => new { 
+                    MaKH = o.MaKh, 
+                    TenKH = o.MaKhNavigation.TenKh ?? "Khách hàng không xác định" 
+                })
+                .Select(g => new
+                {
+                    MaKH = g.Key.MaKH,
+                    TenKH = g.Key.TenKH,
+                    SoDonHang = g.Count(),
+                    TongGiaTri = g.Sum(order => 
+                        order.CtDhs?.Sum(ct => (decimal)((ct.SoLuong ?? 0) * (ct.DonGia ?? 0))) ?? 0)
+                })
+                .OrderByDescending(x => x.SoDonHang) // Sort by number of orders descending
+                .Take(10) // Take top 10 customers
+                .ToList();
 
-            foreach (var group in statusGroups)
+            // Populate data rows
+            foreach (var customer in topCustomers)
             {
                 var rowIndex = dataGridViewOrderStatistics.Rows.Add();
                 var row = dataGridViewOrderStatistics.Rows[rowIndex];
 
-                var count = group.Count();
-                var percentage = totalOrders > 0 ? (count * 100.0 / totalOrders) : 0;
-                
-                decimal revenue = 0;
-                foreach (var order in group)
-                {
-                    if (order.CtDhs != null)
-                    {
-                        revenue += order.CtDhs.Sum(ct => (decimal)((ct.SoLuong ?? 0) * (ct.DonGia ?? 0)));
-                    }
-                }
+                row.Cells["TenKhachHang"].Value = customer.TenKH;
+                row.Cells["SoDonHang"].Value = customer.SoDonHang;
+                row.Cells["TongGiaTri"].Value = customer.TongGiaTri.ToString("N0") + " VNĐ";
 
-                row.Cells["TrangThai"].Value = group.Key;
-                row.Cells["SoLuong"].Value = count;
-                row.Cells["TyLe"].Value = $"{percentage:F1}%";
-                row.Cells["DoanhThu"].Value = revenue.ToString("N0") + " VNĐ";
-
-                // Apply styling based on status
-                StyleStatisticsRow(row, group.Key);
+                // Apply styling for top customers
+                StyleTopCustomerRow(row, customer.SoDonHang);
             }
         }
 
-        // Method to style the new statistics table rows
-        private void StyleStatisticsRow(DataGridViewRow row, string status)
+        // Method to style the top customer table rows
+        private void StyleTopCustomerRow(DataGridViewRow row, int orderCount)
         {
-            if (status == "Hoàn thành")
+            // Style based on number of orders
+            if (orderCount >= 5)
             {
-                row.DefaultCellStyle.BackColor = Color.FromArgb(240, 255, 240);
-                row.Cells["TrangThai"].Style.ForeColor = Color.Green;
-                row.Cells["TrangThai"].Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+                // VIP customers (5+ orders) - Gold background
+                row.DefaultCellStyle.BackColor = Color.FromArgb(255, 248, 220);
+                row.Cells["TenKhachHang"].Style.ForeColor = Color.FromArgb(184, 134, 11);
+                row.Cells["TenKhachHang"].Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+                row.Cells["SoDonHang"].Style.ForeColor = Color.FromArgb(184, 134, 11);
+                row.Cells["SoDonHang"].Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
             }
-            else if (status == "Đơn hàng mới")
+            else if (orderCount >= 3)
             {
+                // Good customers (3-4 orders) - Light blue background
                 row.DefaultCellStyle.BackColor = Color.FromArgb(240, 248, 255);
-                row.Cells["TrangThai"].Style.ForeColor = Color.Blue;
-                row.Cells["TrangThai"].Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+                row.Cells["TenKhachHang"].Style.ForeColor = Color.FromArgb(37, 99, 235);
+                row.Cells["TenKhachHang"].Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+                row.Cells["SoDonHang"].Style.ForeColor = Color.FromArgb(37, 99, 235);
+                row.Cells["SoDonHang"].Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
             }
             else
             {
+                // Regular customers (1-2 orders) - White background
                 row.DefaultCellStyle.BackColor = Color.White;
-                row.Cells["TrangThai"].Style.ForeColor = Color.Black;
-                row.Cells["TrangThai"].Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+                row.Cells["TenKhachHang"].Style.ForeColor = Color.Black;
+                row.Cells["TenKhachHang"].Style.Font = new Font("Segoe UI", 9, FontStyle.Regular);
+                row.Cells["SoDonHang"].Style.ForeColor = Color.Black;
+                row.Cells["SoDonHang"].Style.Font = new Font("Segoe UI", 9, FontStyle.Regular);
             }
+
+            // Always style the total value in green
+            row.Cells["TongGiaTri"].Style.ForeColor = Color.FromArgb(34, 197, 94);
+            row.Cells["TongGiaTri"].Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
         }
     }
 }
