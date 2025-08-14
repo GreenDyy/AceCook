@@ -1,990 +1,987 @@
-using System;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using AceCook.Models;
 using AceCook.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace AceCook
 {
     public partial class OrderAddEditForm : Form
     {
         private readonly AppDbContext _context;
-        private readonly OrderRepository _orderRepository;
-        private readonly Dondathang _order;
-        private readonly bool _isEditMode;
-        private readonly bool _isViewMode;
+        private OrderRepository _orderRepository;
+        private CustomerRepository _customerRepository;
+        private ProductRepository _productRepository;
+        private InventoryRepository _inventoryRepository;
 
-        // Controls
-        private TextBox txtOrderId;
-        private ComboBox cboCustomer;
-        private ComboBox cboEmployee;
-        private DateTimePicker dtpOrderDate;
-        private DateTimePicker dtpDeliveryDate;
-        private ComboBox cboStatus;
-        private DataGridView dgvOrderDetails;
-        private Button btnAddProduct;
-        private Button btnRemoveProduct;
-        private Button btnSave;
-        private Button btnCancel;
-        private Label lblTotalAmount;
-        private TextBox txtTotalAmount;
+        private List<Sanpham> _allProducts;
+        private List<Khachhang> _allCustomers;
+        private List<OrderItem> _orderItems;
+        private string _currentOrderId;
+        private bool _isEditMode;
+        private bool _isViewMode;
+        private Dondathang _editingOrder;
 
-        // Data sources
-        private List<Khachhang> _customers;
-        private List<Nhanvien> _employees;
-        private List<Sanpham> _products;
-        private List<CtDh> _orderDetails;
-
-        public OrderAddEditForm(AppDbContext context, Dondathang order = null, bool isViewMode = false)
+        public OrderAddEditForm()
         {
-            _context = context;
-            _orderRepository = new OrderRepository(context);
-            _order = order ?? new Dondathang();
-            _isEditMode = order != null && !isViewMode;
-            _isViewMode = isViewMode;
-            _orderDetails = new List<CtDh>();
-
-            if (_isEditMode && order.CtDhs != null)
-            {
-                _orderDetails = order.CtDhs.ToList();
-            }
-            else if (_isViewMode && order.CtDhs != null)
-            {
-                _orderDetails = order.CtDhs.ToList();
-            }
-
             InitializeComponent();
-            SetupUI();
-            LoadData();
+            _context = new AppDbContext();
+            _orderRepository = new OrderRepository(_context);
+            _customerRepository = new CustomerRepository(_context);
+            _productRepository = new ProductRepository(_context);
+            _inventoryRepository = new InventoryRepository(_context);
+            
+            _orderItems = new List<OrderItem>();
+            _isEditMode = false;
+            _isViewMode = false;
+            
+            SetupFormForOrder();
         }
 
-        private void InitializeComponent()
+        private void InitializeRepositories()
         {
-            this.SuspendLayout();
+            _orderRepository = new OrderRepository(_context);
+            _customerRepository = new CustomerRepository(_context);
+            _productRepository = new ProductRepository(_context);
+            _inventoryRepository = new InventoryRepository(_context);
+        }
+
+        public OrderAddEditForm(string orderId) : this()
+        {
+            _currentOrderId = orderId;
+            _isEditMode = true;
+            _isViewMode = false;
+            // LoadOrderForEdit sẽ được gọi sau khi SetupFormForOrder hoàn thành
+        }
+
+        public OrderAddEditForm(Dondathang order, bool isViewMode = false)
+        {
+            InitializeComponent();
+            _context = new AppDbContext();
+            _orderRepository = new OrderRepository(_context);
+            _customerRepository = new CustomerRepository(_context);
+            _productRepository = new ProductRepository(_context);
+            _inventoryRepository = new InventoryRepository(_context);
             
-            if (_isViewMode)
+            _orderItems = new List<OrderItem>();
+            _isEditMode = !isViewMode;
+            _isViewMode = isViewMode;
+            _editingOrder = order;
+            _currentOrderId = order?.MaDdh;
+            
+            // Không gọi InitializeForm() ở đây, sẽ gọi sau khi setup repositories
+            SetupFormForOrder();
+        }
+
+                public OrderAddEditForm(AppDbContext context, Dondathang? order, bool isViewMode)
+        {
+            InitializeComponent();
+            // Tạo context mới để tránh vấn đề disposed context
+            _context = new AppDbContext();
+            _isEditMode = !isViewMode;
+            _isViewMode = isViewMode;
+            
+            InitializeRepositories();
+            
+            _orderItems = new List<OrderItem>();
+            
+            if (order != null)
             {
-                this.Text = "Xem chi tiết đơn hàng";
+                _currentOrderId = order.MaDdh;
+                _editingOrder = order;
+                SetupFormForOrder();
             }
             else
             {
-                this.Text = _isEditMode ? "Chỉnh sửa đơn hàng" : "Thêm đơn hàng mới";
+                // Tạo đơn hàng mới
+                _isEditMode = false;
+                SetupFormForOrder();
             }
+        }
+
+
+
+        private void DisableControlsForViewMode()
+        {
+            System.Diagnostics.Debug.WriteLine("DisableControlsForViewMode called");
             
-            this.Size = new Size(1000, 700);
-            this.StartPosition = FormStartPosition.CenterParent;
-            this.BackColor = Color.FromArgb(248, 249, 250);
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            
-            this.ResumeLayout(false);
-        }
-
-        private void SetupUI()
-        {
-            // Order ID
-            var lblOrderId = new Label
-            {
-                Text = "Mã đơn hàng:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(120, 25),
-                Location = new Point(30, 30),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            txtOrderId = new TextBox
-            {
-                Size = new Size(150, 30),
-                Location = new Point(160, 27),
-                Font = new Font("Segoe UI", 10),
-                ReadOnly = true,
-                BackColor = Color.LightGray
-            };
-
-            // Customer
-            var lblCustomer = new Label
-            {
-                Text = "Khách hàng:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(120, 25),
-                Location = new Point(30, 70),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            cboCustomer = new ComboBox
-            {
-                Size = new Size(250, 30),
-                Location = new Point(160, 67),
-                Font = new Font("Segoe UI", 10),
-                DropDownStyle = ComboBoxStyle.DropDownList
-            };
-
-            // Employee
-            var lblEmployee = new Label
-            {
-                Text = "Nhân viên:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(120, 25),
-                Location = new Point(30, 110),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            cboEmployee = new ComboBox
-            {
-                Size = new Size(250, 30),
-                Location = new Point(160, 107),
-                Font = new Font("Segoe UI", 10),
-                DropDownStyle = ComboBoxStyle.DropDownList
-            };
-
-            // Order Date
-            var lblOrderDate = new Label
-            {
-                Text = "Ngày đặt:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(120, 25),
-                Location = new Point(30, 150),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            dtpOrderDate = new DateTimePicker
-            {
-                Size = new Size(150, 30),
-                Location = new Point(160, 147),
-                Font = new Font("Segoe UI", 10),
-                Format = DateTimePickerFormat.Short,
-                Value = DateTime.Now
-            };
-
-            // Delivery Date
-            var lblDeliveryDate = new Label
-            {
-                Text = "Ngày giao:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(120, 25),
-                Location = new Point(30, 190),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            dtpDeliveryDate = new DateTimePicker
-            {
-                Size = new Size(150, 30),
-                Location = new Point(160, 187),
-                Font = new Font("Segoe UI", 10),
-                Format = DateTimePickerFormat.Short,
-                Value = DateTime.Now.AddDays(7)
-            };
-
-            // Status
-            var lblStatus = new Label
-            {
-                Text = "Trạng thái:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(120, 25),
-                Location = new Point(30, 230),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            cboStatus = new ComboBox
-            {
-                Size = new Size(150, 30),
-                Location = new Point(160, 227),
-                Font = new Font("Segoe UI", 10),
-                DropDownStyle = ComboBoxStyle.DropDownList
-            };
-            cboStatus.Items.AddRange(new object[] { "Chờ xử lý", "Đang xử lý", "Đã giao", "Đã hủy" });
-            cboStatus.SelectedIndex = 0;
-
-            // Order Details Section
-            var lblOrderDetails = new Label
-            {
-                Text = "CHI TIẾT ĐƠN HÀNG",
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(200, 30),
-                Location = new Point(30, 280),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            // Order Details Grid
-            dgvOrderDetails = new DataGridView
-            {
-                Size = new Size(700, 200),
-                Location = new Point(30, 320),
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                AllowUserToAddRows = false,
-                AllowUserToDeleteRows = false,
-                ReadOnly = false,
-                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-                BackgroundColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle,
-                GridColor = Color.LightGray,
-                RowHeadersVisible = false,
-                EditMode = DataGridViewEditMode.EditOnF2
-            };
-
-            // Setup grid columns
-            dgvOrderDetails.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "ProductId",
-                HeaderText = "Mã SP",
-                Width = 80,
-                ReadOnly = true
-            });
-
-            dgvOrderDetails.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "ProductName",
-                HeaderText = "Tên sản phẩm",
-                Width = 200,
-                ReadOnly = true
-            });
-
-            dgvOrderDetails.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Quantity",
-                HeaderText = "Số lượng",
-                Width = 100,
-                ReadOnly = false
-            });
-
-            dgvOrderDetails.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "UnitPrice",
-                HeaderText = "Đơn giá",
-                Width = 120,
-                ReadOnly = false
-            });
-
-            dgvOrderDetails.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Total",
-                HeaderText = "Thành tiền",
-                Width = 120,
-                ReadOnly = true
-            });
-
-            // Add event handlers for editing
-            dgvOrderDetails.CellEndEdit += DgvOrderDetails_CellEndEdit;
-            dgvOrderDetails.CellDoubleClick += DgvOrderDetails_CellDoubleClick;
-
-            // Buttons for order details
-            btnAddProduct = new Button
-            {
-                Text = "➕ Thêm sản phẩm",
-                Size = new Size(140, 35),
-                Location = new Point(750, 320),
-                Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnAddProduct.FlatAppearance.BorderSize = 0;
-            btnAddProduct.Click += BtnAddProduct_Click;
-
-            btnRemoveProduct = new Button
-            {
-                Text = "➖ Xóa sản phẩm",
-                Size = new Size(140, 35),
-                Location = new Point(750, 365),
-                Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                BackColor = Color.FromArgb(231, 76, 60),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnRemoveProduct.FlatAppearance.BorderSize = 0;
-            btnRemoveProduct.Click += BtnRemoveProduct_Click;
-
-            var btnViewSummary = new Button
-            {
-                Text = "📋 Xem tổng quan",
-                Size = new Size(140, 35),
-                Location = new Point(750, 410),
-                Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                BackColor = Color.FromArgb(52, 152, 219),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnViewSummary.FlatAppearance.BorderSize = 0;
-            btnViewSummary.Click += BtnViewSummary_Click;
-
-            // Total Amount
-            var lblTotal = new Label
-            {
-                Text = "Tổng tiền:",
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                Size = new Size(100, 30),
-                Location = new Point(30, 540),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            txtTotalAmount = new TextBox
-            {
-                Size = new Size(200, 30),
-                Location = new Point(140, 537),
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                ReadOnly = true,
-                BackColor = Color.LightYellow,
-                TextAlign = HorizontalAlignment.Right
-            };
-
-            // Action Buttons
-            btnSave = new Button
-            {
-                Text = "💾 Lưu đơn hàng",
-                Size = new Size(150, 45),
-                Location = new Point(30, 590),
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                BackColor = Color.FromArgb(52, 152, 219),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnSave.FlatAppearance.BorderSize = 0;
-            btnSave.Click += BtnSave_Click;
-
-            btnCancel = new Button
-            {
-                Text = "❌ Hủy bỏ",
-                Size = new Size(120, 45),
-                Location = new Point(200, 590),
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                BackColor = Color.FromArgb(149, 165, 166),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnCancel.FlatAppearance.BorderSize = 0;
-            btnCancel.Click += BtnCancel_Click;
-
-            // Add controls to form
-            this.Controls.AddRange(new Control[] {
-                lblOrderId, txtOrderId,
-                lblCustomer, cboCustomer,
-                lblEmployee, cboEmployee,
-                lblOrderDate, dtpOrderDate,
-                lblDeliveryDate, dtpDeliveryDate,
-                lblStatus, cboStatus,
-                lblOrderDetails, dgvOrderDetails,
-                btnAddProduct, btnRemoveProduct, btnViewSummary,
-                lblTotal, txtTotalAmount,
-                btnSave, btnCancel
-            });
-        }
-
-        private async void LoadData()
-        {
-            try
-            {
-                // Load customers
-                _customers = await _orderRepository.GetAllCustomersAsync();
-                cboCustomer.DataSource = _customers;
-                cboCustomer.DisplayMember = "TenKh";
-                cboCustomer.ValueMember = "MaKh";
-
-                // Load employees
-                _employees = await _context.Nhanviens.ToListAsync();
-                cboEmployee.DataSource = _employees;
-                cboEmployee.DisplayMember = "HoTenNv";
-                cboEmployee.ValueMember = "MaNv";
-
-                // Load products
-                _products = await _orderRepository.GetAllProductsAsync();
-
-                if (_isEditMode || _isViewMode)
-                {
-                    // Load existing order data
-                    txtOrderId.Text = _order.MaDdh;
-                    cboCustomer.SelectedValue = _order.MaKh;
-                    cboEmployee.SelectedValue = _order.MaNv;
-                    dtpOrderDate.Value = _order.NgayDat?.ToDateTime(TimeOnly.MinValue) ?? DateTime.Now;
-                    if (_order.NgayGiao.HasValue)
-                    {
-                        dtpDeliveryDate.Value = _order.NgayGiao.Value.ToDateTime(TimeOnly.MinValue);
-                    }
-                    cboStatus.Text = _order.TrangThai ?? "Chờ xử lý";
-                }
-                else
-                {
-                    // Generate new order ID
-                    var newOrderId = await _orderRepository.GenerateOrderIdAsync();
-                    txtOrderId.Text = newOrderId;
-                }
-
-                RefreshOrderDetailsGrid();
-                CalculateTotalAmount();
-                
-                // Apply edit restrictions based on order status
-                ApplyEditRestrictions();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void RefreshOrderDetailsGrid()
-        {
-            dgvOrderDetails.Rows.Clear();
-            foreach (var detail in _orderDetails)
-            {
-                var rowIndex = dgvOrderDetails.Rows.Add();
-                var row = dgvOrderDetails.Rows[rowIndex];
-
-                row.Cells["ProductId"].Value = detail.MaSp;
-                row.Cells["ProductName"].Value = detail.MaSpNavigation?.TenSp ?? "N/A";
-                row.Cells["Quantity"].Value = detail.SoLuong;
-                row.Cells["UnitPrice"].Value = detail.DonGia?.ToString("N0") + " VNĐ";
-                row.Cells["Total"].Value = ((detail.SoLuong ?? 0) * (detail.DonGia ?? 0)).ToString("N0") + " VNĐ";
-            }
-        }
-
-        private void CalculateTotalAmount()
-        {
-            decimal total = _orderDetails.Sum(d => (decimal)((d.SoLuong ?? 0) * (d.DonGia ?? 0)));
-            txtTotalAmount.Text = total.ToString("N0") + " VNĐ";
-        }
-
-        private void ApplyEditRestrictions()
-        {
-            if (_isViewMode)
-            {
-                // Disable all editing controls in view mode
-                DisableAllControls();
-                return;
-            }
-
-            // Check if order is completed and disable editing
-            var orderStatus = _order.TrangThai?.ToLower();
-            bool isCompleted = orderStatus == "hoàn thành" || orderStatus == "đã giao" || orderStatus == "đã hủy";
-            
-            if (isCompleted)
-            {
-                DisableAllControls();
-                MessageBox.Show("Đơn hàng này đã hoàn thành và không thể chỉnh sửa!", "Thông báo",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-        private void DisableAllControls()
-        {
-            // Disable input controls
+            // Disable all input controls
             cboCustomer.Enabled = false;
-            cboEmployee.Enabled = false;
             dtpOrderDate.Enabled = false;
             dtpDeliveryDate.Enabled = false;
             cboStatus.Enabled = false;
-            
-            // Disable order details editing
-            dgvOrderDetails.ReadOnly = true;
-            dgvOrderDetails.EditMode = DataGridViewEditMode.EditProgrammatically;
-            
-            // Disable action buttons
+            cboProduct.Enabled = false;
+            numQuantity.Enabled = false;
             btnAddProduct.Enabled = false;
             btnRemoveProduct.Enabled = false;
-            btnSave.Enabled = false;
+
+            // Hide Save button and show Close button for view mode
+            btnSave.Visible = false;
+            btnCancel.Text = "Đóng";
+
+            // Make DataGridView read-only
+            dgvOrderItems.ReadOnly = true;
             
-            // Change save button text
-            btnSave.Text = "🔒 Chỉ xem";
-            btnSave.BackColor = Color.FromArgb(149, 165, 166);
-            
-            // Disable view summary button in view mode
-            if (_isViewMode)
-            {
-                // Find the view summary button by its text
-                foreach (Control control in this.Controls)
-                {
-                    if (control is Button button && button.Text.Contains("Xem tổng quan"))
-                    {
-                        button.Enabled = false;
-                        break;
-                    }
-                }
-            }
+            System.Diagnostics.Debug.WriteLine("All controls disabled for view mode");
         }
 
-        private void BtnAddProduct_Click(object sender, EventArgs e)
+
+
+        private async void LoadOrderForEdit()
         {
-            if (_products == null || _products.Count == 0)
+            try
             {
-                MessageBox.Show("Không có sản phẩm nào để chọn!", "Thông báo",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            using (var form = new ProductSelectionForm(_products))
-            {
-                if (form.ShowDialog() == DialogResult.OK)
+                System.Diagnostics.Debug.WriteLine($"LoadOrderForEdit called - _editingOrder: {_editingOrder?.MaDdh}, _currentOrderId: {_currentOrderId}, _isViewMode: {_isViewMode}");
+                
+                // Nếu _editingOrder chưa được set, load từ database
+                if (_editingOrder == null)
                 {
-                    var selectedProduct = form.SelectedProduct;
-                    var quantity = form.Quantity;
-                    var unitPrice = form.UnitPrice;
+                    System.Diagnostics.Debug.WriteLine($"Loading order from database with ID: {_currentOrderId}");
+                    _editingOrder = await _orderRepository.GetOrderByIdAsync(_currentOrderId).ConfigureAwait(false);
+                    System.Diagnostics.Debug.WriteLine($"Loaded order: {_editingOrder?.MaDdh}, CtDhs count: {_editingOrder?.CtDhs?.Count ?? 0}");
+                }
 
-                    // Check if product already exists
-                    var existingDetail = _orderDetails.FirstOrDefault(d => d.MaSp == selectedProduct.MaSp);
-                    if (existingDetail != null)
+                if (_editingOrder != null)
+                {
+                    txtOrderId.Text = _editingOrder.MaDdh;
+                    cboCustomer.SelectedValue = _editingOrder.MaKh;
+                    dtpOrderDate.Value = _editingOrder.NgayDat?.ToDateTime(TimeOnly.MinValue) ?? DateTime.Now;
+                    dtpDeliveryDate.Value = _editingOrder.NgayGiao?.ToDateTime(TimeOnly.MinValue) ?? DateTime.Now.AddDays(7);
+                    cboStatus.SelectedItem = _editingOrder.TrangThai;
+
+                    // Load order items
+                    System.Diagnostics.Debug.WriteLine($"Loading {_editingOrder.CtDhs?.Count ?? 0} order items");
+                    foreach (var ct in _editingOrder.CtDhs)
                     {
-                        var result = MessageBox.Show(
-                            $"Sản phẩm '{selectedProduct.TenSp}' đã có trong đơn hàng với số lượng {existingDetail.SoLuong}.\n\n" +
-                            "Bạn có muốn cộng thêm số lượng mới không?\n" +
-                            "Chọn 'Có' để cộng thêm, 'Không' để thay thế số lượng cũ.",
-                            "Sản phẩm đã tồn tại",
-                            MessageBoxButtons.YesNo,
-                            MessageBoxIcon.Question);
-
-                        if (result == DialogResult.Yes)
+                        System.Diagnostics.Debug.WriteLine($"Processing order item: MaSp={ct.MaSp}, SoLuong={ct.SoLuong}, DonGia={ct.DonGia}");
+                        var product = _allProducts.FirstOrDefault(p => p.MaSp == ct.MaSp);
+                        if (product != null)
                         {
-                            existingDetail.SoLuong = (existingDetail.SoLuong ?? 0) + quantity;
+                            var quantity = ct.SoLuong ?? 0;
+                            var unitPrice = (double)(ct.DonGia ?? 0);
+                            var orderItem = new OrderItem
+                            {
+                                ProductId = ct.MaSp,
+                                ProductName = product.TenSp ?? "",
+                                Quantity = quantity,
+                                UnitPrice = unitPrice,
+                                TotalPrice = quantity * unitPrice
+                            };
+                            _orderItems.Add(orderItem);
+                            System.Diagnostics.Debug.WriteLine($"Added order item: {orderItem.ProductId} - {orderItem.ProductName} - Qty: {orderItem.Quantity} - Price: {orderItem.UnitPrice}");
                         }
                         else
                         {
-                            existingDetail.SoLuong = quantity;
-                            existingDetail.DonGia = unitPrice;
+                            System.Diagnostics.Debug.WriteLine($"Product not found for MaSp: {ct.MaSp}");
                         }
                     }
-                    else
-                    {
-                        var newDetail = new CtDh
-                        {
-                            MaSp = selectedProduct.MaSp,
-                            MaSpNavigation = selectedProduct,
-                            SoLuong = quantity,
-                            DonGia = unitPrice
-                        };
-                        _orderDetails.Add(newDetail);
-                    }
+                    System.Diagnostics.Debug.WriteLine($"Total order items loaded: {_orderItems.Count}");
 
-                    RefreshOrderDetailsGrid();
-                    CalculateTotalAmount();
+                    System.Diagnostics.Debug.WriteLine("Refreshing order items grid...");
+                    RefreshOrderItemsGrid();
+                    System.Diagnostics.Debug.WriteLine("Updating total amount...");
+                    UpdateTotalAmount();
+                }
+
+                // Disable controls if in view mode
+                if (_isViewMode)
+                {
+                    System.Diagnostics.Debug.WriteLine("Disabling controls for view mode...");
+                    DisableControlsForViewMode();
+                }
+
+                // Update form title with order ID if available
+                if (!string.IsNullOrEmpty(_currentOrderId))
+                {
+                    this.Text += $" - {_currentOrderId}";
+                    System.Diagnostics.Debug.WriteLine($"Form title updated with order ID: {this.Text}");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi tải đơn hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void btnAddProduct_Click(object sender, EventArgs e)
+        {
+            if (_isViewMode) return; // Không cho phép thêm sản phẩm khi ở view mode
+
+            if (cboProduct.SelectedValue == null || numQuantity.Value <= 0)
+            {
+                MessageBox.Show("Vui lòng chọn sản phẩm và nhập số lượng hợp lệ!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedProduct = cboProduct.SelectedItem as Sanpham;
+            if (selectedProduct == null) return;
+
+            var quantity = (int)numQuantity.Value;
+            var unitPrice = (double)(selectedProduct.Gia ?? 0);
+
+            // Kiểm tra tồn kho
+            var availableStock = await GetAvailableStock(selectedProduct.MaSp).ConfigureAwait(false);
+            if (quantity > availableStock)
+            {
+                MessageBox.Show($"Số lượng vượt quá tồn kho! Tồn kho hiện tại: {availableStock}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Check if product already exists in order
+            var existingItem = _orderItems.FirstOrDefault(item => item.ProductId == selectedProduct.MaSp);
+            if (existingItem != null)
+            {
+                existingItem.Quantity += quantity;
+                existingItem.TotalPrice = existingItem.Quantity * existingItem.UnitPrice;
+            }
+            else
+            {
+                _orderItems.Add(new OrderItem
+                {
+                    ProductId = selectedProduct.MaSp,
+                    ProductName = selectedProduct.TenSp ?? "",
+                    Quantity = quantity,
+                    UnitPrice = unitPrice,
+                    TotalPrice = quantity * unitPrice
+                });
+            }
+
+            RefreshOrderItemsGrid();
+            UpdateTotalAmount();
+            ClearProductSelection();
+        }
+
+        private void btnRemoveProduct_Click(object sender, EventArgs e)
+        {
+            if (_isViewMode) return; // Không cho phép xóa sản phẩm khi ở view mode
+
+            if (dgvOrderItems.SelectedRows.Count > 0)
+            {
+                var selectedRow = dgvOrderItems.SelectedRows[0];
+                var productId = selectedRow.Cells["ProductId"].Value?.ToString();
+
+                if (!string.IsNullOrEmpty(productId))
+                {
+                    _orderItems.RemoveAll(item => item.ProductId == productId);
+                    RefreshOrderItemsGrid();
+                    UpdateTotalAmount();
                 }
             }
         }
 
-        private void BtnRemoveProduct_Click(object sender, EventArgs e)
+        private void RefreshOrderItemsGrid()
         {
-            if (dgvOrderDetails.SelectedRows.Count > 0)
+            System.Diagnostics.Debug.WriteLine($"RefreshOrderItemsGrid called - _orderItems count: {_orderItems.Count}");
+            dgvOrderItems.DataSource = null;
+            dgvOrderItems.DataSource = _orderItems;
+            System.Diagnostics.Debug.WriteLine($"DataGridView rows count after refresh: {dgvOrderItems.Rows.Count}");
+        }
+
+        private void UpdateTotalAmount()
+        {
+            var total = _orderItems.Sum(item => item.TotalPrice);
+            System.Diagnostics.Debug.WriteLine($"UpdateTotalAmount - Total: {total:N0} VNĐ");
+            lblTotalAmount.Text = $"Tổng tiền: {total:N0} VNĐ";
+        }
+
+        private void ClearProductSelection()
+        {
+            cboProduct.SelectedIndex = -1;
+            numQuantity.Value = 1;
+        }
+
+        private async void DgvOrderItems_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            if (_isViewMode) return; // Không cho phép chỉnh sửa khi ở view mode
+
+            if (e.ColumnIndex == dgvOrderItems.Columns["Quantity"].Index && e.RowIndex >= 0)
             {
-                var selectedRows = dgvOrderDetails.SelectedRows.Cast<DataGridViewRow>().ToList();
-                var productNames = selectedRows.Select(r => r.Cells["ProductName"].Value.ToString()).ToList();
-                
-                var message = selectedRows.Count == 1 
-                    ? $"Bạn có chắc chắn muốn xóa sản phẩm '{productNames[0]}' khỏi đơn hàng?"
-                    : $"Bạn có chắc chắn muốn xóa {selectedRows.Count} sản phẩm sau khỏi đơn hàng?\n\n{string.Join("\n", productNames)}";
-                
-                var result = MessageBox.Show(message, "Xác nhận xóa",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                
-                if (result == DialogResult.Yes)
+                var row = dgvOrderItems.Rows[e.RowIndex];
+                var productId = row.Cells["ProductId"].Value?.ToString();
+                var newQuantity = Convert.ToInt32(row.Cells["Quantity"].Value ?? 0);
+
+                if (!string.IsNullOrEmpty(productId) && newQuantity > 0)
                 {
-                    foreach (var row in selectedRows)
+                    // Kiểm tra tồn kho
+                    var availableStock = await GetAvailableStock(productId).ConfigureAwait(false);
+                    if (newQuantity > availableStock)
                     {
-                        var productId = row.Cells["ProductId"].Value.ToString();
-                        var detailToRemove = _orderDetails.FirstOrDefault(d => d.MaSp == productId);
-                        if (detailToRemove != null)
-                        {
-                            _orderDetails.Remove(detailToRemove);
-                        }
+                        MessageBox.Show($"Số lượng vượt quá tồn kho! Tồn kho hiện tại: {availableStock}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        row.Cells["Quantity"].Value = availableStock;
+                        newQuantity = availableStock;
                     }
-                    
-                    RefreshOrderDetailsGrid();
-                    CalculateTotalAmount();
-                    
-                    MessageBox.Show($"Đã xóa {selectedRows.Count} sản phẩm khỏi đơn hàng!", "Thành công",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    var item = _orderItems.FirstOrDefault(i => i.ProductId == productId);
+                    if (item != null)
+                    {
+                        item.Quantity = newQuantity;
+                        item.TotalPrice = item.Quantity * item.UnitPrice;
+                        row.Cells["TotalPrice"].Value = item.TotalPrice;
+                        UpdateTotalAmount();
+                    }
+                }
+            }
+        }
+
+        private async void CboProduct_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_isViewMode) return; // Không cho phép thay đổi sản phẩm khi ở view mode
+
+            if (cboProduct.SelectedValue != null)
+            {
+                var productId = cboProduct.SelectedValue.ToString();
+                var availableStock = await GetAvailableStock(productId).ConfigureAwait(false);
+                var selectedProduct = cboProduct.SelectedItem as Sanpham;
+
+                if (selectedProduct != null)
+                {
+                    var price = selectedProduct.Gia?.ToString("N0") ?? "0";
+                    lblStockInfo.Text = $"Tồn kho: {availableStock} | Giá: {price} VNĐ";
+                    numQuantity.Maximum = availableStock;
                 }
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn sản phẩm cần xóa!", "Thông báo",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                lblStockInfo.Text = "";
+                numQuantity.Maximum = 9999;
             }
         }
 
-        private async void BtnSave_Click(object sender, EventArgs e)
+        private void CboCustomer_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // If in view mode, just close the form
-            if (_isViewMode)
-            {
-                this.DialogResult = DialogResult.OK;
-                this.Close();
-                return;
-            }
+            if (_isViewMode) return; // Không cho phép thay đổi khách hàng khi ở view mode
+
+            // Có thể thêm logic xử lý khi khách hàng thay đổi ở đây
+            // Ví dụ: load thông tin khách hàng, cập nhật form, v.v.
+            System.Diagnostics.Debug.WriteLine($"Customer changed to: {cboCustomer.SelectedValue}");
+        }
+
+        private async void btnSave_Click(object sender, EventArgs e)
+        {
+            if (_isViewMode) return; // Không cho phép lưu khi ở view mode
+
+            if (!ValidateForm()) return;
 
             try
             {
-                if (!ValidateForm())
-                    return;
-
-                // Update order object
-                _order.MaDdh = txtOrderId.Text;
-                _order.MaKh = cboCustomer.SelectedValue?.ToString();
-                _order.MaNv = cboEmployee.SelectedValue?.ToString();
-                _order.NgayDat = DateOnly.FromDateTime(dtpOrderDate.Value);
-                _order.NgayGiao = DateOnly.FromDateTime(dtpDeliveryDate.Value);
-                _order.TrangThai = cboStatus.Text;
-
-                // Clear existing order details
-                if (_isEditMode)
-                {
-                    _context.CtDhs.RemoveRange(_order.CtDhs);
-                }
-
-                // Add new order details
-                foreach (var detail in _orderDetails)
-                {
-                    detail.MaDdh = _order.MaDdh;
-                    if (_isEditMode)
-                    {
-                        _context.CtDhs.Add(detail);
-                    }
-                }
+                btnSave.Enabled = false;
+                btnSave.Text = "Đang lưu...";
 
                 if (_isEditMode)
                 {
-                    _context.Dondathangs.Update(_order);
+                    await UpdateExistingOrder();
                 }
                 else
                 {
-                    _order.CtDhs = _orderDetails;
-                    _context.Dondathangs.Add(_order);
+                    await CreateNewOrder();
                 }
 
-                await _context.SaveChangesAsync();
-
-                MessageBox.Show($"Đã {(this._isEditMode ? "cập nhật" : "tạo")} đơn hàng thành công!", 
-                    "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                
+                MessageBox.Show("Lưu đơn hàng thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi lưu đơn hàng: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Lỗi lưu đơn hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnSave.Enabled = true;
+                btnSave.Text = "Lưu";
             }
         }
 
         private bool ValidateForm()
         {
-            if (string.IsNullOrWhiteSpace(txtOrderId.Text))
-            {
-                MessageBox.Show("Mã đơn hàng không được để trống!", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
-
             if (cboCustomer.SelectedValue == null)
             {
-                MessageBox.Show("Vui lòng chọn khách hàng!", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng chọn khách hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
-            if (cboEmployee.SelectedValue == null)
+            if (_orderItems.Count == 0)
             {
-                MessageBox.Show("Vui lòng chọn nhân viên!", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng thêm ít nhất một sản phẩm vào đơn hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
-            if (_orderDetails.Count == 0)
+            if (string.IsNullOrWhiteSpace(cboStatus.Text))
             {
-                MessageBox.Show("Đơn hàng phải có ít nhất một sản phẩm!", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
-
-            if (dtpOrderDate.Value > dtpDeliveryDate.Value)
-            {
-                MessageBox.Show("Ngày đặt không thể sau ngày giao!", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng chọn trạng thái đơn hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
             return true;
         }
 
-        private void BtnCancel_Click(object sender, EventArgs e)
+        private async Task CreateNewOrder()
         {
-            if (_isViewMode)
+            using var transaction = await _context.Database.BeginTransactionAsync().ConfigureAwait(false);
+            try
             {
-                this.DialogResult = DialogResult.OK;
+                // 1. Tạo đơn đặt hàng
+                var order = new Dondathang
+                {
+                    MaDdh = _currentOrderId,
+                    MaKh = cboCustomer.SelectedValue?.ToString(),
+                    MaNv = "NV001", // TODO: Get current user ID
+                    NgayDat = DateOnly.FromDateTime(dtpOrderDate.Value),
+                    NgayGiao = DateOnly.FromDateTime(dtpDeliveryDate.Value),
+                    TrangThai = cboStatus.Text,
+                    CtDhs = new List<CtDh>()
+                };
+
+                // 2. Tạo chi tiết đơn hàng và cập nhật tồn kho
+                foreach (var item in _orderItems)
+                {
+                    var ctDh = new CtDh
+                    {
+                        MaDdh = _currentOrderId,
+                        MaSp = item.ProductId,
+                        SoLuong = item.Quantity,
+                        DonGia = item.UnitPrice
+                    };
+                    order.CtDhs.Add(ctDh);
+
+                    // Cập nhật tồn kho (trừ số lượng)
+                    await UpdateInventory(item.ProductId, item.Quantity).ConfigureAwait(false);
+                }
+
+                // 3. Lưu đơn hàng
+                await _context.Dondathangs.AddAsync(order);
+                await _context.SaveChangesAsync().ConfigureAwait(false);
+
+                // 4. Tạo hóa đơn bán
+                var totalAmount = _orderItems.Sum(item => item.TotalPrice);
+                var invoice = new Hoadonban
+                {
+                    MaHdb = GenerateInvoiceId(),
+                    NgayLap = DateOnly.FromDateTime(DateTime.Now),
+                    TongTien = (decimal)totalAmount,
+                    Vat = 0, // TODO: Add VAT calculation
+                    TrangThaiThanhToan = "Chưa thanh toán",
+                    MaNv = "NV001" // TODO: Get current user ID
+                };
+
+                await _context.Hoadonbans.AddAsync(invoice);
+                await _context.SaveChangesAsync().ConfigureAwait(false);
+
+                // 5. Tạo phiếu xuất kho
+                var exportNote = new Phieuxuatkho
+                {
+                    MaPxk = GenerateExportNoteId(),
+                    NgayXuat = DateOnly.FromDateTime(DateTime.Now),
+                    MaHdb = invoice.MaHdb,
+                    MaKho = "K01", // Kho mặc định
+                    TrangThaiPxk = "Đã xuất"
+                };
+
+                await _context.Phieuxuatkhos.AddAsync(exportNote);
+                await _context.SaveChangesAsync().ConfigureAwait(false);
+
+                await transaction.CommitAsync().ConfigureAwait(false);
             }
-            else
+            catch
             {
-                this.DialogResult = DialogResult.Cancel;
+                await transaction.RollbackAsync().ConfigureAwait(false);
+                throw;
             }
+        }
+
+        private async Task UpdateExistingOrder()
+        {
+            if (_editingOrder == null) return;
+
+            using var transaction = await _context.Database.BeginTransactionAsync().ConfigureAwait(false);
+            try
+            {
+                // 1. Cập nhật thông tin đơn hàng
+                _editingOrder.MaKh = cboCustomer.SelectedValue?.ToString();
+                _editingOrder.NgayDat = DateOnly.FromDateTime(dtpOrderDate.Value);
+                _editingOrder.NgayGiao = DateOnly.FromDateTime(dtpDeliveryDate.Value);
+                _editingOrder.TrangThai = cboStatus.Text;
+
+                // 2. Xóa chi tiết cũ và tạo mới
+                _context.CtDhs.RemoveRange(_editingOrder.CtDhs);
+                _editingOrder.CtDhs.Clear();
+
+                foreach (var item in _orderItems)
+                {
+                    var ctDh = new CtDh
+                    {
+                        MaDdh = _editingOrder.MaDdh,
+                        MaSp = item.ProductId,
+                        SoLuong = item.Quantity,
+                        DonGia = item.UnitPrice
+                    };
+                    _editingOrder.CtDhs.Add(ctDh);
+                }
+
+                await _context.SaveChangesAsync().ConfigureAwait(false);
+                await transaction.CommitAsync().ConfigureAwait(false);
+            }
+            catch
+            {
+                await transaction.RollbackAsync().ConfigureAwait(false);
+                throw;
+            }
+        }
+
+        private void FormatProductDisplay(object sender, ListControlConvertEventArgs e)
+        {
+            if (e.ListItem is Sanpham product)
+            {
+                var price = product.Gia?.ToString("N0") ?? "0";
+                e.Value = $"{product.TenSp} - Giá: {price} VNĐ";
+            }
+        }
+
+        private async Task<int> GetAvailableStock(string productId)
+        {
+            try
+            {
+                var inventory = await _context.CtTons
+                    .FirstOrDefaultAsync(ct => ct.MaSp == productId && ct.MaKho == "K01")
+                    .ConfigureAwait(false);
+
+                return inventory?.SoLuongTonKho ?? 0;
+            }
+            catch (Exception ex)
+            {
+                // Log error and return 0 as default
+                System.Diagnostics.Debug.WriteLine($"Error getting stock for product {productId}: {ex.Message}");
+                return 0;
+            }
+        }
+
+        private async Task UpdateInventory(string productId, int quantity)
+        {
+            try
+            {
+                // Lấy tồn kho của sản phẩm (giả sử kho mặc định là "K01")
+                var inventory = await _context.CtTons
+                    .FirstOrDefaultAsync(ct => ct.MaSp == productId && ct.MaKho == "K01")
+                    .ConfigureAwait(false);
+
+                if (inventory != null)
+                {
+                    inventory.SoLuongTonKho = Math.Max(0, (inventory.SoLuongTonKho ?? 0) - quantity);
+                }
+                else
+                {
+                    // Tạo mới nếu chưa có
+                    inventory = new CtTon
+                    {
+                        MaSp = productId,
+                        MaKho = "K01",
+                        SoLuongTonKho = 0
+                    };
+                    await _context.CtTons.AddAsync(inventory).ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating inventory for product {productId}: {ex.Message}");
+                throw; // Re-throw để transaction có thể rollback
+            }
+        }
+
+        private string GenerateInvoiceId()
+        {
+            return $"HDB{DateTime.Now:yyyyMMddHHmmss}";
+        }
+
+        private string GenerateExportNoteId()
+        {
+            return $"PXK{DateTime.Now:yyyyMMddHHmmss}";
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
-        private void DgvOrderDetails_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void OrderAddEditForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            _context?.Dispose();
+        }
+
+        private async Task CreateSampleCustomers()
+        {
+            try
             {
-                var row = dgvOrderDetails.Rows[e.RowIndex];
-                var productId = row.Cells["ProductId"].Value?.ToString();
-                
-                if (!string.IsNullOrEmpty(productId))
+                var sampleCustomers = new List<Khachhang>
                 {
-                    var detail = _orderDetails.FirstOrDefault(d => d.MaSp == productId);
-                    if (detail != null)
+                    new Khachhang
                     {
-                        // Update quantity
-                        if (e.ColumnIndex == dgvOrderDetails.Columns["Quantity"].Index)
-                        {
-                            if (int.TryParse(row.Cells["Quantity"].Value?.ToString(), out int newQuantity))
-                            {
-                                if (newQuantity > 0)
-                                {
-                                    detail.SoLuong = newQuantity;
-                                }
-                                else
-                                {
-                                    MessageBox.Show("Số lượng phải lớn hơn 0!", "Lỗi",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                    row.Cells["Quantity"].Value = detail.SoLuong;
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                MessageBox.Show("Số lượng không hợp lệ!", "Lỗi",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                row.Cells["Quantity"].Value = detail.SoLuong;
-                                return;
-                            }
-                        }
-                        
-                        // Update unit price
-                        if (e.ColumnIndex == dgvOrderDetails.Columns["UnitPrice"].Index)
-                        {
-                            var unitPriceText = row.Cells["UnitPrice"].Value?.ToString()?.Replace(" VNĐ", "");
-                            if (double.TryParse(unitPriceText, out double newUnitPrice))
-                            {
-                                if (newUnitPrice >= 0)
-                                {
-                                    detail.DonGia = newUnitPrice;
-                                }
-                                else
-                                {
-                                    MessageBox.Show("Đơn giá không được âm!", "Lỗi",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                    row.Cells["UnitPrice"].Value = detail.DonGia?.ToString("N0") + " VNĐ";
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                MessageBox.Show("Đơn giá không hợp lệ!", "Lỗi",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                row.Cells["UnitPrice"].Value = detail.DonGia?.ToString("N0") + " VNĐ";
-                                return;
-                            }
-                        }
-                        
-                        // Refresh the grid to show updated values
-                        RefreshOrderDetailsGrid();
-                        CalculateTotalAmount();
+                        MaKh = "KH001",
+                        TenKh = "Nguyễn Văn An",
+                        LoaiKh = "Cá nhân",
+                        Sdtkh = "0123456789",
+                        DiaChiKh = "123 Đường ABC, Quận 1, TP.HCM",
+                        EmailKh = "nguyenvanan@email.com"
+                    },
+                    new Khachhang
+                    {
+                        MaKh = "KH002",
+                        TenKh = "Trần Thị Bình",
+                        LoaiKh = "Cá nhân",
+                        Sdtkh = "0987654321",
+                        DiaChiKh = "456 Đường XYZ, Quận 2, TP.HCM",
+                        EmailKh = "tranthibinh@email.com"
+                    },
+                    new Khachhang
+                    {
+                        MaKh = "KH003",
+                        TenKh = "Công ty TNHH Minh Phát",
+                        LoaiKh = "Doanh nghiệp",
+                        Sdtkh = "0281234567",
+                        DiaChiKh = "789 Đường DEF, Quận 3, TP.HCM",
+                        EmailKh = "info@minhphat.com"
                     }
-                }
-            }
-        }
+                };
 
-        private void DgvOrderDetails_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
-            {
-                // Allow editing quantity and unit price columns
-                if (e.ColumnIndex == dgvOrderDetails.Columns["Quantity"].Index ||
-                    e.ColumnIndex == dgvOrderDetails.Columns["UnitPrice"].Index)
+                foreach (var customer in sampleCustomers)
                 {
-                    dgvOrderDetails.BeginEdit(true);
+                    await _context.Khachhangs.AddAsync(customer);
+                }
+                await _context.SaveChangesAsync().ConfigureAwait(false);
+
+                // Reload customers
+                _allCustomers = await _customerRepository.GetAllCustomersAsync().ConfigureAwait(false);
+                cboCustomer.DataSource = _allCustomers;
+
+                MessageBox.Show("Đã tạo dữ liệu mẫu cho khách hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error creating sample customers: {ex.Message}");
+                MessageBox.Show($"Lỗi tạo dữ liệu mẫu khách hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+                private void ShowDataInfo()
+        {
+            var customerCount = _allCustomers?.Count ?? 0;
+            var productCount = _allProducts?.Count ?? 0;
+            
+            var info = $"Dữ liệu đã load:\n" +
+                      $"• Khách hàng: {customerCount}\n" +
+                      $"• Sản phẩm: {productCount}";
+            
+            if (customerCount == 0 || productCount == 0)
+            {
+                info += "\n\nLưu ý: Nếu không có dữ liệu, hệ thống sẽ tự động tạo dữ liệu mẫu.";
+            }
+            
+            System.Diagnostics.Debug.WriteLine(info);
+        }
+
+        private async Task<bool> CheckDatabaseConnection()
+        {
+            try
+            {
+                // Kiểm tra kết nối bằng cách thực hiện một query đơn giản
+                var canConnect = await _context.Database.CanConnectAsync();
+                if (!canConnect)
+                {
+                    System.Diagnostics.Debug.WriteLine("Cannot connect to database");
+                    return false;
+                }
+
+                // Kiểm tra xem các bảng có tồn tại không
+                var hasCustomers = await _context.Khachhangs.AnyAsync();
+                var hasProducts = await _context.Sanphams.AnyAsync();
+                
+                System.Diagnostics.Debug.WriteLine($"Database connection OK. Has customers: {hasCustomers}, Has products: {hasProducts}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Database connection error: {ex.Message}");
+                return false;
+            }
+        }
+
+        private async Task CreateSampleProducts()
+        {
+            try
+            {
+                var sampleProducts = new List<Sanpham>
+                {
+                    new Sanpham
+                    {
+                        MaSp = "SP001",
+                        TenSp = "Bánh mì thịt nướng",
+                        MoTa = "Bánh mì thịt nướng thơm ngon",
+                        Gia = 25000,
+                        Dvtsp = "Cái",
+                        Loai = "Bánh mì"
+                    },
+                    new Sanpham
+                    {
+                        MaSp = "SP002",
+                        TenSp = "Phở bò",
+                        MoTa = "Phở bò truyền thống",
+                        Gia = 45000,
+                        Dvtsp = "Tô",
+                        Loai = "Phở"
+                    },
+                    new Sanpham
+                    {
+                        MaSp = "SP003",
+                        TenSp = "Cà phê sữa đá",
+                        MoTa = "Cà phê sữa đá Việt Nam",
+                        Gia = 15000,
+                        Dvtsp = "Ly",
+                        Loai = "Đồ uống"
+                    },
+                    new Sanpham
+                    {
+                        MaSp = "SP004",
+                        TenSp = "Bún chả",
+                        MoTa = "Bún chả Hà Nội",
+                        Gia = 35000,
+                        Dvtsp = "Phần",
+                        Loai = "Bún"
+                    },
+                    new Sanpham
+                    {
+                        MaSp = "SP005",
+                        TenSp = "Trà sữa trân châu",
+                        MoTa = "Trà sữa trân châu đường đen",
+                        Gia = 25000,
+                        Dvtsp = "Ly",
+                        Loai = "Đồ uống"
+                    }
+                };
+
+                foreach (var product in sampleProducts)
+                {
+                    await _context.Sanphams.AddAsync(product);
+                }
+                await _context.SaveChangesAsync().ConfigureAwait(false);
+
+                // Tạo dữ liệu tồn kho mẫu
+                foreach (var product in sampleProducts)
+                {
+                    var inventory = new CtTon
+                    {
+                        MaSp = product.MaSp,
+                        MaKho = "K01",
+                        SoLuongTonKho = 100
+                    };
+                    await _context.CtTons.AddAsync(inventory);
+                }
+                await _context.SaveChangesAsync().ConfigureAwait(false);
+
+                // Reload products
+                _allProducts = await _productRepository.GetAllProductsAsync().ConfigureAwait(false);
+                cboProduct.DataSource = _allProducts;
+
+                // Reload customer combobox nếu cần
+                if (_allCustomers?.Count == 0)
+                {
+                    await CreateSampleCustomers();
+                }
+
+                MessageBox.Show("Đã tạo dữ liệu mẫu cho sản phẩm và tồn kho!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error creating sample products: {ex.Message}");
+                MessageBox.Show($"Lỗi tạo dữ liệu mẫu sản phẩm: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void SetupFormForOrder()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"SetupFormForOrder called - _isEditMode: {_isEditMode}, _isViewMode: {_isViewMode}, _editingOrder: {_editingOrder?.MaDdh}");
+                
+                // Kiểm tra kết nối database
+                if (!await CheckDatabaseConnection())
+                {
+                    MessageBox.Show("Không thể kết nối đến database. Vui lòng kiểm tra kết nối!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Load customers and products
+                System.Diagnostics.Debug.WriteLine("Loading customers and products...");
+                _allCustomers = await _customerRepository.GetAllCustomersAsync().ConfigureAwait(false);
+                _allProducts = await _productRepository.GetAllProductsAsync().ConfigureAwait(false);
+
+                // Debug: Kiểm tra dữ liệu
+                System.Diagnostics.Debug.WriteLine($"Loaded {_allCustomers?.Count ?? 0} customers");
+                System.Diagnostics.Debug.WriteLine($"Loaded {_allProducts?.Count ?? 0} products");
+
+                // Hiển thị thông tin dữ liệu
+                ShowDataInfo();
+
+                // Kiểm tra dữ liệu trước khi setup
+                if (_allCustomers == null || _allCustomers.Count == 0)
+                {
+                    MessageBox.Show("Không thể load danh sách khách hàng. Vui lòng kiểm tra database!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    _allCustomers = new List<Khachhang>();
+
+                    // Tạo dữ liệu mẫu cho khách hàng
+                    await CreateSampleCustomers();
+                }
+
+                if (_allProducts == null || _allProducts.Count == 0)
+                {
+                    MessageBox.Show("Không thể load danh sách sản phẩm. Vui lòng kiểm tra database!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    _allProducts = new List<Sanpham>();
+
+                    // Tạo dữ liệu mẫu cho sản phẩm
+                    await CreateSampleProducts();
+                }
+
+                // Setup customer combo box
+                System.Diagnostics.Debug.WriteLine("Setting up customer combo box...");
+                cboCustomer.DataSource = _allCustomers;
+                cboCustomer.DisplayMember = "TenKh";
+                cboCustomer.ValueMember = "MaKh";
+                System.Diagnostics.Debug.WriteLine($"Customer combo box setup complete - Items count: {cboCustomer.Items.Count}");
+
+                // Setup product combo box
+                System.Diagnostics.Debug.WriteLine("Setting up product combo box...");
+                cboProduct.DataSource = _allProducts;
+                cboProduct.DisplayMember = "TenSp";
+                cboProduct.ValueMember = "MaSp";
+                System.Diagnostics.Debug.WriteLine($"Product combo box setup complete - Items count: {cboProduct.Items.Count}");
+
+                // Add stock information to product display
+                cboProduct.Format += FormatProductDisplay;
+
+                // Setup DataGridView
+                System.Diagnostics.Debug.WriteLine("Setting up DataGridView...");
+                dgvOrderItems.AutoGenerateColumns = false;
+                dgvOrderItems.Columns.Clear();
+
+                dgvOrderItems.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "ProductId",
+                    HeaderText = "Mã SP",
+                    DataPropertyName = "ProductId",
+                    Width = 80
+                });
+
+                dgvOrderItems.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "ProductName",
+                    HeaderText = "Tên Sản Phẩm",
+                    DataPropertyName = "ProductName",
+                    Width = 200
+                });
+
+                dgvOrderItems.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "Quantity",
+                    HeaderText = "Số Lượng",
+                    DataPropertyName = "Quantity",
+                    Width = 100
+                });
+
+                // Add event handler for quantity changes
+                dgvOrderItems.CellEndEdit += DgvOrderItems_CellEndEdit;
+
+                // Add event handler for product selection
+                cboProduct.SelectedIndexChanged += CboProduct_SelectedIndexChanged;
+
+                dgvOrderItems.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "UnitPrice",
+                    HeaderText = "Đơn Giá",
+                    DataPropertyName = "UnitPrice",
+                    Width = 120
+                });
+
+                dgvOrderItems.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "TotalPrice",
+                    HeaderText = "Thành Tiền",
+                    DataPropertyName = "TotalPrice",
+                    Width = 120
+                });
+
+                System.Diagnostics.Debug.WriteLine($"DataGridView setup complete - Columns count: {dgvOrderItems.Columns.Count}");
+
+                // Set default dates
+                System.Diagnostics.Debug.WriteLine("Setting up default dates...");
+                dtpOrderDate.Value = DateTime.Now;
+                dtpDeliveryDate.Value = DateTime.Now.AddDays(7);
+                System.Diagnostics.Debug.WriteLine($"Default dates set - Order: {dtpOrderDate.Value:dd/MM/yyyy}, Delivery: {dtpDeliveryDate.Value:dd/MM/yyyy}");
+
+                // Set default status
+                System.Diagnostics.Debug.WriteLine("Setting up status combo box...");
+                cboStatus.Items.Clear();
+                cboStatus.Items.AddRange(new object[] { "Chờ xử lý", "Đang xử lý", "Đã giao", "Đã hủy" });
+                cboStatus.SelectedItem = "Chờ xử lý";
+                System.Diagnostics.Debug.WriteLine($"Status combo box setup complete - Selected: {cboStatus.SelectedItem}");
+
+                // Set form title based on mode
+                System.Diagnostics.Debug.WriteLine("Setting form title...");
+                if (_isViewMode)
+                {
+                    this.Text = "Xem chi tiết đơn hàng";
+                    System.Diagnostics.Debug.WriteLine("Form title set to: Xem chi tiết đơn hàng");
+                }
+                else if (_isEditMode)
+                {
+                    this.Text = "Chỉnh sửa đơn hàng";
+                    System.Diagnostics.Debug.WriteLine("Form title set to: Chỉnh sửa đơn hàng");
+                }
+                else
+                {
+                    this.Text = "Thêm đơn hàng mới";
+                    System.Diagnostics.Debug.WriteLine("Form title set to: Thêm đơn hàng mới");
+                }
+
+                UpdateTotalAmount();
+
+                // Generate order ID cho trường hợp tạo mới
+                if (!_isEditMode && !_isViewMode)
+                {
+                    _currentOrderId = await _orderRepository.GenerateOrderIdAsync().ConfigureAwait(false);
+                    txtOrderId.Text = _currentOrderId;
+                }
+
+                // Bây giờ mới load dữ liệu đơn hàng
+                if (_editingOrder != null || (!string.IsNullOrEmpty(_currentOrderId) && _isEditMode))
+                {
+                    System.Diagnostics.Debug.WriteLine("Calling LoadOrderForEdit...");
+                    LoadOrderForEdit();
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Not calling LoadOrderForEdit - conditions not met");
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khởi tạo form: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void BtnViewSummary_Click(object sender, EventArgs e)
-        {
-            if (_orderDetails.Count == 0)
-            {
-                MessageBox.Show("Đơn hàng chưa có sản phẩm nào!", "Thông báo",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
 
-            var summary = $"=== TỔNG QUAN ĐƠN HÀNG ===\n\n" +
-                         $"Mã đơn hàng: {txtOrderId.Text}\n" +
-                         $"Khách hàng: {cboCustomer.Text}\n" +
-                         $"Nhân viên: {cboEmployee.Text}\n" +
-                         $"Ngày đặt: {dtpOrderDate.Value:dd/MM/yyyy}\n" +
-                         $"Ngày giao: {dtpDeliveryDate.Value:dd/MM/yyyy}\n" +
-                         $"Trạng thái: {cboStatus.Text}\n\n" +
-                         $"=== CHI TIẾT SẢN PHẨM ===\n";
-
-            decimal totalAmount = 0;
-            foreach (var detail in _orderDetails)
-            {
-                var amount = (detail.SoLuong ?? 0) * (detail.DonGia ?? 0);
-                totalAmount += (decimal)amount;
-                summary += $"\n{detail.MaSpNavigation?.TenSp ?? "N/A"}\n" +
-                          $"  Số lượng: {detail.SoLuong}\n" +
-                          $"  Đơn giá: {detail.DonGia:N0} VNĐ\n" +
-                          $"  Thành tiền: {amount:N0} VNĐ\n";
-            }
-
-            summary += $"\n=== TỔNG TIỀN: {totalAmount:N0} VNĐ ===";
-            summary += $"\n=== TỔNG SẢN PHẨM: {_orderDetails.Count} loại ===";
-
-            MessageBox.Show(summary, "Tổng quan đơn hàng", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
     }
 
-    // Helper form for product selection
-    public class ProductSelectionForm : Form
+    public class OrderItem
     {
-        private ComboBox cboProduct;
-        private NumericUpDown nudQuantity;
-        private NumericUpDown nudUnitPrice;
-        private Button btnOK;
-        private Button btnCancel;
-
-        public Sanpham SelectedProduct { get; private set; }
-        public int Quantity { get; private set; }
-        public double UnitPrice { get; private set; }
-
-        public ProductSelectionForm(List<Sanpham> products)
-        {
-            this.Text = "Chọn sản phẩm";
-            this.Size = new Size(400, 250);
-            this.StartPosition = FormStartPosition.CenterParent;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-
-            var lblProduct = new Label
-            {
-                Text = "Sản phẩm:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(100, 25),
-                Location = new Point(30, 30),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            cboProduct = new ComboBox
-            {
-                Size = new Size(250, 30),
-                Location = new Point(30, 60),
-                Font = new Font("Segoe UI", 10),
-                DropDownStyle = ComboBoxStyle.DropDownList
-            };
-            cboProduct.DataSource = products;
-            cboProduct.DisplayMember = "TenSp";
-            cboProduct.ValueMember = "MaSp";
-            cboProduct.SelectedIndexChanged += CboProduct_SelectedIndexChanged;
-
-            var lblQuantity = new Label
-            {
-                Text = "Số lượng:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(100, 25),
-                Location = new Point(30, 100),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            nudQuantity = new NumericUpDown
-            {
-                Size = new Size(100, 30),
-                Location = new Point(30, 130),
-                Font = new Font("Segoe UI", 10),
-                Minimum = 1,
-                Maximum = 9999,
-                Value = 1
-            };
-
-            var lblUnitPrice = new Label
-            {
-                Text = "Đơn giá:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(100, 25),
-                Location = new Point(180, 100),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            nudUnitPrice = new NumericUpDown
-            {
-                Size = new Size(150, 30),
-                Location = new Point(180, 130),
-                Font = new Font("Segoe UI", 10),
-                Minimum = 0,
-                Maximum = 999999999,
-                DecimalPlaces = 0,
-                Value = 0
-            };
-
-            btnOK = new Button
-            {
-                Text = "OK",
-                Size = new Size(80, 35),
-                Location = new Point(180, 170),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(52, 152, 219),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                DialogResult = DialogResult.OK
-            };
-            btnOK.FlatAppearance.BorderSize = 0;
-            btnOK.Click += BtnOK_Click;
-
-            btnCancel = new Button
-            {
-                Text = "Hủy",
-                Size = new Size(80, 35),
-                Location = new Point(280, 170),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(149, 165, 166),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                DialogResult = DialogResult.Cancel
-            };
-            btnCancel.FlatAppearance.BorderSize = 0;
-
-            this.Controls.AddRange(new Control[] {
-                lblProduct, cboProduct,
-                lblQuantity, nudQuantity,
-                lblUnitPrice, nudUnitPrice,
-                btnOK, btnCancel
-            });
-
-            // Bây giờ mới set SelectedIndex sau khi controls đã được thêm vào form
-            if (products.Count > 0)
-            {
-                cboProduct.SelectedIndex = 0;
-            }
-        }
-
-        private void CboProduct_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cboProduct.SelectedItem is Sanpham product)
-            {
-                nudUnitPrice.Value = product.Gia ?? 0;
-            }
-        }
-
-        private void BtnOK_Click(object sender, EventArgs e)
-        {
-            if (cboProduct.SelectedItem is Sanpham product)
-            {
-                SelectedProduct = product;
-                Quantity = (int)nudQuantity.Value;
-                UnitPrice = (double)nudUnitPrice.Value;
-            }
-        }
+        public string ProductId { get; set; } = "";
+        public string ProductName { get; set; } = "";
+        public int Quantity { get; set; }
+        public double UnitPrice { get; set; }
+        public double TotalPrice { get; set; }
     }
 }

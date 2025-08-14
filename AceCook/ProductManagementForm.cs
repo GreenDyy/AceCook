@@ -26,159 +26,151 @@ namespace AceCook
         public ProductManagementForm(AppDbContext context)
         {
             _productRepository = new ProductRepository(context);
+            InitializeComponent();
             SetupUI();
             _ = LoadDataAsync(); // Sử dụng async method để load dữ liệu
         }
 
-        private void SetupUI()
+        private void InitializeComponent()
         {
+            this.SuspendLayout();
+            
             this.Text = "Quản lý Sản phẩm";
-            this.Size = new Size(1000, 600);
+            this.Size = new Size(1400, 800);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(248, 249, 250);
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            
+            this.ResumeLayout(false);
+        }
 
+        private void SetupUI()
+        {
             // Title
             lblTitle = new Label
             {
                 Text = "QUẢN LÝ SẢN PHẨM",
-                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                Font = new Font("Segoe UI", 20, FontStyle.Bold),
                 ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(300, 40),
-                Location = new Point(20, 20)
+                Dock = DockStyle.Top,
+                Height = 70,
+                TextAlign = ContentAlignment.MiddleLeft,
             };
 
             // Search Panel
-            var searchPanel = new Panel
+            var pnlSearch = new FlowLayoutPanel
             {
-                Size = new Size(960, 60),
-                Location = new Point(20, 70),
-                BackColor = Color.White
+                Dock = DockStyle.Top,
+                Height = 90,
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle,
+                Padding = new Padding(15),
+                FlowDirection = FlowDirection.LeftToRight,
+                AutoScroll = true,
+                WrapContents = false,
+                Margin = new Padding(0, 200, 0, 150)
             };
 
             var lblSearch = new Label
             {
                 Text = "Tìm kiếm:",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(80, 25),
-                Location = new Point(20, 20)
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                AutoSize = true,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Margin = new Padding(0, 8, 10, 0)
             };
 
             txtSearch = new TextBox
             {
-                Size = new Size(200, 25),
-                Location = new Point(100, 18),
-                Font = new Font("Segoe UI", 10)
+                Width = 250,
+                Font = new Font("Segoe UI", 10),
+                PlaceholderText = "Mã SP, tên SP, mô tả...",
+                Margin = new Padding(0, 5, 20, 0)
             };
             txtSearch.TextChanged += TxtSearch_TextChanged;
 
             var lblCategory = new Label
             {
                 Text = "Loại:",
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(40, 25),
-                Location = new Point(320, 20)
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                AutoSize = true,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Margin = new Padding(0, 8, 10, 0)
             };
 
             cboCategory = new ComboBox
             {
-                Size = new Size(150, 25),
-                Location = new Point(360, 18),
+                Width = 150,
                 Font = new Font("Segoe UI", 10),
-                DropDownStyle = ComboBoxStyle.DropDownList
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Margin = new Padding(0, 5, 20, 0)
             };
             cboCategory.SelectedIndexChanged += CboCategory_SelectedIndexChanged;
 
             btnClearFilter = new Button
             {
-                Text = "Xóa bộ lọc",
-                Size = new Size(80, 30),
-                Location = new Point(530, 15),
-                Font = new Font("Segoe UI", 9),
+                Text = "🔄 Xóa bộ lọc",
+                Width = 120,
+                Height = 35,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(149, 165, 166),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                FlatStyle = FlatStyle.Flat,
+                Margin = new Padding(0, 5, 10, 0)
             };
             btnClearFilter.FlatAppearance.BorderSize = 0;
             btnClearFilter.Click += BtnClearFilter_Click;
 
             btnRefresh = new Button
             {
-                Text = "Làm mới",
-                Size = new Size(80, 30),
-                Location = new Point(630, 15),
-                Font = new Font("Segoe UI", 9),
+                Text = "🔄 Làm mới",
+                Width = 100,
+                Height = 35,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(52, 152, 219),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                FlatStyle = FlatStyle.Flat,
+                Margin = new Padding(0, 5, 10, 0)
             };
             btnRefresh.FlatAppearance.BorderSize = 0;
             btnRefresh.Click += BtnRefresh_Click;
 
-            searchPanel.Controls.Add(lblSearch);
-            searchPanel.Controls.Add(txtSearch);
-            searchPanel.Controls.Add(lblCategory);
-            searchPanel.Controls.Add(cboCategory);
-            searchPanel.Controls.Add(btnClearFilter);
-            searchPanel.Controls.Add(btnRefresh);
+            pnlSearch.Controls.AddRange(new Control[] {
+                lblSearch, txtSearch, lblCategory, cboCategory, btnClearFilter, btnRefresh
+            });
 
-            // Button Panel
-            var buttonPanel = new Panel
+            // Actions Panel
+            var pnlActions = new FlowLayoutPanel
             {
-                Size = new Size(960, 50),
-                Location = new Point(20, 140),
+                Dock = DockStyle.Top,
+                Height = 70,
+                FlowDirection = FlowDirection.LeftToRight,
+                Padding = new Padding(15),
                 BackColor = Color.Transparent
             };
 
-            btnAdd = new Button
-            {
-                Text = "Thêm mới",
-                Size = new Size(100, 35),
-                Location = new Point(0, 0),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnAdd.FlatAppearance.BorderSize = 0;
+            btnAdd = CreateActionButton("➕ Thêm sản phẩm mới", Color.FromArgb(46, 204, 113));
             btnAdd.Click += BtnAdd_Click;
 
-            btnEdit = new Button
-            {
-                Text = "Chỉnh sửa",
-                Size = new Size(100, 35),
-                Location = new Point(120, 0),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(241, 196, 15),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnEdit.FlatAppearance.BorderSize = 0;
+            btnRefresh = CreateActionButton("🔄 Làm mới dữ liệu", Color.FromArgb(52, 152, 219));
+            btnRefresh.Click += BtnRefresh_Click;
+
+            var btnViewDetails = CreateActionButton("👁️ Xem chi tiết", Color.FromArgb(108, 92, 231));
+            btnViewDetails.Click += BtnViewDetails_Click;
+
+            btnEdit = CreateActionButton("✏️ Chỉnh sửa sản phẩm", Color.FromArgb(255, 193, 7));
             btnEdit.Click += BtnEdit_Click;
 
-            btnDelete = new Button
-            {
-                Text = "Xóa",
-                Size = new Size(100, 35),
-                Location = new Point(240, 0),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(231, 76, 60),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnDelete.FlatAppearance.BorderSize = 0;
+            btnDelete = CreateActionButton("🗑️ Xóa sản phẩm", Color.FromArgb(231, 76, 60));
             btnDelete.Click += BtnDelete_Click;
 
-            buttonPanel.Controls.Add(btnAdd);
-            buttonPanel.Controls.Add(btnEdit);
-            buttonPanel.Controls.Add(btnDelete);
+            pnlActions.Controls.AddRange(new Control[] { btnAdd, btnRefresh, btnViewDetails, btnEdit, btnDelete });
 
             // DataGridView
             dataGridViewProducts = new DataGridView
             {
-                Size = new Size(1140, 350),
-                Location = new Point(30, 370),
+                Dock = DockStyle.Fill,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -203,21 +195,27 @@ namespace AceCook
             dataGridViewProducts.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
             dataGridViewProducts.DefaultCellStyle.SelectionForeColor = Color.White;
 
-            // Add controls to form
-            this.Controls.Add(lblTitle);
-            this.Controls.Add(searchPanel);
-            this.Controls.Add(buttonPanel);
-            this.Controls.Add(dataGridViewProducts);
+            // Add all to form
+            this.Controls.AddRange(new Control[] { dataGridViewProducts, pnlActions, pnlSearch, lblTitle });
+        }
 
-            // Add shadow effect to search panel
-            searchPanel.Paint += (sender, e) =>
+        // Helper to create buttons
+        private Button CreateActionButton(string text, Color backColor)
+        {
+            var btn = new Button
             {
-                ControlPaint.DrawBorder(e.Graphics, searchPanel.ClientRectangle,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid,
-                    Color.LightGray, 1, ButtonBorderStyle.Solid);
+                Text = text,
+                Width = 200,
+                Height = 40,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                BackColor = backColor,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Margin = new Padding(0, 0, 15, 0),
+                Cursor = Cursors.Hand
             };
+            btn.FlatAppearance.BorderSize = 0;
+            return btn;
         }
 
         private async Task LoadDataAsync()
@@ -309,32 +307,110 @@ namespace AceCook
             if (products != null)
             {
                 dataGridViewProducts.DataSource = null;
-                dataGridViewProducts.DataSource = products;
-            }
+                dataGridViewProducts.Columns.Clear();
 
-            // Configure columns
-            if (dataGridViewProducts.Columns.Count > 0)
-            {
-                dataGridViewProducts.Columns["MaSp"].HeaderText = "Mã SP";
-                dataGridViewProducts.Columns["TenSp"].HeaderText = "Tên Sản Phẩm";
-                dataGridViewProducts.Columns["MoTa"].HeaderText = "Mô Tả";
-                dataGridViewProducts.Columns["Gia"].HeaderText = "Giá";
-                dataGridViewProducts.Columns["DVTSP"].HeaderText = "Đơn Vị";
-                dataGridViewProducts.Columns["Loai"].HeaderText = "Loại";
-
-                // Format price column
-                if (dataGridViewProducts.Columns["Gia"] != null)
+                // Create custom columns
+                dataGridViewProducts.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    dataGridViewProducts.Columns["Gia"].DefaultCellStyle.Format = "N0";
+                    Name = "MaSp",
+                    HeaderText = "Mã SP",
+                    Width = 100
+                });
+
+                dataGridViewProducts.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "TenSp",
+                    HeaderText = "Tên Sản Phẩm",
+                    Width = 200
+                });
+
+                dataGridViewProducts.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "MoTa",
+                    HeaderText = "Mô Tả",
+                    Width = 250
+                });
+
+                dataGridViewProducts.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "Gia",
+                    HeaderText = "Giá",
+                    Width = 120
+                });
+
+                dataGridViewProducts.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "DVTSP",
+                    HeaderText = "Đơn Vị",
+                    Width = 100
+                });
+
+                dataGridViewProducts.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "Loai",
+                    HeaderText = "Loại",
+                    Width = 120
+                });
+
+                dataGridViewProducts.Columns.Add(new DataGridViewButtonColumn
+                {
+                    Name = "ViewDetails",
+                    HeaderText = "Xem chi tiết",
+                    Width = 100,
+                    Text = "👁️ Xem",
+                    UseColumnTextForButtonValue = true
+                });
+
+                // Populate data
+                foreach (var product in products)
+                {
+                    var rowIndex = dataGridViewProducts.Rows.Add();
+                    var row = dataGridViewProducts.Rows[rowIndex];
+
+                    row.Cells["MaSp"].Value = product.MaSp;
+                    row.Cells["TenSp"].Value = product.TenSp;
+                    row.Cells["MoTa"].Value = product.MoTa;
+                    row.Cells["Gia"].Value = (product.Gia ?? 0).ToString("N0") + " VNĐ";
+                    row.Cells["Loai"].Value = product.Loai;
                 }
 
-                // Ẩn 3 cột cuối
-                if (dataGridViewProducts.Columns["CtDhs"] != null)
-                    dataGridViewProducts.Columns["CtDhs"].Visible = false;
-                if (dataGridViewProducts.Columns["CtTons"] != null)
-                    dataGridViewProducts.Columns["CtTons"].Visible = false;
-                if (dataGridViewProducts.Columns["DinhMucs"] != null)
-                    dataGridViewProducts.Columns["DinhMucs"].Visible = false;
+                // Handle button clicks
+                dataGridViewProducts.CellClick += DataGridViewProducts_CellClick;
+            }
+        }
+
+        private async void DataGridViewProducts_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.ColumnIndex == dataGridViewProducts.Columns["ViewDetails"].Index)
+            {
+                try
+                {
+                    var productId = dataGridViewProducts.Rows[e.RowIndex].Cells["MaSp"].Value.ToString();
+                    var product = await _productRepository.GetProductByIdAsync(productId);
+                    if (product != null)
+                    {
+                        ViewProductDetails(product);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi xem chi tiết: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void ViewProductDetails(Sanpham product)
+        {
+            try
+            {
+                var viewForm = new ProductAddEditForm(_productRepository, FormMode.View, product);
+                viewForm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở form xem chi tiết: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -378,6 +454,48 @@ namespace AceCook
             cboCategory.SelectedIndex = 0;
         }
 
+        private async void BtnViewDetails_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewProducts.SelectedRows.Count > 0)
+            {
+                try
+                {
+                    // Get the selected product ID from the first column
+                    var selectedRow = dataGridViewProducts.SelectedRows[0];
+                    var productId = selectedRow.Cells["MaSp"].Value?.ToString();
+                    
+                    if (!string.IsNullOrEmpty(productId))
+                    {
+                        var product = await _productRepository.GetProductByIdAsync(productId);
+                        if (product != null)
+                        {
+                            ViewProductDetails(product);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Không thể tải thông tin sản phẩm!", "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không thể lấy thông tin sản phẩm đã chọn!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi tải thông tin sản phẩm: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một sản phẩm để xem chi tiết!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
         private async void BtnRefresh_Click(object sender, EventArgs e)
         {
             await LoadDataAsync();
@@ -385,30 +503,13 @@ namespace AceCook
 
         private async void BtnAdd_Click(object sender, EventArgs e)
         {
-            var addForm = new ProductAddEditForm();
+            var addForm = new ProductAddEditForm(_productRepository, FormMode.Add);
             if (addForm.ShowDialog() == DialogResult.OK)
             {
-                try
-                {
-                    bool success = await _productRepository.AddProductAsync(addForm.Product);
-                    if (success)
-                    {
-                        MessageBox.Show("Thêm sản phẩm thành công!", "Thông báo", 
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadProducts();
-                        LoadCategories();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Lỗi khi thêm sản phẩm!", "Lỗi", 
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Lỗi khi thêm sản phẩm: {ex.Message}", "Lỗi", 
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                MessageBox.Show("Thêm sản phẩm thành công!", "Thông báo", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadProducts();
+                LoadCategories();
             }
         }
 
@@ -419,30 +520,13 @@ namespace AceCook
                 var selectedProduct = dataGridViewProducts.SelectedRows[0].DataBoundItem as Sanpham;
                 if (selectedProduct != null)
                 {
-                    var editForm = new ProductAddEditForm(selectedProduct);
+                    var editForm = new ProductAddEditForm(_productRepository, FormMode.Edit, selectedProduct);
                     if (editForm.ShowDialog() == DialogResult.OK)
                     {
-                        try
-                        {
-                            bool success = await _productRepository.UpdateProductAsync(editForm.Product);
-                            if (success)
-                            {
-                                MessageBox.Show("Cập nhật sản phẩm thành công!", "Thông báo", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                LoadProducts();
-                                LoadCategories();
-                            }
-                            else
-                            {
-                                MessageBox.Show("Lỗi khi cập nhật sản phẩm!", "Lỗi", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"Lỗi khi cập nhật sản phẩm: {ex.Message}", "Lỗi", 
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                        MessageBox.Show("Cập nhật sản phẩm thành công!", "Thông báo", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadProducts();
+                        LoadCategories();
                     }
                 }
             }

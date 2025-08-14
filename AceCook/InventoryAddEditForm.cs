@@ -1,260 +1,213 @@
-using System;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Globalization;
 using AceCook.Models;
 using AceCook.Repositories;
 
 namespace AceCook
 {
+    public enum InventoryOperationType
+    {
+        View,
+        NhapKho,
+        XuatKho
+    }
+
     public partial class InventoryAddEditForm : Form
     {
-        private readonly AppDbContext _context;
         private readonly InventoryRepository _inventoryRepository;
-        private readonly CtTon _inventoryItem;
-        private readonly bool _isEditMode;
-        private List<Sanpham> _products;
-        private List<Khohang> _warehouses;
+        private InventoryOperationType _operationType;
+        private CtTon _currentInventory;
+        public CtTon InventoryItem { get; private set; }
 
-        public CtTon InventoryItem => _inventoryItem;
-
-        public InventoryAddEditForm(AppDbContext context, CtTon inventoryItem = null)
+        public InventoryAddEditForm(InventoryRepository inventoryRepository, InventoryOperationType operationType, CtTon inventory)
         {
-            _context = context;
-            _inventoryRepository = new InventoryRepository(context);
-            _inventoryItem = inventoryItem ?? new CtTon();
-            _isEditMode = inventoryItem != null;
-            _products = new List<Sanpham>();
-            _warehouses = new List<Khohang>();
+            _inventoryRepository = inventoryRepository;
+            _operationType = operationType;
+            _currentInventory = inventory;
             
             InitializeComponent();
-            SetupUI();
-            _ = LoadDataAsync();
+            InitializeForm();
         }
 
-        private void InitializeComponent()
+        private void InitializeForm()
         {
-            this.SuspendLayout();
-            
-            if (_isEditMode)
+            switch (_operationType)
             {
-                this.Text = "Chỉnh sửa tồn kho";
+                case InventoryOperationType.View:
+                    this.Text = "Xem thông tin tồn kho";
+                    lblTitle.Text = "THÔNG TIN TỒN KHO";
+                    lblSoLuongThayDoi.Visible = false;
+                    numSoLuongThayDoi.Visible = false;
+                    lblSoLuongSauKhi.Visible = false;
+                    txtSoLuongSauKhi.Visible = false;
+                    lblGhiChu.Visible = false;
+                    txtGhiChu.Visible = false;
+                    btnSave.Visible = false;
+                    btnCancel.Text = "Đóng";
+                    break;
+                case InventoryOperationType.NhapKho:
+                    this.Text = "Nhập kho";
+                    lblTitle.Text = "NHẬP KHO";
+                    lblTitle.ForeColor = Color.FromArgb(46, 204, 113);
+                    lblSoLuongThayDoi.Text = "SL nhập:";
+                    lblSoLuongSauKhi.Text = "SL sau nhập:";
+                    btnSave.Text = "Nhập kho";
+                    break;
+                case InventoryOperationType.XuatKho:
+                    this.Text = "Xuất kho";
+                    lblTitle.Text = "XUẤT KHO";
+                    lblTitle.ForeColor = Color.FromArgb(231, 76, 60);
+                    lblSoLuongThayDoi.Text = "SL xuất:";
+                    lblSoLuongSauKhi.Text = "SL sau xuất:";
+                    txtSoLuongSauKhi.BackColor = Color.LightCoral;
+                    btnSave.Text = "Xuất kho";
+                    btnSave.BackColor = Color.FromArgb(231, 76, 60);
+                    break;
+            }
+
+            LoadInventoryData();
+        }
+
+        private void LoadInventoryData()
+        {
+            if (_currentInventory != null)
+            {
+                txtMaSP.Text = _currentInventory.MaSp;
+                txtTenSP.Text = _currentInventory.MaSpNavigation?.TenSp ?? "N/A";
+                txtMaKho.Text = _currentInventory.MaKho;
+                txtTenKho.Text = _currentInventory.MaKhoNavigation?.TenKho ?? "N/A";
+                
+                var currentStock = _currentInventory.SoLuongTonKho ?? 0;
+                txtSoLuongHienTai.Text = currentStock.ToString("N0", CultureInfo.GetCultureInfo("vi-VN"));
+                
+                UpdateSoLuongSauKhi();
+            }
+        }
+
+        private void NumSoLuongThayDoi_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateSoLuongSauKhi();
+        }
+
+        private void UpdateSoLuongSauKhi()
+        {
+            var currentStock = _currentInventory?.SoLuongTonKho ?? 0;
+            var changeAmount = (int)numSoLuongThayDoi.Value;
+            
+            int newStock = 0;
+            switch (_operationType)
+            {
+                case InventoryOperationType.NhapKho:
+                    newStock = currentStock + changeAmount;
+                    break;
+                case InventoryOperationType.XuatKho:
+                    newStock = currentStock - changeAmount;
+                    break;
+            }
+
+            txtSoLuongSauKhi.Text = newStock.ToString("N0", CultureInfo.GetCultureInfo("vi-VN"));
+            
+            // Cảnh báo nếu số lượng sau khi xuất < 0
+            if (_operationType == InventoryOperationType.XuatKho && newStock < 0)
+            {
+                txtSoLuongSauKhi.BackColor = Color.Red;
+                txtSoLuongSauKhi.ForeColor = Color.White;
             }
             else
             {
-                this.Text = "Thêm tồn kho mới";
+                txtSoLuongSauKhi.BackColor = _operationType == InventoryOperationType.NhapKho ? 
+                    Color.LightGreen : Color.LightCoral;
+                txtSoLuongSauKhi.ForeColor = Color.Black;
             }
-            
-            this.Size = new Size(600, 500);
-            this.StartPosition = FormStartPosition.CenterParent;
-            this.BackColor = Color.FromArgb(248, 249, 250);
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            
-            this.ResumeLayout(false);
         }
 
-        private void SetupUI()
+        private bool ValidateInput()
         {
-            // Title
-            var lblTitle = new Label
+            var changeAmount = (int)numSoLuongThayDoi.Value;
+            
+            if (changeAmount <= 0)
             {
-                Text = _isEditMode ? "CHỈNH SỬA TỒN KHO" : "THÊM TỒN KHO MỚI",
-                Font = new Font("Segoe UI", 16, FontStyle.Bold),
-                ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(400, 40),
-                Location = new Point(30, 20),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
+                MessageBox.Show("Số lượng phải lớn hơn 0!", "Lỗi xác thực", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
 
-            // Form Panel
-            var formPanel = new Panel
+            if (_operationType == InventoryOperationType.XuatKho)
             {
-                Size = new Size(540, 350),
-                Location = new Point(30, 80),
-                BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle
-            };
-
-            // Sản phẩm
-            var lblProduct = new Label
-            {
-                Text = "Sản phẩm:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(100, 25),
-                Location = new Point(20, 30),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            var cboProduct = new ComboBox
-            {
-                Name = "cboProduct",
-                Size = new Size(300, 30),
-                Location = new Point(130, 28),
-                Font = new Font("Segoe UI", 10),
-                DropDownStyle = ComboBoxStyle.DropDownList
-            };
-
-            // Kho hàng
-            var lblWarehouse = new Label
-            {
-                Text = "Kho hàng:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(100, 25),
-                Location = new Point(20, 80),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            var cboWarehouse = new ComboBox
-            {
-                Name = "cboWarehouse",
-                Size = new Size(300, 30),
-                Location = new Point(130, 78),
-                Font = new Font("Segoe UI", 10),
-                DropDownStyle = ComboBoxStyle.DropDownList
-            };
-
-            // Số lượng tồn
-            var lblQuantity = new Label
-            {
-                Text = "Số lượng tồn:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(100, 25),
-                Location = new Point(20, 130),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            var numQuantity = new NumericUpDown
-            {
-                Name = "numQuantity",
-                Size = new Size(150, 30),
-                Location = new Point(130, 128),
-                Font = new Font("Segoe UI", 10),
-                Minimum = 0,
-                Maximum = 999999,
-                Value = _inventoryItem.SoLuongTonKho ?? 0
-            };
-
-            // Ghi chú
-            var lblNote = new Label
-            {
-                Text = "Ghi chú:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(100, 25),
-                Location = new Point(20, 180),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            var txtNote = new TextBox
-            {
-                Name = "txtNote",
-                Size = new Size(300, 60),
-                Location = new Point(130, 178),
-                Font = new Font("Segoe UI", 10),
-                Multiline = true,
-            };
-
-            // Buttons
-            var btnSave = new Button
-            {
-                Name = "btnSave",
-                Text = _isEditMode ? "💾 Cập nhật" : "💾 Lưu",
-                Size = new Size(120, 40),
-                Location = new Point(200, 280),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnSave.FlatAppearance.BorderSize = 0;
-            btnSave.Click += BtnSave_Click;
-
-            var btnCancel = new Button
-            {
-                Text = "❌ Hủy",
-                Size = new Size(120, 40),
-                Location = new Point(340, 280),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(149, 165, 166),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnCancel.FlatAppearance.BorderSize = 0;
-            btnCancel.Click += BtnCancel_Click;
-
-            // Add controls to form panel
-            formPanel.Controls.AddRange(new Control[] { 
-                lblProduct, cboProduct, lblWarehouse, cboWarehouse,
-                lblQuantity, numQuantity, lblNote, txtNote, btnSave, btnCancel
-            });
-
-            // Add controls to form
-            this.Controls.AddRange(new Control[] { lblTitle, formPanel });
-        }
-
-        private async Task LoadDataAsync()
-        {
-            try
-            {
-                // Load products
-                var productRepo = new ProductRepository(_context);
-                _products = await productRepo.GetAllProductsAsync();
-                
-                var cboProduct = GetControl<ComboBox>("cboProduct");
-                cboProduct.DataSource = _products;
-                cboProduct.DisplayMember = "TenSp";
-                cboProduct.ValueMember = "MaSp";
-
-                // Load warehouses
-                _warehouses = await _inventoryRepository.GetAllWarehousesAsync();
-                
-                var cboWarehouse = GetControl<ComboBox>("cboWarehouse");
-                cboWarehouse.DataSource = _warehouses;
-                cboWarehouse.DisplayMember = "TenKho";
-                cboWarehouse.ValueMember = "MaKho";
-
-                // Set selected values if editing
-                if (_isEditMode)
+                var currentStock = _currentInventory?.SoLuongTonKho ?? 0;
+                if (changeAmount > currentStock)
                 {
-                    cboProduct.SelectedValue = _inventoryItem.MaSp;
-                    cboWarehouse.SelectedValue = _inventoryItem.MaKho;
+                    MessageBox.Show($"Không thể xuất {changeAmount} sản phẩm! Chỉ còn {currentStock} trong kho.", 
+                        "Lỗi xác thực", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return false;
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+
+            return true;
         }
 
-        private void BtnSave_Click(object sender, EventArgs e)
+        private async void BtnSave_Click(object sender, EventArgs e)
         {
-            if (!ValidateForm())
+            if (!ValidateInput())
                 return;
 
             try
             {
-                var cboProduct = GetControl<ComboBox>("cboProduct");
-                var cboWarehouse = GetControl<ComboBox>("cboWarehouse");
-                var numQuantity = GetControl<NumericUpDown>("numQuantity");
-                var txtNote = GetControl<TextBox>("txtNote");
+                btnSave.Enabled = false;
+                Cursor = Cursors.WaitCursor;
 
-                // Update inventory object
-                _inventoryItem.MaSp = cboProduct.SelectedValue?.ToString();
-                _inventoryItem.MaKho = cboWarehouse.SelectedValue?.ToString();
-                _inventoryItem.SoLuongTonKho = (int)numQuantity.Value;
+                var changeAmount = (int)numSoLuongThayDoi.Value;
+                var currentStock = _currentInventory?.SoLuongTonKho ?? 0;
+                
+                int newStock = 0;
+                switch (_operationType)
+                {
+                    case InventoryOperationType.NhapKho:
+                        newStock = currentStock + changeAmount;
+                        break;
+                    case InventoryOperationType.XuatKho:
+                        newStock = currentStock - changeAmount;
+                        break;
+                }
 
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                // Update inventory
+                _currentInventory.SoLuongTonKho = newStock;
+                bool success = await _inventoryRepository.UpdateInventoryAsync(_currentInventory);
+
+                if (success)
+                {
+                    InventoryItem = _currentInventory;
+                    
+                    var operation = _operationType == InventoryOperationType.NhapKho ? "nhập" : "xuất";
+                    MessageBox.Show($"Đã {operation} {changeAmount} sản phẩm thành công!\nSố lượng tồn kho mới: {newStock}", 
+                        "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Không thể cập nhật tồn kho. Vui lòng thử lại.", "Lỗi", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi lưu dữ liệu: {ex.Message}", "Lỗi",
+                MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}", "Lỗi", 
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnSave.Enabled = true;
+                Cursor = Cursors.Default;
             }
         }
 
@@ -262,56 +215,6 @@ namespace AceCook
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
-        }
-
-        private bool ValidateForm()
-        {
-            var cboProduct = GetControl<ComboBox>("cboProduct");
-            var cboWarehouse = GetControl<ComboBox>("cboWarehouse");
-            var numQuantity = GetControl<NumericUpDown>("numQuantity");
-
-            // Validate required fields
-            if (cboProduct.SelectedValue == null)
-            {
-                MessageBox.Show("Vui lòng chọn sản phẩm!", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                cboProduct.Focus();
-                return false;
-            }
-
-            if (cboWarehouse.SelectedValue == null)
-            {
-                MessageBox.Show("Vui lòng chọn kho hàng!", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                cboWarehouse.Focus();
-                return false;
-            }
-
-            if (numQuantity.Value <= 0)
-            {
-                MessageBox.Show("Số lượng tồn phải lớn hơn 0!", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                numQuantity.Focus();
-                return false;
-            }
-
-            return true;
-        }
-
-        private T GetControl<T>(string name) where T : Control
-        {
-            foreach (Control control in this.Controls)
-            {
-                if (control is Panel panel)
-                {
-                    foreach (Control c in panel.Controls)
-                    {
-                        if (c.Name == name && c is T result)
-                            return result;
-                    }
-                }
-            }
-            throw new InvalidOperationException($"Control '{name}' not found");
         }
     }
 }
