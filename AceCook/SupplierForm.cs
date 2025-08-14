@@ -48,7 +48,7 @@ namespace AceCook
                 Text = "QUẢN LÝ NHÀ CUNG CẤP",
                 Font = new Font("Segoe UI", 20, FontStyle.Bold),
                 ForeColor = Color.FromArgb(52, 73, 94),
-                Size = new Size(400, 50),
+                Size = new Size(500, 50),
                 Location = new Point(30, 20),
                 TextAlign = ContentAlignment.MiddleLeft
             };
