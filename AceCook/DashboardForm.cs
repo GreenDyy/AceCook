@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using AceCook.Models;
 using AceCook.Repositories;
+using System.Linq;
 
 namespace AceCook
 {
@@ -296,7 +297,19 @@ namespace AceCook
 
         private void LoadSupplierManagement()
         {
-            ShowComingSoonContent("Quản lý nhà cung cấp");
+            try
+            {
+                var supplierForm = new SupplierForm(_context);
+                supplierForm.TopLevel = false;
+                supplierForm.FormBorderStyle = FormBorderStyle.None;
+                supplierForm.Dock = DockStyle.Fill;
+                panelContent.Controls.Add(supplierForm);
+                supplierForm.Show();
+            }
+            catch (Exception ex)
+            {
+                ShowErrorContent("Quản lý nhà cung cấp", ex.Message);
+            }
         }
 
         private void LoadRevenueReport()

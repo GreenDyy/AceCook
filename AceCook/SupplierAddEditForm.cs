@@ -2,18 +2,29 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using AceCook.Models;
+using AceCook.Repositories;
+using System.Linq; // Added for FirstOrDefault
 
 namespace AceCook
 {
     public partial class SupplierAddEditForm : Form
     {
+        private readonly AppDbContext _context;
+        private readonly SupplierRepository _supplierRepository;
         private readonly Nhacungcap _supplier;
         private readonly bool _isEditMode;
+        private TextBox txtMaNcc;
+        private TextBox txtTenNcc;
+        private TextBox txtSoDienThoai;
+        private TextBox txtEmail;
+        private TextBox txtDiaChi;
 
         public Nhacungcap Supplier => _supplier;
 
-        public SupplierAddEditForm(Nhacungcap supplier = null)
+        public SupplierAddEditForm(AppDbContext context, Nhacungcap supplier = null)
         {
+            _context = context;
+            _supplierRepository = new SupplierRepository(context);
             _supplier = supplier ?? new Nhacungcap();
             _isEditMode = supplier != null;
             InitializeComponent();
@@ -68,134 +79,129 @@ namespace AceCook
             // Mã NCC
             var lblMaNcc = new Label
             {
-                Text = "Mã NCC:",
+                Text = "Mã nhà cung cấp:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(100, 25),
+                Size = new Size(120, 25),
                 Location = new Point(20, 30),
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
-            var txtMaNcc = new TextBox
+            txtMaNcc = new TextBox
             {
                 Name = "txtMaNcc",
-                Size = new Size(150, 30),
-                Location = new Point(130, 28),
+                Size = new Size(350, 30),
+                Location = new Point(150, 28),
                 Font = new Font("Segoe UI", 10),
-                Text = _supplier.MaNcc ?? "",
-                Enabled = !_isEditMode // Không cho phép sửa mã khi edit
+                Enabled = !_isEditMode
             };
 
             // Tên NCC
             var lblTenNcc = new Label
             {
-                Text = "Tên NCC:",
+                Text = "Tên nhà cung cấp:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(100, 25),
+                Size = new Size(120, 25),
                 Location = new Point(20, 80),
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
-            var txtTenNcc = new TextBox
+            txtTenNcc = new TextBox
             {
                 Name = "txtTenNcc",
-                Size = new Size(300, 30),
-                Location = new Point(130, 78),
-                Font = new Font("Segoe UI", 10),
-                Text = _supplier.TenNcc ?? ""
+                Size = new Size(350, 30),
+                Location = new Point(150, 78),
+                Font = new Font("Segoe UI", 10)
             };
 
-            // SĐT NCC
-            var lblSdtncc = new Label
+            // Số điện thoại
+            var lblSoDienThoai = new Label
             {
                 Text = "Số điện thoại:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(100, 25),
+                Size = new Size(120, 25),
                 Location = new Point(20, 130),
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
-            var txtSdtncc = new TextBox
+            txtSoDienThoai = new TextBox
             {
-                Name = "txtSdtncc",
-                Size = new Size(200, 30),
-                Location = new Point(130, 128),
-                Font = new Font("Segoe UI", 10),
-                Text = _supplier.Sdtncc ?? ""
+                Name = "txtSoDienThoai",
+                Size = new Size(350, 30),
+                Location = new Point(150, 128),
+                Font = new Font("Segoe UI", 10)
             };
 
-            // Email NCC
-            var lblEmailNcc = new Label
+            // Email
+            var lblEmail = new Label
             {
                 Text = "Email:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(100, 25),
+                Size = new Size(120, 25),
                 Location = new Point(20, 180),
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
-            var txtEmailNcc = new TextBox
+            txtEmail = new TextBox
             {
-                Name = "txtEmailNcc",
-                Size = new Size(300, 30),
-                Location = new Point(130, 178),
-                Font = new Font("Segoe UI", 10),
-                Text = _supplier.EmailNcc ?? ""
+                Name = "txtEmail",
+                Size = new Size(350, 30),
+                Location = new Point(150, 178),
+                Font = new Font("Segoe UI", 10)
             };
 
-            // Địa chỉ NCC
-            var lblDiaChiNcc = new Label
+            // Địa chỉ
+            var lblDiaChi = new Label
             {
                 Text = "Địa chỉ:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(100, 25),
+                Size = new Size(120, 25),
                 Location = new Point(20, 230),
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
-            var txtDiaChiNcc = new TextBox
+            txtDiaChi = new TextBox
             {
-                Name = "txtDiaChiNcc",
-                Size = new Size(300, 30),
-                Location = new Point(130, 228),
+                Name = "txtDiaChi",
+                Size = new Size(350, 60),
+                Location = new Point(150, 228),
                 Font = new Font("Segoe UI", 10),
-                Text = _supplier.DiaChiNcc ?? ""
+                Multiline = true
             };
 
             // Buttons
             var btnSave = new Button
             {
-                Name = "btnSave",
-                Text = _isEditMode ? "💾 Cập nhật" : "💾 Lưu",
+                Text = "Lưu",
                 Size = new Size(120, 40),
-                Location = new Point(200, 280),
+                Location = new Point(250, 290),
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = Color.FromArgb(46, 204, 113),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
+                DialogResult = DialogResult.OK
             };
-            btnSave.FlatAppearance.BorderSize = 0;
             btnSave.Click += BtnSave_Click;
 
             var btnCancel = new Button
             {
-                Text = "❌ Hủy",
+                Text = "Hủy",
                 Size = new Size(120, 40),
-                Location = new Point(340, 280),
+                Location = new Point(380, 290),
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(149, 165, 166),
+                BackColor = Color.FromArgb(231, 76, 60),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
+                DialogResult = DialogResult.Cancel
             };
-            btnCancel.FlatAppearance.BorderSize = 0;
-            btnCancel.Click += BtnCancel_Click;
 
             // Add controls to form panel
-            formPanel.Controls.AddRange(new Control[] { 
-                lblMaNcc, txtMaNcc, lblTenNcc, txtTenNcc,
-                lblSdtncc, txtSdtncc, lblEmailNcc, txtEmailNcc,
-                lblDiaChiNcc, txtDiaChiNcc, btnSave, btnCancel
+            formPanel.Controls.AddRange(new Control[] {
+                lblMaNcc, txtMaNcc,
+                lblTenNcc, txtTenNcc,
+                lblSoDienThoai, txtSoDienThoai,
+                lblEmail, txtEmail,
+                lblDiaChi, txtDiaChi,
+                btnSave, btnCancel
             });
 
             // Add controls to form
@@ -206,115 +212,60 @@ namespace AceCook
         {
             if (_isEditMode)
             {
-                // Data is already loaded in constructor
-                return;
+                txtMaNcc.Text = _supplier.MaNcc;
+                txtTenNcc.Text = _supplier.TenNcc;
+                txtSoDienThoai.Text = _supplier.Sdtncc;  // Changed from SoDienThoai to Sdtncc
+                txtEmail.Text = _supplier.EmailNcc;       // Changed from Email to EmailNcc
+                txtDiaChi.Text = _supplier.DiaChiNcc;     // Changed from DiaChi to DiaChiNcc
             }
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            if (!ValidateForm())
-                return;
-
-            try
+            if (ValidateInput())
             {
-                // Update supplier object
-                _supplier.MaNcc = GetControl<TextBox>("txtMaNcc").Text.Trim();
-                _supplier.TenNcc = GetControl<TextBox>("txtTenNcc").Text.Trim();
-                _supplier.Sdtncc = GetControl<TextBox>("txtSdtncc").Text.Trim();
-                _supplier.EmailNcc = GetControl<TextBox>("txtEmailNcc").Text.Trim();
-                _supplier.DiaChiNcc = GetControl<TextBox>("txtDiaChiNcc").Text.Trim();
+                try
+                {
+                    // Chỉ cập nhật thông tin cho đối tượng _supplier
+                    _supplier.MaNcc = txtMaNcc.Text.Trim();
+                    _supplier.TenNcc = txtTenNcc.Text.Trim();
+                    _supplier.Sdtncc = txtSoDienThoai.Text.Trim();
+                    _supplier.EmailNcc = txtEmail.Text.Trim();
+                    _supplier.DiaChiNcc = txtDiaChi.Text.Trim();
 
-                this.DialogResult = DialogResult.OK;
-                this.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi lưu dữ liệu: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Trả về DialogResult.OK để form chính xử lý việc thêm/sửa
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi lưu thông tin: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
-        private void BtnCancel_Click(object sender, EventArgs e)
+        private bool ValidateInput()
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
-        }
-
-        private bool ValidateForm()
-        {
-            var txtMaNcc = GetControl<TextBox>("txtMaNcc");
-            var txtTenNcc = GetControl<TextBox>("txtTenNcc");
-            var txtSdtncc = GetControl<TextBox>("txtSdtncc");
-
-            // Validate required fields
             if (string.IsNullOrWhiteSpace(txtMaNcc.Text))
             {
-                MessageBox.Show("Vui lòng nhập mã nhà cung cấp!", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtMaNcc.Focus();
+                MessageBox.Show("Vui lòng nhập mã nhà cung cấp", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(txtTenNcc.Text))
             {
-                MessageBox.Show("Vui lòng nhập tên nhà cung cấp!", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtTenNcc.Focus();
+                MessageBox.Show("Vui lòng nhập tên nhà cung cấp", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(txtSdtncc.Text))
+            if (string.IsNullOrWhiteSpace(txtSoDienThoai.Text))
             {
-                MessageBox.Show("Vui lòng nhập số điện thoại!", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtSdtncc.Focus();
+                MessageBox.Show("Vui lòng nhập số điện thoại", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
-            }
-
-            // Validate phone number format (basic validation)
-            if (txtSdtncc.Text.Length < 10 || txtSdtncc.Text.Length > 11)
-            {
-                MessageBox.Show("Số điện thoại phải có 10-11 chữ số!", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtSdtncc.Focus();
-                return false;
-            }
-
-            // Validate email format if provided
-            var txtEmailNcc = GetControl<TextBox>("txtEmailNcc");
-            if (!string.IsNullOrWhiteSpace(txtEmailNcc.Text))
-            {
-                try
-                {
-                    var email = new System.Net.Mail.MailAddress(txtEmailNcc.Text);
-                }
-                catch
-                {
-                    MessageBox.Show("Email không đúng định dạng!", "Lỗi",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    txtEmailNcc.Focus();
-                    return false;
-                }
             }
 
             return true;
-        }
-
-        private T GetControl<T>(string name) where T : Control
-        {
-            foreach (Control control in this.Controls)
-            {
-                if (control is Panel panel)
-                {
-                    foreach (Control c in panel.Controls)
-                    {
-                        if (c.Name == name && c is T result)
-                            return result;
-                    }
-                }
-            }
-            throw new InvalidOperationException($"Control '{name}' not found");
         }
     }
 }

@@ -53,13 +53,30 @@ namespace AceCook.Repositories
         {
             try
             {
-                _context.Nhacungcaps.Update(supplier);
+                var existingSupplier = await _context.Nhacungcaps
+                    .FirstOrDefaultAsync(n => n.MaNcc == supplier.MaNcc);
+
+                if (existingSupplier == null)
+                {
+                    return false;
+                }
+
+                // Cập nhật từng trường một cách rõ ràng
+                existingSupplier.TenNcc = supplier.TenNcc;
+                existingSupplier.Sdtncc = supplier.Sdtncc;
+                existingSupplier.EmailNcc = supplier.EmailNcc;
+                existingSupplier.DiaChiNcc = supplier.DiaChiNcc;
+
+                // Đánh dấu MaNcc không được modified
+                _context.Entry(existingSupplier).Property(x => x.MaNcc).IsModified = false;
+
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                Console.WriteLine($"Error in UpdateSupplierAsync: {ex.Message}");
+                throw; // Throw lại exception để caller xử lý
             }
         }
 

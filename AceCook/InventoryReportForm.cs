@@ -41,6 +41,13 @@ namespace AceCook
         private Label label5;
         private PictureBox pictureBox1;
         private Button btnGenerate;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
         private DataGridView dgvInventory;
 
         public InventoryReportForm()
@@ -82,17 +89,24 @@ namespace AceCook
             label5 = new Label();
             pictureBox1 = new PictureBox();
             dgvInventory = new DataGridView();
+            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn7 = new DataGridViewTextBoxColumn();
             panel2.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
+            ((ISupportInitialize)pictureBox3).BeginInit();
             groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            ((ISupportInitialize)pictureBox2).BeginInit();
             groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox5).BeginInit();
+            ((ISupportInitialize)pictureBox5).BeginInit();
             groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dgvInventory).BeginInit();
+            ((ISupportInitialize)pictureBox1).BeginInit();
+            ((ISupportInitialize)dgvInventory).BeginInit();
             SuspendLayout();
             // 
             // lblFromDate
@@ -383,57 +397,60 @@ namespace AceCook
             // 
             // dgvInventory
             // 
-            dgvInventory.Location = new Point(12, 200);
-            dgvInventory.Size = new Size(1563, 750);
-            dgvInventory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvInventory.AllowUserToAddRows = false;
             dgvInventory.AllowUserToDeleteRows = false;
-            dgvInventory.ReadOnly = true;
+            dgvInventory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvInventory.BackgroundColor = Color.White;
-            dgvInventory.Columns.AddRange(new DataGridViewColumn[] {
-                new DataGridViewTextBoxColumn 
-                { 
-                    Name = "MaSP",
-                    HeaderText = "MÃ SP",
-                    DataPropertyName = "MaSP"
-                },
-                new DataGridViewTextBoxColumn 
-                { 
-                    Name = "TenSanPham",
-                    HeaderText = "TÊN SẢN PHẨM",
-                    DataPropertyName = "TenSanPham"
-                },
-                new DataGridViewTextBoxColumn 
-                { 
-                    Name = "Loai",
-                    HeaderText = "LOẠI",
-                    DataPropertyName = "Loai"
-                },
-                new DataGridViewTextBoxColumn 
-                { 
-                    Name = "Gia",
-                    HeaderText = "GIÁ",
-                    DataPropertyName = "Gia"
-                },
-                new DataGridViewTextBoxColumn 
-                { 
-                    Name = "TonKho",
-                    HeaderText = "TỒN KHO",
-                    DataPropertyName = "TonKho"
-                },
-                new DataGridViewTextBoxColumn 
-                { 
-                    Name = "GiaTri",
-                    HeaderText = "GIÁ TRỊ",
-                    DataPropertyName = "GiaTri"
-                },
-                new DataGridViewTextBoxColumn 
-                { 
-                    Name = "ChiTietTheoKho",
-                    HeaderText = "CHI TIẾT THEO KHO",
-                    DataPropertyName = "ChiTietTheoKho"
-                }
-            });
+            dgvInventory.ColumnHeadersHeight = 29;
+            dgvInventory.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6, dataGridViewTextBoxColumn7 });
+            dgvInventory.Location = new Point(76, 465);
+            dgvInventory.Name = "dgvInventory";
+            dgvInventory.ReadOnly = true;
+            dgvInventory.RowHeadersWidth = 51;
+            dgvInventory.Size = new Size(1401, 459);
+            dgvInventory.TabIndex = 0;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            dataGridViewTextBoxColumn1.MinimumWidth = 6;
+            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            dataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            dataGridViewTextBoxColumn2.MinimumWidth = 6;
+            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            dataGridViewTextBoxColumn2.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            dataGridViewTextBoxColumn3.MinimumWidth = 6;
+            dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            dataGridViewTextBoxColumn3.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            dataGridViewTextBoxColumn4.MinimumWidth = 6;
+            dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            dataGridViewTextBoxColumn4.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn5
+            // 
+            dataGridViewTextBoxColumn5.MinimumWidth = 6;
+            dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            dataGridViewTextBoxColumn5.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn6
+            // 
+            dataGridViewTextBoxColumn6.MinimumWidth = 6;
+            dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+            dataGridViewTextBoxColumn6.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn7
+            // 
+            dataGridViewTextBoxColumn7.MinimumWidth = 6;
+            dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+            dataGridViewTextBoxColumn7.ReadOnly = true;
             // 
             // InventoryReportForm
             // 
@@ -456,17 +473,17 @@ namespace AceCook
             groupBox1.PerformLayout();
             groupBox5.ResumeLayout(false);
             groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
+            ((ISupportInitialize)pictureBox3).EndInit();
             groupBox4.ResumeLayout(false);
             groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            ((ISupportInitialize)pictureBox2).EndInit();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox5).EndInit();
+            ((ISupportInitialize)pictureBox5).EndInit();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dgvInventory).EndInit();
+            ((ISupportInitialize)pictureBox1).EndInit();
+            ((ISupportInitialize)dgvInventory).EndInit();
             ResumeLayout(false);
         }
 
