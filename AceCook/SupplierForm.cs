@@ -62,10 +62,11 @@ namespace AceCook
                 BorderStyle = BorderStyle.FixedSingle
             };
                         var lblTotalSuppliersTitle = new Label
+                      var lblTotalSuppliersTitle = new Label
             {
                 Text = "Tổng số nhà cung cấp:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                AutoSize = true,  // Tự động điều chỉnh kích thước theo text
+                AutoSize = true,
                 Location = new Point(20, 15),
                 TextAlign = ContentAlignment.MiddleLeft
             };
@@ -75,17 +76,18 @@ namespace AceCook
                 Text = "0",
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 ForeColor = Color.FromArgb(52, 152, 219),
-                AutoSize = true,  // Tự động điều chỉnh kích thước theo text
-                Location = new Point(180, 15),  // Điều chỉnh vị trí dựa trên độ rộng thực tế của lblTotalSuppliersTitle
-                TextAlign = ContentAlignment.MiddleLeft
+                Size = new Size(50, 25),
+                Location = new Point(200, 15),  // Điều chỉnh vị trí để hiển thị số
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(5, 0, 0, 0)  // Thêm padding bên trái
             };
 
             var lblActiveSuppliersTitle = new Label
             {
                 Text = "Nhà cung cấp đang hoạt động:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                AutoSize = true,  // Tự động điều chỉnh kích thước theo text
-                Location = new Point(250, 15),  // Điều chỉnh khoảng cách với cặp label đầu tiên
+                AutoSize = true,
+                Location = new Point(300, 15),
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
@@ -94,9 +96,10 @@ namespace AceCook
                 Text = "0",
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 ForeColor = Color.FromArgb(46, 204, 113),
-                AutoSize = true,  // Tự động điều chỉnh kích thước theo text
-                Location = new Point(470, 15),  // Điều chỉnh vị trí dựa trên độ rộng thực tế của lblActiveSuppliersTitle
-                TextAlign = ContentAlignment.MiddleLeft
+                Size = new Size(50, 25),
+                Location = new Point(520, 15),  // Điều chỉnh vị trí để hiển thị số
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(5, 0, 0, 0)  // Thêm padding bên trái
             };
           
             pnlSummary.Controls.AddRange(new Control[] { 
