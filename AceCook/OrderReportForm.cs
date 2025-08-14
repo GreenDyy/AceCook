@@ -107,7 +107,7 @@ namespace AceCook
                 Font = new Font("Segoe UI", 10),
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            cboStatusFilter.Items.AddRange(new object[] { "Tất cả", "Chờ xử lý", "Đang xử lý", "Đã giao", "Đã hủy" });
+            cboStatusFilter.Items.AddRange(new object[] { "Tất cả", "Đơn hàng mới", "Đã hoàn thành" });
             cboStatusFilter.SelectedIndex = 0;
             cboStatusFilter.SelectedIndexChanged += CboStatusFilter_SelectedIndexChanged;
 
@@ -445,7 +445,7 @@ namespace AceCook
                 row.Cells["CustomerInfo"].Value = order.MaKhNavigation?.TenKh ?? "N/A";
                 row.Cells["NgayDat"].Value = order.NgayDat?.ToString("dd/MM/yyyy");
                 row.Cells["NgayGiao"].Value = order.NgayGiao?.ToString("dd/MM/yyyy") ?? "Chưa giao";
-                row.Cells["TrangThai"].Value = order.TrangThai ?? "Chờ xử lý";
+                row.Cells["TrangThai"].Value = order.TrangThai ?? "Đơn hàng mới";
                 
                 // Calculate total amount
                 decimal totalAmount = 0;
@@ -498,7 +498,7 @@ namespace AceCook
             });
 
             // Group by status
-            var statusGroups = orders.GroupBy(o => o.TrangThai ?? "Chờ xử lý");
+            var statusGroups = orders.GroupBy(o => o.TrangThai ?? "Đơn hàng mới");
             var totalOrders = orders.Count;
 
             foreach (var group in statusGroups)
@@ -530,24 +530,20 @@ namespace AceCook
 
         private void StyleStatusCell(DataGridViewCell cell, string status)
         {
-            if (status == "Hoàn thành" || status == "Đã giao")
+            if (status == "Đã hoàn thành")
             {
                 cell.Style.ForeColor = Color.Green;
                 cell.Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
             }
-            else if (status == "Đang xử lý")
+            else if (status == "Đơn hàng mới")
             {
-                cell.Style.ForeColor = Color.Orange;
-                cell.Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
-            }
-            else if (status == "Đã hủy")
-            {
-                cell.Style.ForeColor = Color.Red;
+                cell.Style.ForeColor = Color.Blue;
                 cell.Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
             }
             else
             {
-                cell.Style.ForeColor = Color.Blue;
+                // Default style for any other status
+                cell.Style.ForeColor = Color.Black;
                 cell.Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
             }
         }
