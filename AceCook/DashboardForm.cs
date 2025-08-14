@@ -318,12 +318,36 @@ namespace AceCook
 
         private void LoadInventoryReport()
         {
-            ShowComingSoonContent("Báo cáo tồn kho");
+            try
+            {
+                var inventoryReportForm = new InventoryReportForm();
+                inventoryReportForm.TopLevel = false;
+                inventoryReportForm.FormBorderStyle = FormBorderStyle.None;
+                inventoryReportForm.Dock = DockStyle.Fill;
+                panelContent.Controls.Add(inventoryReportForm);
+                inventoryReportForm.Show();
+            }
+            catch (Exception ex)
+            {
+                ShowErrorContent("Báo cáo tồn kho", ex.Message);
+            }
         }
 
         private void LoadOrderReport()
         {
-            ShowComingSoonContent("Báo cáo đơn hàng");
+            try
+            {
+                var orderReportForm = new OrderReportForm();
+                orderReportForm.TopLevel = false;
+                orderReportForm.FormBorderStyle = FormBorderStyle.None;
+                orderReportForm.Dock = DockStyle.Fill;
+                panelContent.Controls.Add(orderReportForm);
+                orderReportForm.Show();
+            }
+            catch (Exception ex)
+            {
+                ShowErrorContent("Báo cáo đơn hàng", ex.Message);
+            }
         }
 
         private void LoadSettings()
