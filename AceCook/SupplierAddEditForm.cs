@@ -2,11 +2,15 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using AceCook.Models;
+using AceCook.Data;
+using AceCook.Repositories;
 
 namespace AceCook
 {
     public partial class SupplierAddEditForm : Form
     {
+        private readonly AppDbContext _context;
+        private readonly SupplierRepository _supplierRepository;
         private readonly Nhacungcap _supplier;
         private readonly bool _isEditMode;
         private TextBox txtMaNcc;
@@ -17,8 +21,10 @@ namespace AceCook
 
         public Nhacungcap Supplier => _supplier;
 
-        public SupplierAddEditForm(Nhacungcap supplier = null)
+        public SupplierAddEditForm(AppDbContext context, Nhacungcap supplier = null)
         {
+            _context = context;
+            _supplierRepository = new SupplierRepository(context);
             _supplier = supplier ?? new Nhacungcap();
             _isEditMode = supplier != null;
             InitializeComponent();
@@ -214,7 +220,7 @@ namespace AceCook
             }
         }
 
-        private void BtnSave_Click(object sender, EventArgs e)
+        private async void BtnSave_Click(object sender, EventArgs e)
         {
             if (ValidateInput())
             {
@@ -224,8 +230,27 @@ namespace AceCook
                 _supplier.EmailNcc = txtEmail.Text.Trim();         // Changed from Email to EmailNcc
                 _supplier.DiaChiNcc = txtDiaChi.Text.Trim();       // Changed from DiaChi to DiaChiNcc
                 
-                DialogResult = DialogResult.OK;
-                Close();
+                try
+                {
+                    bool success = await _supplierRepository.AddSupplierAsync(_supplier);
+                    if (success)
+                    {
+                        MessageBox.Show("Thêm nhà cung cấp thành công!", "Thông báo", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        DialogResult = DialogResult.OK;
+                        Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Lỗi khi thêm nhà cung cấp!", "Lỗi", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi thêm nhà cung cấp: {ex.Message}", "Lỗi", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 

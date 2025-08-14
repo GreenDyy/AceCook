@@ -379,7 +379,7 @@ namespace AceCook
 
         private async void BtnAdd_Click(object sender, EventArgs e)
         {
-            using (var addForm = new SupplierAddEditForm())
+            using (var addForm = new SupplierAddEditForm(_context))
             {
                 if (addForm.ShowDialog() == DialogResult.OK)
                 {
