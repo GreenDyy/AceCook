@@ -118,7 +118,7 @@ namespace AceCook
             {
                 Text = "Tìm kiếm:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(80, 25),
+                Size = new Size(100, 25),
                 Location = new Point(20, 25),
                 TextAlign = ContentAlignment.MiddleLeft
             };
