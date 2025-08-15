@@ -71,14 +71,14 @@ namespace AceCook
             {
                 Text = "Từ ngày:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(90, 30),
+                Size = new Size(90, 35),
                 Location = new Point(20, 15),
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
             dtpStartDate = new DateTimePicker
             {
-                Size = new Size(130, 30),
+                Size = new Size(130, 35),
                 Location = new Point(120, 12),
                 Font = new Font("Segoe UI", 10),
                 Format = DateTimePickerFormat.Short,
@@ -89,14 +89,14 @@ namespace AceCook
             {
                 Text = "đến:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(50, 30),
+                Size = new Size(50, 35),
                 Location = new Point(250, 15),
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
             dtpEndDate = new DateTimePicker
             {
-                Size = new Size(130, 30),
+                Size = new Size(130, 35),
                 Location = new Point(300, 12),
                 Font = new Font("Segoe UI", 10),
                 Format = DateTimePickerFormat.Short,
