@@ -29,12 +29,35 @@ namespace AceCook.Repositories
 
         public async Task<Dondathang?> GetOrderByIdAsync(string maDDH)
         {
-            return await _context.Dondathangs
-                .Include(d => d.MaKhNavigation)
-                .Include(d => d.MaNvNavigation)
-                .Include(d => d.CtDhs)
-                    .ThenInclude(ct => ct.MaSpNavigation)
-                .FirstOrDefaultAsync(d => d.MaDdh == maDDH);
+            try
+            {
+                var order = await _context.Dondathangs
+                    .Include(d => d.MaKhNavigation)
+                    .Include(d => d.MaNvNavigation)
+                    .Include(d => d.CtDhs)
+                        .ThenInclude(ct => ct.MaSpNavigation)
+                    .FirstOrDefaultAsync(d => d.MaDdh == maDDH);
+
+                // Đảm bảo các navigation properties không null
+                if (order != null)
+                {
+                    if (order.CtDhs == null)
+                        order.CtDhs = new List<CtDh>();
+                    
+                    if (order.MaKhNavigation == null)
+                        order.MaKhNavigation = new Khachhang();
+                    
+                    if (order.MaNvNavigation == null)
+                        order.MaNvNavigation = new Nhanvien();
+                }
+
+                return order;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in GetOrderByIdAsync: {ex.Message}");
+                return null;
+            }
         }
 
         public async Task<List<Dondathang>> SearchOrdersAsync(string searchTerm)
@@ -217,7 +240,7 @@ namespace AceCook.Repositories
             return $"DDH{(lastNumber + 1):D3}";
         }
 
-        public async Task<List<Dondathang>> GetFilteredOrdersAsync(string? searchTerm, string? status, DateOnly? startDate, DateOnly? endDate)
+        public async Task<List<Dondathang>> GetFilteredOrdersAsync(string? searchTerm, string? status, DateTime? startDate, DateTime? endDate)
         {
             var query = _context.Dondathangs
                 .Include(d => d.MaKhNavigation)
@@ -232,12 +255,12 @@ namespace AceCook.Repositories
                 query = query.Where(d => d.TrangThai == status);
             }
 
-            // Apply date range filter
+            // Apply date range filter - sử dụng DateTime để tránh lỗi LINQ translation
             if (startDate.HasValue && endDate.HasValue)
             {
                 query = query.Where(d => d.NgayDat.HasValue &&
-                                       d.NgayDat.Value >= startDate.Value &&
-                                       d.NgayDat.Value <= endDate.Value);
+                                       d.NgayDat.Value.ToDateTime(TimeOnly.MinValue) >= startDate.Value &&
+                                       d.NgayDat.Value.ToDateTime(TimeOnly.MinValue) <= endDate.Value);
             }
 
             // Apply search filter

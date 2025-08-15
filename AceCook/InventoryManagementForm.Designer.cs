@@ -63,69 +63,6 @@
             this.lblTitle.Height = 70;
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 
-            // Summary Panel
-            this.pnlSummary.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlSummary.Height = 80;
-            this.pnlSummary.BackColor = System.Drawing.Color.White;
-            this.pnlSummary.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlSummary.Margin = new System.Windows.Forms.Padding(0, 200, 0, 150);
-
-            var lblTotalItemsTitle = new System.Windows.Forms.Label
-            {
-                Text = "Tổng số sản phẩm:",
-                Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point),
-                Size = new System.Drawing.Size(150, 25),
-                Location = new System.Drawing.Point(20, 15),
-                TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-            };
-
-            this.lblTotalItems.Text = "0";
-            this.lblTotalItems.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.lblTotalItems.ForeColor = System.Drawing.Color.FromArgb(52, 152, 219);
-            this.lblTotalItems.Size = new System.Drawing.Size(100, 25);
-            this.lblTotalItems.Location = new System.Drawing.Point(180, 15);
-            this.lblTotalItems.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-
-            var lblTotalValueTitle = new System.Windows.Forms.Label
-            {
-                Text = "Tổng giá trị:",
-                Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point),
-                Size = new System.Drawing.Size(120, 25),
-                Location = new System.Drawing.Point(320, 15),
-                TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-            };
-
-            this.lblTotalValue.Text = "0 VNĐ";
-            this.lblTotalValue.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.lblTotalValue.ForeColor = System.Drawing.Color.FromArgb(46, 204, 113);
-            this.lblTotalValue.Size = new System.Drawing.Size(200, 25);
-            this.lblTotalValue.Location = new System.Drawing.Point(450, 15);
-            this.lblTotalValue.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-
-            var lblLowStockTitle = new System.Windows.Forms.Label
-            {
-                Text = "Sản phẩm sắp hết:",
-                Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point),
-                Size = new System.Drawing.Size(150, 25),
-                Location = new System.Drawing.Point(20, 45),
-                TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-            };
-
-            var lblLowStockCount = new System.Windows.Forms.Label
-            {
-                Text = "0",
-                Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point),
-                ForeColor = System.Drawing.Color.FromArgb(231, 76, 60),
-                Size = new System.Drawing.Size(100, 25),
-                Location = new System.Drawing.Point(180, 45),
-                TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-            };
-
-            this.pnlSummary.Controls.AddRange(new System.Windows.Forms.Control[] { 
-                lblTotalItemsTitle, this.lblTotalItems, 
-                lblTotalValueTitle, this.lblTotalValue,
-                lblLowStockTitle, lblLowStockCount
-            });
 
             // Filters Panel
             var pnlFilters = new System.Windows.Forms.FlowLayoutPanel
@@ -150,9 +87,9 @@
                 Margin = new System.Windows.Forms.Padding(0, 8, 10, 0)
             };
 
-            this.txtSearch.Width = 200;
+            this.txtSearch.Width = 220; // Increased from 200 to 220 for better text display
             this.txtSearch.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.GraphicsUnit.Point);
-            this.txtSearch.Margin = new System.Windows.Forms.Padding(0, 5, 20, 0);
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(0, 5, 25, 0); // Increased right margin from 20 to 25
             this.txtSearch.TextChanged += new System.EventHandler(this.TxtSearch_TextChanged);
 
             var lblWarehouse = new System.Windows.Forms.Label
@@ -164,10 +101,10 @@
                 Margin = new System.Windows.Forms.Padding(0, 8, 10, 0)
             };
 
-            this.cboWarehouseFilter.Width = 150;
+            this.cboWarehouseFilter.Width = 180; // Increased from 150 to 180 to prevent text truncation
             this.cboWarehouseFilter.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.GraphicsUnit.Point);
             this.cboWarehouseFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboWarehouseFilter.Margin = new System.Windows.Forms.Padding(0, 5, 20, 0);
+            this.cboWarehouseFilter.Margin = new System.Windows.Forms.Padding(0, 5, 25, 0); // Increased right margin from 20 to 25
             this.cboWarehouseFilter.Items.Add("Tất cả kho");
             this.cboWarehouseFilter.SelectedIndex = 0;
             this.cboWarehouseFilter.SelectedIndexChanged += new System.EventHandler(this.CboWarehouseFilter_SelectedIndexChanged);
@@ -181,10 +118,10 @@
                 Margin = new System.Windows.Forms.Padding(0, 8, 10, 0)
             };
 
-            this.cboProductTypeFilter.Width = 150;
+            this.cboProductTypeFilter.Width = 180; // Increased from 150 to 180 to prevent text truncation
             this.cboProductTypeFilter.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.GraphicsUnit.Point);
             this.cboProductTypeFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboProductTypeFilter.Margin = new System.Windows.Forms.Padding(0, 5, 20, 0);
+            this.cboProductTypeFilter.Margin = new System.Windows.Forms.Padding(0, 5, 25, 0); // Increased right margin from 20 to 25
             this.cboProductTypeFilter.Items.Add("Tất cả loại");
             this.cboProductTypeFilter.SelectedIndex = 0;
             this.cboProductTypeFilter.SelectedIndexChanged += new System.EventHandler(this.CboProductTypeFilter_SelectedIndexChanged);
@@ -199,17 +136,6 @@
             this.btnRefresh.Margin = new System.Windows.Forms.Padding(0, 5, 10, 0);
             this.btnRefresh.FlatAppearance.BorderSize = 0;
             this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
-
-            this.btnExport.Text = "📊 Xuất báo cáo";
-            this.btnExport.Width = 120;
-            this.btnExport.Height = 35;
-            this.btnExport.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.btnExport.BackColor = System.Drawing.Color.FromArgb(46, 204, 113);
-            this.btnExport.ForeColor = System.Drawing.Color.White;
-            this.btnExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExport.Margin = new System.Windows.Forms.Padding(0, 5, 10, 0);
-            this.btnExport.FlatAppearance.BorderSize = 0;
-            this.btnExport.Click += new System.EventHandler(this.BtnExport_Click);
 
             pnlFilters.Controls.AddRange(new System.Windows.Forms.Control[] { 
                 lblSearch, this.txtSearch, lblWarehouse, this.cboWarehouseFilter,
@@ -239,7 +165,7 @@
 
             // DataGridView
             this.dataGridViewInventory.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridViewInventory.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridViewInventory.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.None; // Changed from Fill to None
             this.dataGridViewInventory.AllowUserToAddRows = false;
             this.dataGridViewInventory.AllowUserToDeleteRows = false;
             this.dataGridViewInventory.ReadOnly = true;
@@ -251,7 +177,9 @@
             this.dataGridViewInventory.RowHeadersVisible = false;
             this.dataGridViewInventory.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.dataGridViewInventory.ColumnHeadersHeight = 50;
-            this.dataGridViewInventory.RowTemplate.Height = 50;
+            this.dataGridViewInventory.RowTemplate.Height = 35; // Reduced from 50 to 35 for better density
+            this.dataGridViewInventory.AllowUserToResizeRows = false;
+            this.dataGridViewInventory.AllowUserToResizeColumns = true; // Allow users to resize columns
 
             // Style the DataGridView
             this.dataGridViewInventory.DefaultCellStyle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.GraphicsUnit.Point);
@@ -261,6 +189,13 @@
             this.dataGridViewInventory.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             this.dataGridViewInventory.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(52, 152, 219);
             this.dataGridViewInventory.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+            
+            // Enable word wrap and better text display
+            this.dataGridViewInventory.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewInventory.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            
+            // Set alternating row colors for better readability
+            this.dataGridViewInventory.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 249, 250);
 
             // Add all to form
             this.Controls.AddRange(new System.Windows.Forms.Control[] { 
@@ -269,7 +204,7 @@
 
             // Form properties
             this.BackColor = System.Drawing.Color.FromArgb(248, 249, 250);
-            this.ClientSize = new System.Drawing.Size(1400, 800);
+            this.ClientSize = new System.Drawing.Size(1600, 900); // Increased from 1400x800 to 1600x900 for better spacing
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -314,75 +249,85 @@
             this.dataGridViewInventory.DataSource = null;
             this.dataGridViewInventory.Columns.Clear();
 
-            // Create custom columns
+            // Create custom columns with optimized widths for better readability
             this.dataGridViewInventory.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
             {
                 Name = "MaSp",
                 HeaderText = "Mã SP",
-                Width = 100
+                Width = 100,
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
             });
 
             this.dataGridViewInventory.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
             {
                 Name = "TenSp",
                 HeaderText = "Tên sản phẩm",
-                Width = 200
+                Width = 280,
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
             });
 
             this.dataGridViewInventory.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
             {
                 Name = "Loai",
                 HeaderText = "Loại",
-                Width = 120
+                Width = 140,
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
             });
 
             this.dataGridViewInventory.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
             {
                 Name = "MaKho",
                 HeaderText = "Mã kho",
-                Width = 80
+                Width = 100,
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
             });
 
             this.dataGridViewInventory.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
             {
                 Name = "TenKho",
                 HeaderText = "Tên kho",
-                Width = 150
+                Width = 200,
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
             });
 
             this.dataGridViewInventory.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
             {
                 Name = "ViTri",
                 HeaderText = "Vị trí",
-                Width = 150
+                Width = 280,
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
             });
 
             this.dataGridViewInventory.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
             {
                 Name = "SoLuongTon",
                 HeaderText = "Số lượng tồn",
-                Width = 120
+                Width = 140,
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
             });
 
             this.dataGridViewInventory.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
             {
                 Name = "DonGia",
                 HeaderText = "Đơn giá",
-                Width = 120
+                Width = 140,
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
             });
 
             this.dataGridViewInventory.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
             {
                 Name = "ThanhTien",
                 HeaderText = "Thành tiền",
-                Width = 150
+                Width = 160,
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
             });
 
             this.dataGridViewInventory.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
             {
                 Name = "TrangThai",
                 HeaderText = "Trạng thái",
-                Width = 100
+                Width = 120,
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
             });
 
             // Populate data

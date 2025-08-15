@@ -55,11 +55,352 @@ namespace AceCook
 
         private void SetupForm()
         {
+            SetupBasicControls();
             SetupComboBoxes();
             SetupDataGridView();
             SetupEventHandlers();
             SetDefaultValues();
             UpdateFormTitle();
+            SetupProductControls();
+            SetupActionControls();
+        }
+
+        private void SetupBasicControls()
+        {
+            try
+            {
+                // Panel cho thông tin cơ bản
+                var pnlBasicInfo = new Panel
+                {
+                    Dock = DockStyle.Top,
+                    Height = 150,
+                    BackColor = Color.FromArgb(248, 249, 250),
+                    BorderStyle = BorderStyle.FixedSingle,
+                    Padding = new Padding(15)
+                };
+
+                // Label tiêu đề
+                var lblBasicInfo = new Label
+                {
+                    Text = "THÔNG TIN ĐƠN HÀNG",
+                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(52, 73, 94),
+                    AutoSize = true,
+                    Location = new Point(15, 15)
+                };
+
+                // Label và TextBox cho Mã đơn hàng
+                var lblOrderId = new Label
+                {
+                    Text = "Mã đơn hàng:",
+                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                    AutoSize = true,
+                    Location = new Point(15, 50)
+                };
+
+                txtOrderId = new TextBox
+                {
+                    Location = new Point(120, 48),
+                    Size = new Size(150, 25),
+                    Font = new Font("Segoe UI", 10),
+                    ReadOnly = true,
+                    BackColor = Color.LightGray
+                };
+
+                // Label và ComboBox cho Khách hàng
+                var lblCustomer = new Label
+                {
+                    Text = "Khách hàng:",
+                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                    AutoSize = true,
+                    Location = new Point(290, 50)
+                };
+
+                cboCustomer = new ComboBox
+                {
+                    Location = new Point(380, 48),
+                    Size = new Size(250, 25),
+                    Font = new Font("Segoe UI", 10),
+                    DropDownStyle = ComboBoxStyle.DropDownList
+                };
+
+                // Label và DateTimePicker cho Ngày đặt
+                var lblOrderDate = new Label
+                {
+                    Text = "Ngày đặt:",
+                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                    AutoSize = true,
+                    Location = new Point(15, 85)
+                };
+
+                dtpOrderDate = new DateTimePicker
+                {
+                    Location = new Point(120, 83),
+                    Size = new Size(150, 25),
+                    Font = new Font("Segoe UI", 10),
+                    Format = DateTimePickerFormat.Short
+                };
+
+                // Label và DateTimePicker cho Ngày giao
+                var lblDeliveryDate = new Label
+                {
+                    Text = "Ngày giao:",
+                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                    AutoSize = true,
+                    Location = new Point(290, 85)
+                };
+
+                dtpDeliveryDate = new DateTimePicker
+                {
+                    Location = new Point(380, 83),
+                    Size = new Size(150, 25),
+                    Font = new Font("Segoe UI", 10),
+                    Format = DateTimePickerFormat.Short
+                };
+
+                // Label và ComboBox cho Trạng thái
+                var lblStatus = new Label
+                {
+                    Text = "Trạng thái:",
+                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                    AutoSize = true,
+                    Location = new Point(550, 85)
+                };
+
+                cboStatus = new ComboBox
+                {
+                    Location = new Point(630, 83),
+                    Size = new Size(150, 25),
+                    Font = new Font("Segoe UI", 10),
+                    DropDownStyle = ComboBoxStyle.DropDownList
+                };
+
+                // Thêm controls vào panel
+                pnlBasicInfo.Controls.AddRange(new Control[] 
+                {
+                    lblBasicInfo, lblOrderId, txtOrderId, lblCustomer, cboCustomer,
+                    lblOrderDate, dtpOrderDate, lblDeliveryDate, dtpDeliveryDate,
+                    lblStatus, cboStatus
+                });
+
+                // Thêm panel vào form
+                this.Controls.Add(pnlBasicInfo);
+
+                System.Diagnostics.Debug.WriteLine("Basic controls setup completed");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error setting up basic controls: {ex.Message}");
+                MessageBox.Show($"Lỗi khi thiết lập controls cơ bản: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void SetupProductControls()
+        {
+            try
+            {
+                // Tạo panel cho việc thêm sản phẩm
+                var pnlAddProduct = new Panel
+                {
+                    Dock = DockStyle.Top,
+                    Height = 120,
+                    BackColor = Color.White,
+                    BorderStyle = BorderStyle.FixedSingle,
+                    Padding = new Padding(15)
+                };
+
+                // Label "Thêm sản phẩm"
+                var lblAddProduct = new Label
+                {
+                    Text = "THÊM SẢN PHẨM VÀO ĐƠN HÀNG",
+                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(52, 73, 94),
+                    AutoSize = true,
+                    Location = new Point(15, 15)
+                };
+
+                // Label "Sản phẩm"
+                var lblProduct = new Label
+                {
+                    Text = "Sản phẩm:",
+                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                    AutoSize = true,
+                    Location = new Point(15, 50)
+                };
+
+                // ComboBox sản phẩm
+                cboProduct = new ComboBox
+                {
+                    Location = new Point(100, 48),
+                    Size = new Size(250, 25),
+                    Font = new Font("Segoe UI", 10),
+                    DropDownStyle = ComboBoxStyle.DropDownList
+                };
+
+                // Label "Số lượng"
+                var lblQuantity = new Label
+                {
+                    Text = "Số lượng:",
+                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                    AutoSize = true,
+                    Location = new Point(370, 50)
+                };
+
+                // NumericUpDown cho số lượng
+                numQuantity = new NumericUpDown
+                {
+                    Location = new Point(450, 48),
+                    Size = new Size(100, 25),
+                    Font = new Font("Segoe UI", 10),
+                    Minimum = 1,
+                    Maximum = 9999,
+                    Value = 1
+                };
+
+                // Label hiển thị thông tin tồn kho
+                lblStockInfo = new Label
+                {
+                    Text = "Chọn sản phẩm để xem thông tin tồn kho",
+                    Font = new Font("Segoe UI", 9),
+                    ForeColor = Color.Gray,
+                    AutoSize = true,
+                    Location = new Point(100, 80)
+                };
+
+                // Nút thêm sản phẩm
+                btnAddProduct = new Button
+                {
+                    Text = "➕ Thêm vào đơn hàng",
+                    Location = new Point(570, 45),
+                    Size = new Size(150, 30),
+                    Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                    BackColor = Color.FromArgb(46, 204, 113),
+                    ForeColor = Color.White,
+                    FlatStyle = FlatStyle.Flat,
+                    Cursor = Cursors.Hand
+                };
+                btnAddProduct.FlatAppearance.BorderSize = 0;
+
+                // Nút xóa sản phẩm
+                btnRemoveProduct = new Button
+                {
+                    Text = "🗑️ Xóa sản phẩm",
+                    Location = new Point(730, 45),
+                    Size = new Size(130, 30),
+                    Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                    BackColor = Color.FromArgb(231, 76, 60),
+                    ForeColor = Color.White,
+                    FlatStyle = FlatStyle.Flat,
+                    Cursor = Cursors.Hand
+                };
+                btnRemoveProduct.FlatAppearance.BorderSize = 0;
+
+                // Thêm controls vào panel
+                pnlAddProduct.Controls.AddRange(new Control[] 
+                {
+                    lblAddProduct, lblProduct, cboProduct, lblQuantity, numQuantity,
+                    lblStockInfo, btnAddProduct, btnRemoveProduct
+                });
+
+                // Thêm panel vào form
+                this.Controls.Add(pnlAddProduct);
+
+                // Gắn event handlers
+                btnAddProduct.Click += btnAddProduct_Click;
+                btnRemoveProduct.Click += btnRemoveProduct_Click;
+                cboProduct.SelectedIndexChanged += CboProduct_SelectedIndexChanged;
+
+                System.Diagnostics.Debug.WriteLine("Product controls setup completed");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error setting up product controls: {ex.Message}");
+                MessageBox.Show($"Lỗi khi thiết lập controls sản phẩm: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void SetupActionControls()
+        {
+            try
+            {
+                // Panel cho tổng tiền và nút hành động
+                var pnlActions = new Panel
+                {
+                    Dock = DockStyle.Bottom,
+                    Height = 80,
+                    BackColor = Color.FromArgb(248, 249, 250),
+                    BorderStyle = BorderStyle.FixedSingle,
+                    Padding = new Padding(15)
+                };
+
+                // Label tổng tiền
+                var lblTotal = new Label
+                {
+                    Text = "Tổng tiền:",
+                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(52, 73, 94),
+                    AutoSize = true,
+                    Location = new Point(15, 25)
+                };
+
+                // Label hiển thị tổng tiền
+                lblTotalAmount = new Label
+                {
+                    Text = "0 VNĐ",
+                    Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(46, 204, 113),
+                    AutoSize = true,
+                    Location = new Point(120, 22)
+                };
+
+                // Nút Lưu
+                btnSave = new Button
+                {
+                    Text = "💾 Lưu đơn hàng",
+                    Location = new Point(400, 20),
+                    Size = new Size(150, 40),
+                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                    BackColor = Color.FromArgb(46, 204, 113),
+                    ForeColor = Color.White,
+                    FlatStyle = FlatStyle.Flat,
+                    Cursor = Cursors.Hand
+                };
+                btnSave.FlatAppearance.BorderSize = 0;
+
+                // Nút Hủy/Đóng
+                btnCancel = new Button
+                {
+                    Text = "❌ Hủy",
+                    Location = new Point(570, 20),
+                    Size = new Size(120, 40),
+                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                    BackColor = Color.FromArgb(231, 76, 60),
+                    ForeColor = Color.White,
+                    FlatStyle = FlatStyle.Flat,
+                    Cursor = Cursors.Hand
+                };
+                btnCancel.FlatAppearance.BorderSize = 0;
+
+                // Thêm controls vào panel
+                pnlActions.Controls.AddRange(new Control[] 
+                {
+                    lblTotal, lblTotalAmount, btnSave, btnCancel
+                });
+
+                // Thêm panel vào form
+                this.Controls.Add(pnlActions);
+
+                // Gắn event handlers
+                btnSave.Click += btnSave_Click;
+                btnCancel.Click += btnCancel_Click;
+
+                System.Diagnostics.Debug.WriteLine("Action controls setup completed");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error setting up action controls: {ex.Message}");
+                MessageBox.Show($"Lỗi khi thiết lập controls hành động: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private async void SetupComboBoxes()
@@ -91,19 +432,82 @@ namespace AceCook
 
         private void SetupDataGridView()
         {
-            dgvOrderItems.AutoGenerateColumns = false;
-            dgvOrderItems.Columns.Clear();
-
-            var columns = new[]
+            try
             {
-                new DataGridViewTextBoxColumn { Name = "ProductId", HeaderText = "Mã SP", DataPropertyName = "ProductId", Width = 80 },
-                new DataGridViewTextBoxColumn { Name = "ProductName", HeaderText = "Tên Sản Phẩm", DataPropertyName = "ProductName", Width = 200 },
-                new DataGridViewTextBoxColumn { Name = "Quantity", HeaderText = "Số Lượng", DataPropertyName = "Quantity", Width = 100 },
-                new DataGridViewTextBoxColumn { Name = "UnitPrice", HeaderText = "Đơn Giá", DataPropertyName = "UnitPrice", Width = 120 },
-                new DataGridViewTextBoxColumn { Name = "TotalPrice", HeaderText = "Thành Tiền", DataPropertyName = "TotalPrice", Width = 120 }
-            };
+                // Tạo DataGridView
+                dgvOrderItems = new DataGridView
+                {
+                    Dock = DockStyle.Fill,
+                    AutoGenerateColumns = false,
+                    AllowUserToAddRows = false,
+                    AllowUserToDeleteRows = false,
+                    ReadOnly = true,
+                    SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                    MultiSelect = false,
+                    BackgroundColor = Color.White,
+                    BorderStyle = BorderStyle.FixedSingle,
+                    GridColor = Color.LightGray,
+                    RowHeadersVisible = false,
+                    CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
+                    ColumnHeadersHeight = 40,
+                    RowTemplate = { Height = 35 }
+                };
 
-            dgvOrderItems.Columns.AddRange(columns);
+                // Thiết lập style cho DataGridView
+                dgvOrderItems.DefaultCellStyle.Font = new Font("Segoe UI", 9);
+                dgvOrderItems.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+                dgvOrderItems.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
+                dgvOrderItems.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dgvOrderItems.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dgvOrderItems.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
+                dgvOrderItems.DefaultCellStyle.SelectionForeColor = Color.White;
+
+                // Tạo các cột
+                var columns = new[]
+                {
+                    new DataGridViewTextBoxColumn { Name = "ProductId", HeaderText = "Mã SP", DataPropertyName = "ProductId", Width = 80 },
+                    new DataGridViewTextBoxColumn { Name = "ProductName", HeaderText = "Tên Sản Phẩm", DataPropertyName = "ProductName", Width = 250 },
+                    new DataGridViewTextBoxColumn { Name = "Quantity", HeaderText = "Số Lượng", DataPropertyName = "Quantity", Width = 100 },
+                    new DataGridViewTextBoxColumn { Name = "UnitPrice", HeaderText = "Đơn Giá", DataPropertyName = "UnitPrice", Width = 120 },
+                    new DataGridViewTextBoxColumn { Name = "TotalPrice", HeaderText = "Thành Tiền", DataPropertyName = "TotalPrice", Width = 150 }
+                };
+
+                dgvOrderItems.Columns.AddRange(columns);
+
+                // Tạo panel chứa DataGridView
+                var pnlDataGrid = new Panel
+                {
+                    Dock = DockStyle.Fill,
+                    BackColor = Color.White,
+                    BorderStyle = BorderStyle.FixedSingle,
+                    Padding = new Padding(10)
+                };
+
+                // Label tiêu đề cho danh sách sản phẩm
+                var lblOrderItems = new Label
+                {
+                    Text = "DANH SÁCH SẢN PHẨM TRONG ĐƠN HÀNG",
+                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(52, 73, 94),
+                    AutoSize = true,
+                    Location = new Point(10, 10)
+                };
+
+                pnlDataGrid.Controls.Add(lblOrderItems);
+                pnlDataGrid.Controls.Add(dgvOrderItems);
+                dgvOrderItems.Location = new Point(10, 40);
+                dgvOrderItems.Size = new Size(pnlDataGrid.Width - 20, pnlDataGrid.Height - 50);
+
+                // Thêm panel vào form
+                this.Controls.Add(pnlDataGrid);
+
+                System.Diagnostics.Debug.WriteLine("DataGridView setup completed");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error setting up DataGridView: {ex.Message}");
+                MessageBox.Show($"Lỗi khi thiết lập DataGridView: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void SetupEventHandlers()
@@ -127,16 +531,50 @@ namespace AceCook
             
             if (!string.IsNullOrEmpty(_currentOrderId))
                 this.Text += $" - {_currentOrderId}";
+                
+            // Nếu ở view mode, hiển thị thêm thông tin
+            if (_isViewMode && _editingOrder != null)
+            {
+                var customerName = _editingOrder.MaKhNavigation?.TenKh ?? "Không xác định";
+                var orderDate = _editingOrder.NgayDat?.ToString("dd/MM/yyyy") ?? "N/A";
+                this.Text += $" | KH: {customerName} | Ngày: {orderDate}";
+            }
         }
 
         private void DisableControlsForViewMode()
         {
-            var controls = new Control[] { cboCustomer, dtpOrderDate, dtpDeliveryDate, cboStatus, cboProduct, numQuantity, btnAddProduct, btnRemoveProduct };
-            foreach (var control in controls) control.Enabled = false;
+            try
+            {
+                // Disable tất cả controls input
+                var controls = new Control[] { cboCustomer, dtpOrderDate, dtpDeliveryDate, cboStatus, cboProduct, numQuantity, btnAddProduct, btnRemoveProduct };
+                foreach (var control in controls) 
+                {
+                    if (control != null) control.Enabled = false;
+                }
 
-            btnSave.Visible = false;
-            btnCancel.Text = "Đóng";
-            dgvOrderItems.ReadOnly = true;
+                // Ẩn nút Save và đổi text nút Cancel
+                if (btnSave != null) btnSave.Visible = false;
+                if (btnCancel != null) btnCancel.Text = "Đóng";
+
+                // Đảm bảo DataGridView không thể chỉnh sửa
+                if (dgvOrderItems != null)
+                {
+                    dgvOrderItems.ReadOnly = true;
+                    dgvOrderItems.AllowUserToAddRows = false;
+                    dgvOrderItems.AllowUserToDeleteRows = false;
+                    dgvOrderItems.AllowUserToOrderColumns = false;
+                    dgvOrderItems.AllowUserToResizeRows = false;
+                }
+                
+                // Ẩn các controls thêm sản phẩm
+                if (lblStockInfo != null) lblStockInfo.Visible = false;
+
+                System.Diagnostics.Debug.WriteLine("View mode controls disabled successfully");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error disabling controls for view mode: {ex.Message}");
+            }
         }
 
         private async void LoadOrderForEdit()
@@ -157,6 +595,7 @@ namespace AceCook
                     _editingOrder = await _orderRepository.GetOrderByIdAsync(_currentOrderId);
                     if (_editingOrder != null)
                     {
+                        MessageBox.Show($"Đang chỉnh sửa đơn hàng: {_editingOrder.MaDdh}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         LoadOrderData();
                         LoadOrderItems();
                         RefreshOrderItemsGrid();
@@ -193,21 +632,77 @@ namespace AceCook
 
         private void LoadOrderItems()
         {
-            _orderItems.Clear();
-            foreach (var ct in _editingOrder.CtDhs)
+            try
             {
-                var product = _allProducts.FirstOrDefault(p => p.MaSp == ct.MaSp);
-                if (product != null)
+                _orderItems.Clear();
+                
+                // Kiểm tra xem có dữ liệu chi tiết đơn hàng không
+                if (_editingOrder?.CtDhs == null || !_editingOrder.CtDhs.Any())
                 {
-                    _orderItems.Add(new OrderItem
+                    System.Diagnostics.Debug.WriteLine("Không có chi tiết đơn hàng để load");
+                    if (_isViewMode)
                     {
-                        ProductId = ct.MaSp,
-                        ProductName = product.TenSp ?? "",
-                        Quantity = ct.SoLuong ?? 0,
-                        UnitPrice = (double)(ct.DonGia ?? 0),
-                        TotalPrice = (ct.SoLuong ?? 0) * (double)(ct.DonGia ?? 0)
-                    });
+                        MessageBox.Show("Đơn hàng này không có sản phẩm nào!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    return;
                 }
+
+                System.Diagnostics.Debug.WriteLine($"Loading {_editingOrder.CtDhs.Count} order items");
+                
+                foreach (var ct in _editingOrder.CtDhs)
+                {
+                    try
+                    {
+                        // Tìm sản phẩm tương ứng
+                        var product = _allProducts?.FirstOrDefault(p => p.MaSp == ct.MaSp);
+                        
+                        if (product != null)
+                        {
+                            var orderItem = new OrderItem
+                            {
+                                ProductId = ct.MaSp ?? "",
+                                ProductName = product.TenSp ?? "Không xác định",
+                                Quantity = ct.SoLuong ?? 0,
+                                UnitPrice = (double)(ct.DonGia ?? 0),
+                                TotalPrice = (ct.SoLuong ?? 0) * (double)(ct.DonGia ?? 0)
+                            };
+                            
+                            _orderItems.Add(orderItem);
+                            System.Diagnostics.Debug.WriteLine($"Added item: {orderItem.ProductName} - Qty: {orderItem.Quantity} - Price: {orderItem.UnitPrice:N0}");
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Product not found for MaSp: {ct.MaSp}");
+                            // Tạo item với thông tin cơ bản nếu không tìm thấy sản phẩm
+                            var orderItem = new OrderItem
+                            {
+                                ProductId = ct.MaSp ?? "",
+                                ProductName = $"Sản phẩm {ct.MaSp}",
+                                Quantity = ct.SoLuong ?? 0,
+                                UnitPrice = (double)(ct.DonGia ?? 0),
+                                TotalPrice = (ct.SoLuong ?? 0) * (double)(ct.DonGia ?? 0)
+                            };
+                            _orderItems.Add(orderItem);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error processing order item {ct.MaSp}: {ex.Message}");
+                    }
+                }
+                
+                System.Diagnostics.Debug.WriteLine($"Successfully loaded {_orderItems.Count} order items");
+                
+                // Hiển thị thông báo nếu load thành công và ở view mode
+                if (_isViewMode && _orderItems.Count > 0)
+                {
+                    System.Diagnostics.Debug.WriteLine($"View mode: Loaded {_orderItems.Count} items successfully");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in LoadOrderItems: {ex.Message}");
+                MessageBox.Show($"Lỗi khi tải danh sách sản phẩm: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -215,17 +710,81 @@ namespace AceCook
         {
             if (_isViewMode) return;
 
-            if (!ValidateProductSelection()) return;
+            try
+            {
+                if (!ValidateProductSelection()) return;
 
-            var selectedProduct = cboProduct.SelectedItem as Sanpham;
-            var quantity = (int)numQuantity.Value;
+                var selectedProduct = cboProduct.SelectedItem as Sanpham;
+                var quantity = (int)numQuantity.Value;
 
-            if (!await ValidateStock(selectedProduct.MaSp, quantity)) return;
+                // Kiểm tra tồn kho trước khi thêm
+                var availableStock = await GetAvailableStock(selectedProduct.MaSp);
+                
+                if (availableStock <= 0)
+                {
+                    MessageBox.Show($"Sản phẩm '{selectedProduct.TenSp}' hiện không có trong kho!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
-            AddOrUpdateOrderItem(selectedProduct, quantity);
-            RefreshOrderItemsGrid();
-            UpdateTotalAmount();
-            ClearProductSelection();
+                if (quantity > availableStock)
+                {
+                    var result = MessageBox.Show(
+                        $"Số lượng vượt quá tồn kho!\n\n" +
+                        $"Tồn kho hiện tại: {availableStock}\n" +
+                        $"Số lượng yêu cầu: {quantity}\n\n" +
+                        $"Bạn có muốn đặt số lượng tối đa có thể ({availableStock}) không?",
+                        "Cảnh báo tồn kho",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        quantity = availableStock;
+                        numQuantity.Value = quantity;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                // Kiểm tra xem sản phẩm đã có trong đơn hàng chưa
+                var existingItem = _orderItems.FirstOrDefault(item => item.ProductId == selectedProduct.MaSp);
+                if (existingItem != null)
+                {
+                    var newTotalQuantity = existingItem.Quantity + quantity;
+                    if (newTotalQuantity > availableStock)
+                    {
+                        MessageBox.Show($"Tổng số lượng vượt quá tồn kho!\n\n" +
+                                      $"Đã có: {existingItem.Quantity}\n" +
+                                      $"Thêm mới: {quantity}\n" +
+                                      $"Tổng: {newTotalQuantity}\n" +
+                                      $"Tồn kho: {availableStock}",
+                                      "Cảnh báo tồn kho",
+                                      MessageBoxButtons.OK,
+                                      MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+
+                // Thêm hoặc cập nhật sản phẩm
+                AddOrUpdateOrderItem(selectedProduct, quantity);
+                RefreshOrderItemsGrid();
+                UpdateTotalAmount();
+                ClearProductSelection();
+
+                // Hiển thị thông báo thành công
+                MessageBox.Show($"Đã thêm '{selectedProduct.TenSp}' vào đơn hàng!\n" +
+                              $"Số lượng: {quantity}\n" +
+                              $"Tồn kho còn lại: {availableStock - quantity}",
+                              "Thành công",
+                              MessageBoxButtons.OK,
+                              MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi thêm sản phẩm: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private bool ValidateProductSelection()
@@ -288,14 +847,100 @@ namespace AceCook
 
         private void RefreshOrderItemsGrid()
         {
-            dgvOrderItems.DataSource = null;
-            dgvOrderItems.DataSource = _orderItems;
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"Refreshing grid with {_orderItems.Count} items");
+                
+                // Clear và set lại DataSource
+                dgvOrderItems.DataSource = null;
+                dgvOrderItems.DataSource = _orderItems;
+                
+                // Đảm bảo DataGridView hiển thị đúng
+                dgvOrderItems.Refresh();
+                
+                System.Diagnostics.Debug.WriteLine($"Grid refreshed successfully. Rows count: {dgvOrderItems.Rows.Count}");
+                
+                // Nếu ở view mode, đảm bảo không thể chỉnh sửa
+                if (_isViewMode)
+                {
+                    dgvOrderItems.ReadOnly = true;
+                    dgvOrderItems.AllowUserToAddRows = false;
+                    dgvOrderItems.AllowUserToDeleteRows = false;
+                }
+                
+                // Cập nhật thông tin tồn kho cho từng sản phẩm
+                UpdateStockInfoInGrid();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error refreshing grid: {ex.Message}");
+                MessageBox.Show($"Lỗi khi cập nhật bảng dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void UpdateStockInfoInGrid()
+        {
+            try
+            {
+                for (int i = 0; i < dgvOrderItems.Rows.Count; i++)
+                {
+                    var row = dgvOrderItems.Rows[i];
+                    var productId = row.Cells["ProductId"].Value?.ToString();
+                    
+                    if (!string.IsNullOrEmpty(productId))
+                    {
+                        var availableStock = await GetAvailableStock(productId);
+                        var currentQuantity = Convert.ToInt32(row.Cells["Quantity"].Value ?? 0);
+                        
+                        // Thay đổi màu sắc dựa trên tồn kho
+                        if (availableStock <= 0)
+                        {
+                            row.DefaultCellStyle.BackColor = Color.LightCoral;
+                            row.DefaultCellStyle.ForeColor = Color.DarkRed;
+                        }
+                        else if (availableStock < currentQuantity)
+                        {
+                            row.DefaultCellStyle.BackColor = Color.LightYellow;
+                            row.DefaultCellStyle.ForeColor = Color.DarkOrange;
+                        }
+                        else
+                        {
+                            row.DefaultCellStyle.BackColor = Color.White;
+                            row.DefaultCellStyle.ForeColor = Color.Black;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating stock info in grid: {ex.Message}");
+            }
         }
 
         private void UpdateTotalAmount()
         {
-            var total = _orderItems.Sum(item => item.TotalPrice);
-            lblTotalAmount.Text = $"Tổng tiền: {total:N0} VNĐ";
+            try
+            {
+                var total = _orderItems.Sum(item => item.TotalPrice);
+                System.Diagnostics.Debug.WriteLine($"Total amount: {total:N0} VNĐ");
+                
+                if (lblTotalAmount != null)
+                {
+                    lblTotalAmount.Text = $"Tổng tiền: {total:N0} VNĐ";
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("lblTotalAmount is null");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating total amount: {ex.Message}");
+                if (lblTotalAmount != null)
+                {
+                    lblTotalAmount.Text = "Tổng tiền: Lỗi tính toán";
+                }
+            }
         }
 
         private void ClearProductSelection()
@@ -336,15 +981,49 @@ namespace AceCook
         {
             if (_isViewMode || cboProduct.SelectedValue == null) return;
 
-            var productId = cboProduct.SelectedValue.ToString();
-            var availableStock = await GetAvailableStock(productId);
-            var selectedProduct = cboProduct.SelectedItem as Sanpham;
-
-            if (selectedProduct != null)
+            try
             {
-                var price = selectedProduct.Gia?.ToString("N0") ?? "0";
-                lblStockInfo.Text = $"Tồn kho: {availableStock} | Giá: {price} VNĐ";
-                numQuantity.Maximum = availableStock;
+                var productId = cboProduct.SelectedValue.ToString();
+                var selectedProduct = cboProduct.SelectedItem as Sanpham;
+
+                if (selectedProduct != null)
+                {
+                    // Lấy thông tin tồn kho
+                    var availableStock = await GetAvailableStock(productId);
+                    var price = selectedProduct.Gia?.ToString("N0") ?? "0";
+                    
+                    // Cập nhật thông tin hiển thị
+                    lblStockInfo.Text = $"Tồn kho: {availableStock} | Giá: {price} VNĐ";
+                    lblStockInfo.Visible = true;
+                    
+                    // Cập nhật số lượng tối đa có thể đặt
+                    numQuantity.Maximum = availableStock;
+                    numQuantity.Value = Math.Min((int)numQuantity.Value, availableStock);
+                    
+                    // Hiển thị thông báo nếu hết hàng
+                    if (availableStock <= 0)
+                    {
+                        lblStockInfo.Text = "HẾT HÀNG | Giá: " + price + " VNĐ";
+                        lblStockInfo.ForeColor = Color.Red;
+                        btnAddProduct.Enabled = false;
+                    }
+                    else if (availableStock <= 10)
+                    {
+                        lblStockInfo.ForeColor = Color.Orange;
+                        btnAddProduct.Enabled = true;
+                    }
+                    else
+                    {
+                        lblStockInfo.ForeColor = Color.Green;
+                        btnAddProduct.Enabled = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in CboProduct_SelectedIndexChanged: {ex.Message}");
+                lblStockInfo.Text = "Lỗi khi tải thông tin sản phẩm";
+                lblStockInfo.ForeColor = Color.Red;
             }
         }
 
@@ -405,6 +1084,18 @@ namespace AceCook
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                // Kiểm tra tồn kho một lần nữa trước khi tạo đơn hàng
+                foreach (var item in _orderItems)
+                {
+                    var availableStock = await GetAvailableStock(item.ProductId);
+                    if (availableStock < item.Quantity)
+                    {
+                        throw new InvalidOperationException(
+                            $"Sản phẩm '{item.ProductName}' không đủ tồn kho!\n" +
+                            $"Yêu cầu: {item.Quantity}, Tồn kho: {availableStock}");
+                    }
+                }
+
                 var order = new Dondathang
                 {
                     MaDdh = _currentOrderId,
@@ -422,19 +1113,25 @@ namespace AceCook
                     }).ToList()
                 };
 
+                // Lưu đơn hàng
                 await _context.Dondathangs.AddAsync(order);
                 await _context.SaveChangesAsync();
 
+                // Cập nhật tồn kho
                 foreach (var item in _orderItems)
                 {
                     await UpdateInventory(item.ProductId, item.Quantity);
                 }
 
+                // Commit transaction
                 await transaction.CommitAsync();
+                
+                System.Diagnostics.Debug.WriteLine($"Order {_currentOrderId} created successfully with {_orderItems.Count} items");
             }
-            catch
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync();
+                System.Diagnostics.Debug.WriteLine($"Error creating order: {ex.Message}");
                 throw;
             }
         }
@@ -483,29 +1180,68 @@ namespace AceCook
         {
             try
             {
+                if (string.IsNullOrEmpty(productId))
+                {
+                    System.Diagnostics.Debug.WriteLine("ProductId is null or empty");
+                    return 0;
+                }
+
                 var inventory = await _context.CtTons
                     .FirstOrDefaultAsync(ct => ct.MaSp == productId && ct.MaKho == "K01");
-                return inventory?.SoLuongTonKho ?? 0;
+                
+                var stock = inventory?.SoLuongTonKho ?? 0;
+                System.Diagnostics.Debug.WriteLine($"Available stock for {productId}: {stock}");
+                
+                return stock;
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Error getting available stock for {productId}: {ex.Message}");
                 return 0;
             }
         }
 
         private async Task UpdateInventory(string productId, int quantity)
         {
-            var inventory = await _context.CtTons
-                .FirstOrDefaultAsync(ct => ct.MaSp == productId && ct.MaKho == "K01");
+            try
+            {
+                // Tìm inventory hiện tại
+                var inventory = await _context.CtTons
+                    .FirstOrDefaultAsync(ct => ct.MaSp == productId && ct.MaKho == "K01");
 
-            if (inventory != null)
-            {
-                inventory.SoLuongTonKho = Math.Max(0, (inventory.SoLuongTonKho ?? 0) - quantity);
+                if (inventory != null)
+                {
+                    // Kiểm tra tồn kho trước khi trừ
+                    var currentStock = inventory.SoLuongTonKho ?? 0;
+                    if (currentStock < quantity)
+                    {
+                        throw new InvalidOperationException($"Tồn kho không đủ! Yêu cầu: {quantity}, Hiện có: {currentStock}");
+                    }
+
+                    // Trừ tồn kho
+                    inventory.SoLuongTonKho = Math.Max(0, currentStock - quantity);
+                    
+                    System.Diagnostics.Debug.WriteLine($"Updated inventory for {productId}: {currentStock} -> {inventory.SoLuongTonKho}");
+                }
+                else
+                {
+                    // Tạo mới inventory nếu chưa có
+                    inventory = new CtTon 
+                    { 
+                        MaSp = productId, 
+                        MaKho = "K01", 
+                        SoLuongTonKho = 0 
+                    };
+                    await _context.CtTons.AddAsync(inventory);
+                    System.Diagnostics.Debug.WriteLine($"Created new inventory for {productId}");
+                }
+
+                await _context.SaveChangesAsync();
             }
-            else
+            catch (Exception ex)
             {
-                inventory = new CtTon { MaSp = productId, MaKho = "K01", SoLuongTonKho = 0 };
-                await _context.CtTons.AddAsync(inventory);
+                System.Diagnostics.Debug.WriteLine($"Error updating inventory for {productId}: {ex.Message}");
+                throw new InvalidOperationException($"Không thể cập nhật tồn kho cho sản phẩm {productId}: {ex.Message}");
             }
         }
 

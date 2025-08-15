@@ -48,7 +48,7 @@
             // 
             txtUsername.BackColor = SystemColors.Menu;
             txtUsername.Font = new Font("Segoe UI", 12F);
-            txtUsername.Location = new Point(582, 232);
+            txtUsername.Location = new Point(419, 176);
             txtUsername.Margin = new Padding(5, 6, 5, 6);
             txtUsername.Name = "txtUsername";
             txtUsername.Size = new Size(553, 50);
@@ -58,7 +58,7 @@
             // 
             txtPassword.BackColor = SystemColors.Menu;
             txtPassword.Font = new Font("Segoe UI", 12F);
-            txtPassword.Location = new Point(582, 389);
+            txtPassword.Location = new Point(419, 340);
             txtPassword.Margin = new Padding(5, 6, 5, 6);
             txtPassword.Name = "txtPassword";
             txtPassword.Size = new Size(553, 50);
@@ -68,7 +68,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(582, 105);
+            label1.Location = new Point(419, 110);
             label1.Margin = new Padding(5, 0, 5, 0);
             label1.Name = "label1";
             label1.Size = new Size(250, 45);
@@ -79,7 +79,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(582, 309);
+            label2.Location = new Point(419, 271);
             label2.Margin = new Padding(5, 0, 5, 0);
             label2.Name = "label2";
             label2.Size = new Size(171, 45);
@@ -90,7 +90,7 @@
             // 
             btnLogin.BackColor = Color.Gainsboro;
             btnLogin.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            btnLogin.Location = new Point(582, 507);
+            btnLogin.Location = new Point(419, 464);
             btnLogin.Margin = new Padding(5, 6, 5, 6);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(557, 96);
@@ -103,7 +103,7 @@
             // 
             checkBoxShowPass.AutoSize = true;
             checkBoxShowPass.Font = new Font("Segoe UI", 10F);
-            checkBoxShowPass.Location = new Point(582, 627);
+            checkBoxShowPass.Location = new Point(419, 584);
             checkBoxShowPass.Margin = new Padding(5, 6, 5, 6);
             checkBoxShowPass.Name = "checkBoxShowPass";
             checkBoxShowPass.Size = new Size(259, 41);
@@ -118,7 +118,7 @@
             label3.BackColor = Color.Transparent;
             label3.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             label3.ForeColor = Color.White;
-            label3.Location = new Point(435, 61);
+            label3.Location = new Point(288, 65);
             label3.Margin = new Padding(5, 0, 5, 0);
             label3.Name = "label3";
             label3.Size = new Size(1010, 65);
@@ -134,7 +134,7 @@
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1698, 200);
+            panel1.Size = new Size(1375, 200);
             panel1.TabIndex = 7;
             // 
             // pictureBox1
@@ -158,7 +158,7 @@
             panel2.Controls.Add(label2);
             panel2.Location = new Point(0, 200);
             panel2.Name = "panel2";
-            panel2.Size = new Size(1698, 867);
+            panel2.Size = new Size(1375, 867);
             panel2.TabIndex = 9;
             // 
             // LoginForm
@@ -166,7 +166,7 @@
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ControlLightLight;
-            ClientSize = new Size(1698, 1067);
+            ClientSize = new Size(1375, 1067);
             Controls.Add(panel2);
             Controls.Add(panel1);
             Margin = new Padding(5, 6, 5, 6);

@@ -304,7 +304,7 @@ namespace AceCook
                 return;
             }
 
-            if (products != null)
+            try
             {
                 dataGridViewProducts.DataSource = null;
                 dataGridViewProducts.Columns.Clear();
@@ -362,20 +362,39 @@ namespace AceCook
                 });
 
                 // Populate data
-                foreach (var product in products)
+                if (products != null)
                 {
-                    var rowIndex = dataGridViewProducts.Rows.Add();
-                    var row = dataGridViewProducts.Rows[rowIndex];
+                    foreach (var product in products)
+                    {
+                        try
+                        {
+                            var rowIndex = dataGridViewProducts.Rows.Add();
+                            var row = dataGridViewProducts.Rows[rowIndex];
 
-                    row.Cells["MaSp"].Value = product.MaSp;
-                    row.Cells["TenSp"].Value = product.TenSp;
-                    row.Cells["MoTa"].Value = product.MoTa;
-                    row.Cells["Gia"].Value = (product.Gia ?? 0).ToString("N0") + " VNĐ";
-                    row.Cells["Loai"].Value = product.Loai;
+                            row.Cells["MaSp"].Value = product.MaSp ?? "N/A";
+                            row.Cells["TenSp"].Value = product.TenSp ?? "N/A";
+                            row.Cells["MoTa"].Value = product.MoTa ?? "N/A";
+                            row.Cells["Gia"].Value = (product.Gia ?? 0).ToString("N0") + " VNĐ";
+                            row.Cells["DVTSP"].Value = product.Dvtsp ?? "N/A";
+                            row.Cells["Loai"].Value = product.Loai ?? "N/A";
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Error processing product {product.MaSp}: {ex.Message}");
+                            // Bỏ qua dòng lỗi và tiếp tục
+                        }
+                    }
                 }
 
-                // Handle button clicks
+                // Handle button clicks - chỉ đăng ký một lần
+                dataGridViewProducts.CellClick -= DataGridViewProducts_CellClick;
                 dataGridViewProducts.CellClick += DataGridViewProducts_CellClick;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in RefreshDataGridView: {ex.Message}");
+                MessageBox.Show($"Lỗi khi refresh DataGridView: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -414,38 +433,85 @@ namespace AceCook
             }
         }
 
+        private System.Windows.Forms.Timer _searchTimer;
+        private bool _isSearching = false;
+
         private void TxtSearch_TextChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+            try
+            {
+                // Tạo timer để tránh tìm kiếm quá nhiều lần
+                if (_searchTimer == null)
+                {
+                    _searchTimer = new System.Windows.Forms.Timer();
+                    _searchTimer.Interval = 500; // Delay 500ms
+                    _searchTimer.Tick += async (s, args) =>
+                    {
+                        _searchTimer.Stop();
+                        if (!_isSearching)
+                        {
+                            await ApplyFilters();
+                        }
+                    };
+                }
+                
+                // Reset timer
+                _searchTimer.Stop();
+                _searchTimer.Start();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in TxtSearch_TextChanged: {ex.Message}");
+            }
         }
 
         private void CboCategory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+            _ = ApplyFilters();
         }
 
-        private async void ApplyFilters()
+        private async Task ApplyFilters()
         {
-            string searchText = txtSearch.Text.ToLower();
-            string selectedCategory = cboCategory.SelectedItem?.ToString();
-
-            List<Sanpham> filteredProducts;
-
-            if (!string.IsNullOrEmpty(searchText))
+            if (_isSearching) return;
+            
+            try
             {
-                filteredProducts = await _productRepository.SearchProductsAsync(searchText);
-            }
-            else
-            {
-                filteredProducts = _products;
-            }
+                _isSearching = true;
+                string searchText = txtSearch.Text.Trim().ToLower();
+                string selectedCategory = cboCategory.SelectedItem?.ToString();
 
-            if (selectedCategory != "Tất cả" && !string.IsNullOrEmpty(selectedCategory))
-            {
-                filteredProducts = filteredProducts.Where(p => p.Loai == selectedCategory).ToList();
-            }
+                List<Sanpham> filteredProducts;
 
-            RefreshDataGridView(filteredProducts);
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    filteredProducts = await _productRepository.SearchProductsAsync(searchText);
+                }
+                else
+                {
+                    filteredProducts = _products ?? new List<Sanpham>();
+                }
+
+                if (selectedCategory != "Tất cả" && !string.IsNullOrEmpty(selectedCategory))
+                {
+                    filteredProducts = filteredProducts.Where(p => p.Loai == selectedCategory).ToList();
+                }
+
+                RefreshDataGridView(filteredProducts);
+                
+                // Update title với số lượng kết quả
+                var resultCount = filteredProducts.Count;
+                this.Text = $"Quản lý Sản phẩm - Hiển thị {resultCount} sản phẩm";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in ApplyFilters: {ex.Message}");
+                MessageBox.Show($"Lỗi khi áp dụng bộ lọc: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                _isSearching = false;
+            }
         }
 
         private void BtnClearFilter_Click(object sender, EventArgs e)
@@ -503,13 +569,20 @@ namespace AceCook
 
         private async void BtnAdd_Click(object sender, EventArgs e)
         {
-            var addForm = new ProductAddEditForm(_productRepository, FormMode.Add);
-            if (addForm.ShowDialog() == DialogResult.OK)
+            try
             {
-                MessageBox.Show("Thêm sản phẩm thành công!", "Thông báo", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadProducts();
-                LoadCategories();
+                var addForm = new ProductAddEditForm(_productRepository, FormMode.Add);
+                if (addForm.ShowDialog() == DialogResult.OK)
+                {
+                    MessageBox.Show("Thêm sản phẩm thành công!", "Thông báo", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    await LoadDataAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở form thêm sản phẩm: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -517,17 +590,40 @@ namespace AceCook
         {
             if (dataGridViewProducts.SelectedRows.Count > 0)
             {
-                var selectedProduct = dataGridViewProducts.SelectedRows[0].DataBoundItem as Sanpham;
-                if (selectedProduct != null)
+                try
                 {
-                    var editForm = new ProductAddEditForm(_productRepository, FormMode.Edit, selectedProduct);
-                    if (editForm.ShowDialog() == DialogResult.OK)
+                    var selectedRow = dataGridViewProducts.SelectedRows[0];
+                    var productId = selectedRow.Cells["MaSp"].Value?.ToString();
+                    
+                    if (!string.IsNullOrEmpty(productId))
                     {
-                        MessageBox.Show("Cập nhật sản phẩm thành công!", "Thông báo", 
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadProducts();
-                        LoadCategories();
+                        var product = await _productRepository.GetProductByIdAsync(productId);
+                        if (product != null)
+                        {
+                            var editForm = new ProductAddEditForm(_productRepository, FormMode.Edit, product);
+                            if (editForm.ShowDialog() == DialogResult.OK)
+                            {
+                                MessageBox.Show("Cập nhật sản phẩm thành công!", "Thông báo", 
+                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                await LoadDataAsync();
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Không thể tải thông tin sản phẩm!", "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
+                    else
+                    {
+                        MessageBox.Show("Không thể lấy thông tin sản phẩm đã chọn!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi tải thông tin sản phẩm: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
@@ -541,36 +637,59 @@ namespace AceCook
         {
             if (dataGridViewProducts.SelectedRows.Count > 0)
             {
-                var selectedProduct = dataGridViewProducts.SelectedRows[0].DataBoundItem as Sanpham;
-                if (selectedProduct != null)
+                try
                 {
-                    var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa sản phẩm '{selectedProduct.TenSp}'?", 
-                        "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    var selectedRow = dataGridViewProducts.SelectedRows[0];
+                    var productId = selectedRow.Cells["MaSp"].Value?.ToString();
                     
-                    if (result == DialogResult.Yes)
+                    if (!string.IsNullOrEmpty(productId))
                     {
-                        try
+                        var product = await _productRepository.GetProductByIdAsync(productId);
+                        if (product != null)
                         {
-                            bool success = await _productRepository.DeleteProductAsync(selectedProduct.MaSp);
-                            if (success)
+                            var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa sản phẩm '{product.TenSp}'?", 
+                                "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                            
+                            if (result == DialogResult.Yes)
                             {
-                                MessageBox.Show("Xóa sản phẩm thành công!", "Thông báo", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                LoadProducts();
-                                LoadCategories();
-                            }
-                            else
-                            {
-                                MessageBox.Show("Lỗi khi xóa sản phẩm!", "Lỗi", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                try
+                                {
+                                    bool success = await _productRepository.DeleteProductAsync(productId);
+                                    if (success)
+                                    {
+                                        MessageBox.Show("Xóa sản phẩm thành công!", "Thông báo", 
+                                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                        await LoadDataAsync();
+                                    }
+                                    else
+                                    {
+                                        MessageBox.Show("Lỗi khi xóa sản phẩm!", "Lỗi", 
+                                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show($"Lỗi khi xóa sản phẩm: {ex.Message}", "Lỗi", 
+                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
                             }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            MessageBox.Show($"Lỗi khi xóa sản phẩm: {ex.Message}", "Lỗi", 
+                            MessageBox.Show("Không thể tải thông tin sản phẩm để xóa!", "Lỗi",
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
+                    else
+                    {
+                        MessageBox.Show("Không thể lấy thông tin sản phẩm đã chọn!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi tải thông tin sản phẩm: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
@@ -578,6 +697,15 @@ namespace AceCook
                 MessageBox.Show("Vui lòng chọn một sản phẩm để xóa", "Thông báo", 
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _searchTimer?.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 } 
