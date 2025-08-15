@@ -165,13 +165,13 @@
             // 
             this.cmbLoai.FormattingEnabled = true;
             this.cmbLoai.Items.AddRange(new object[] {
-            "Mì tôm",
             "Hủ tiếu",
-            "Cháo",
-            "Nước suối",
-            "Nước ngọt",
-            "Bánh kẹo",
-            "Khác"});
+            "Phở", 
+            "Bún",
+            "Miến",
+            "Mỳ ly",
+            "Mì gói",
+            "Mì tô"});
             this.cmbLoai.Location = new System.Drawing.Point(150, 257);
             this.cmbLoai.Name = "cmbLoai";
             this.cmbLoai.Size = new System.Drawing.Size(300, 21);
