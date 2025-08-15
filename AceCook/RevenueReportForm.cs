@@ -20,24 +20,32 @@ namespace AceCook
 
         private void LoadSampleData()
         {
-            dataGridViewDetails.Rows.Clear();
-            Random rnd = new Random();
-
-            DateTime startDate = dateTimePickerFrom.Value.Date;
-            DateTime endDate = dateTimePickerTo.Value.Date;
-
-            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+            try
             {
-                int soHoaDon = rnd.Next(1, 20);
-                decimal tongTien = rnd.Next(1000000, 10000000);
-                decimal trungBinh = tongTien / soHoaDon;
+                dataGridViewDetails.Rows.Clear();
+                Random rnd = new Random();
 
-                dataGridViewDetails.Rows.Add(
-                    date.ToString("dd/MM/yyyy"),
-                    soHoaDon,
-                    tongTien.ToString("N0") + " ₫",
-                    trungBinh.ToString("N0") + " ₫"
-                );
+                DateTime startDate = dateTimePickerFrom.Value.Date;
+                DateTime endDate = dateTimePickerTo.Value.Date;
+
+                for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+                {
+                    int soHoaDon = rnd.Next(1, 20);
+                    decimal tongTien = rnd.Next(1000000, 10000000);
+                    decimal trungBinh = tongTien / soHoaDon;
+
+                    dataGridViewDetails.Rows.Add(
+                        date.ToString("dd/MM/yyyy"),
+                        soHoaDon.ToString(),
+                        tongTien.ToString("N0") + " ₫",
+                        trungBinh.ToString("N0") + " ₫"
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
