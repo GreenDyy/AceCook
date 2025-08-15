@@ -50,6 +50,8 @@ namespace AceCook
                         this.Text = "Thêm khách hàng mới";
                         if (lblTitle != null) lblTitle.Text = "Thêm khách hàng mới";
                         if (btnSave != null) btnSave.Text = "Thêm";
+                        // Auto-generate customer ID for Add mode
+                        GenerateCustomerId();
                         break;
                     case FormMode.Edit:
                         this.Text = "Chỉnh sửa khách hàng";
@@ -72,11 +74,111 @@ namespace AceCook
                 {
                     cmbLoaiKH.SelectedIndex = 0;
                 }
+
+                // Add event handler for phone number validation
+                if (txtSDTKH != null)
+                {
+                    txtSDTKH.KeyPress += TxtSDTKH_KeyPress;
+                    txtSDTKH.TextChanged += TxtSDTKH_TextChanged;
+                    txtSDTKH.PlaceholderText = "Nhập 10 chữ số";
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi khởi tạo form: {ex.Message}", "Lỗi", 
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void GenerateCustomerId()
+        {
+            try
+            {
+                if (txtMaKH == null) return;
+
+                // Get all existing customer IDs
+                var customers = await _customerRepository.GetAllCustomersAsync();
+                var existingIds = customers.Select(c => c.MaKh).ToList();
+
+                // Find the highest existing number
+                int highestNumber = 0;
+                foreach (var id in existingIds)
+                {
+                    if (id != null && id.StartsWith("KH"))
+                    {
+                        // Extract the number part after "KH"
+                        string numberPart = id.Substring(2);
+                        if (int.TryParse(numberPart, out int number))
+                        {
+                            if (number > highestNumber)
+                            {
+                                highestNumber = number;
+                            }
+                        }
+                    }
+                }
+
+                // Generate next ID
+                int nextNumber = highestNumber + 1;
+                string newId = $"KH{nextNumber:D2}";
+
+                txtMaKH.Text = newId;
+                txtMaKH.ReadOnly = true;
+                txtMaKH.BackColor = SystemColors.Control;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error generating customer ID: {ex.Message}");
+                // Fallback to manual entry if auto-generation fails
+                if (txtMaKH != null)
+                {
+                    txtMaKH.ReadOnly = false;
+                    txtMaKH.BackColor = SystemColors.Window;
+                }
+            }
+        }
+
+        private void TxtSDTKH_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Only allow digits and backspace
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void TxtSDTKH_TextChanged(object sender, EventArgs e)
+        {
+            if (txtSDTKH == null) return;
+
+            // Remove any non-digit characters
+            string digitsOnly = new string(txtSDTKH.Text.Where(char.IsDigit).ToArray());
+            
+            // Limit to 10 digits
+            if (digitsOnly.Length > 10)
+            {
+                digitsOnly = digitsOnly.Substring(0, 10);
+            }
+
+            // Update text if it changed
+            if (txtSDTKH.Text != digitsOnly)
+            {
+                txtSDTKH.Text = digitsOnly;
+                txtSDTKH.SelectionStart = txtSDTKH.Text.Length;
+            }
+
+            // Show validation feedback
+            if (!string.IsNullOrEmpty(digitsOnly) && digitsOnly.Length != 10)
+            {
+                txtSDTKH.BackColor = Color.LightYellow;
+            }
+            else if (!string.IsNullOrEmpty(digitsOnly) && digitsOnly.Length == 10)
+            {
+                txtSDTKH.BackColor = Color.LightGreen;
+            }
+            else
+            {
+                txtSDTKH.BackColor = SystemColors.Window;
             }
         }
 
@@ -111,6 +213,12 @@ namespace AceCook
                         txtMaKH.ReadOnly = true;
                         txtMaKH.BackColor = SystemColors.Control;
                     }
+
+                    // Validate phone number display
+                    if (txtSDTKH != null && !string.IsNullOrEmpty(txtSDTKH.Text))
+                    {
+                        TxtSDTKH_TextChanged(txtSDTKH, EventArgs.Empty);
+                    }
                 }
             }
             catch (Exception ex)
@@ -141,6 +249,21 @@ namespace AceCook
                     if (txtDiaChiKH != null) txtDiaChiKH.BackColor = backColor;
                     if (txtEmailKH != null) txtEmailKH.BackColor = backColor;
                     if (cmbLoaiKH != null) cmbLoaiKH.BackColor = backColor;
+                }
+                else
+                {
+                    // Reset colors for edit mode
+                    if (txtMaKH != null) txtMaKH.BackColor = SystemColors.Window;
+                    if (txtTenKH != null) txtTenKH.BackColor = SystemColors.Window;
+                    if (txtDiaChiKH != null) txtDiaChiKH.BackColor = SystemColors.Window;
+                    if (txtEmailKH != null) txtEmailKH.BackColor = SystemColors.Window;
+                    if (cmbLoaiKH != null) cmbLoaiKH.BackColor = SystemColors.Window;
+                    
+                    // Phone number will get its color from TextChanged event
+                    if (txtSDTKH != null && !string.IsNullOrEmpty(txtSDTKH.Text))
+                    {
+                        TxtSDTKH_TextChanged(txtSDTKH, EventArgs.Empty);
+                    }
                 }
             }
             catch (Exception ex)
@@ -184,13 +307,13 @@ namespace AceCook
                 // Validate SDTKH
                 if (txtSDTKH != null && !string.IsNullOrWhiteSpace(txtSDTKH.Text))
                 {
-                    if (txtSDTKH.Text.Length > 10)
+                    if (txtSDTKH.Text.Length != 10)
                     {
-                        errors.Add("Số điện thoại không được vượt quá 10 ký tự.");
+                        errors.Add("Số điện thoại phải có đúng 10 chữ số.");
                     }
-                    if (!Regex.IsMatch(txtSDTKH.Text, @"^[0-9]+$"))
+                    if (!Regex.IsMatch(txtSDTKH.Text, @"^[0-9]{10}$"))
                     {
-                        errors.Add("Số điện thoại chỉ được chứa các chữ số.");
+                        errors.Add("Số điện thoại phải có đúng 10 chữ số.");
                     }
                 }
 
