@@ -42,7 +42,6 @@ namespace AceCook
             _isViewMode = isViewMode;
             _editingOrder = order;
             _currentOrderId = order?.MaDdh;
-            LoadOrderForEdit();
         }
 
         // Constructor mới để nhận thông tin nhân viên
@@ -53,8 +52,6 @@ namespace AceCook
             _isEditMode = false; // Đảm bảo đây là chế độ tạo mới
             _isViewMode = false;
             SetupEmployeeInfo();
-            // Tự động sinh mã đơn hàng mới khi khởi tạo form
-            LoadOrderForEdit();
         }
 
         public OrderAddEditForm(Dondathang order, Nhanvien currentEmployee, bool isViewMode = false) : this()
@@ -65,12 +62,14 @@ namespace AceCook
             _isViewMode = isViewMode;
             _editingOrder = order;
             _currentOrderId = order?.MaDdh;
-            LoadOrderForEdit();
             SetupEmployeeInfo();
             if (_isViewMode)
             {
                 grpProductSelection.Visible = false;
             }
+            lbStatus.Text = "Hoàn thành";
+            lbStatus.ForeColor = Color.Green;
+            lbStatus.Font = new Font("Segoe UI", 10, FontStyle.Bold);
         }
 
         private void InitializeRepositories()
@@ -83,20 +82,14 @@ namespace AceCook
             _orderItems = new List<OrderItem>();
         }
 
-        private void SetupForm()
+        private async void SetupForm()
         {
-            SetupComboBoxes();
+            await SetupComboBoxes();
             UpdateFormTitle();
             SetupActionControls();
 
             // Khởi tạo hiển thị tồn kho
             ResetInventoryDisplay();
-
-            // Ẩn trạng thái đơn hàng
-            if (lblStatus != null)
-            {
-                lblStatus.Visible = false;
-            }
 
             // Thiết lập thông tin nhân viên nếu có
             if (_currentEmployee != null)
@@ -115,6 +108,9 @@ namespace AceCook
 
             // Kiểm tra visibility của lblTotalAmount
             CheckTotalAmountVisibility();
+
+            // Load dữ liệu đơn hàng sau khi đã setup xong ComboBoxes
+            LoadOrderForEdit();
 
             // Thêm event handler để đảm bảo mã đơn hàng được sinh khi form được hiển thị
             this.Load += OrderAddEditForm_Load;
@@ -247,7 +243,7 @@ namespace AceCook
             }
         }
 
-        private async void SetupComboBoxes()
+        private async Task SetupComboBoxes()
         {
             try
             {
@@ -414,15 +410,27 @@ namespace AceCook
 
         private void LoadOrderData()
         {
-            txtOrderId.Text = _editingOrder.MaDdh;
-            cboCustomer.SelectedValue = _editingOrder.MaKh;
-            dtpOrderDate.Value = _editingOrder.NgayDat?.ToDateTime(TimeOnly.MinValue) ?? DateTime.Now;
-            dtpDeliveryDate.Value = _editingOrder.NgayGiao?.ToDateTime(TimeOnly.MinValue) ?? DateTime.Now.AddDays(7);
-
-            // Ẩn trạng thái đơn hàng
-            if (lblStatus != null)
+            try
             {
-                lblStatus.Visible = false;
+                txtOrderId.Text = _editingOrder.MaDdh;
+                
+                // Đảm bảo ComboBox đã có dữ liệu trước khi set SelectedValue
+                if (cboCustomer.DataSource != null && _editingOrder.MaKh != null)
+                {
+                    cboCustomer.SelectedValue = _editingOrder.MaKh;
+                    System.Diagnostics.Debug.WriteLine($"Set customer ComboBox to: {_editingOrder.MaKh}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Cannot set customer ComboBox - DataSource: {cboCustomer.DataSource != null}, MaKh: {_editingOrder.MaKh}");
+                }
+                
+                dtpOrderDate.Value = _editingOrder.NgayDat?.ToDateTime(TimeOnly.MinValue) ?? DateTime.Now;
+                dtpDeliveryDate.Value = _editingOrder.NgayGiao?.ToDateTime(TimeOnly.MinValue) ?? DateTime.Now.AddDays(7);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in LoadOrderData: {ex.Message}");
             }
         }
 
@@ -1188,7 +1196,7 @@ namespace AceCook
                                       MessageBoxButtons.OK,
                                       MessageBoxIcon.Warning);
                     }
-                    MessageBox.Show("Đơn hàng đã được tạo thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // MessageBox.Show("Đơn hàng đã được tạo thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {

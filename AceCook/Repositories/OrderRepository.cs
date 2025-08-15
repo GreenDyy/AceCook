@@ -619,16 +619,24 @@ namespace AceCook.Repositories
         /// <returns>Mã hóa đơn bán được tạo</returns>
         public async Task<string> CreateInvoiceForOrderAsync(string maDDH, decimal totalAmount)
         {
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 // Kiểm tra xem đơn hàng có tồn tại không
                 var existingOrder = await _context.Dondathangs
-                    .AsNoTracking()
+                    .Include(d => d.CtDhs)
                     .FirstOrDefaultAsync(d => d.MaDdh == maDDH);
                 
                 if (existingOrder == null)
                 {
                     throw new InvalidOperationException($"Không tìm thấy đơn hàng {maDDH}");
+                }
+
+                // Kiểm tra xem kho có tồn tại không
+                var kho = await _context.Khohangs.FirstOrDefaultAsync(k => k.MaKho == "K01");
+                if (kho == null)
+                {
+                    throw new InvalidOperationException("Không tìm thấy kho K01");
                 }
 
                 // Tạo mã hóa đơn bán mới
@@ -653,16 +661,40 @@ namespace AceCook.Repositories
                     MaPxk = await GeneratePhieuXuatKhoIdAsync(),
                     NgayXuat = DateOnly.FromDateTime(DateTime.Now),
                     MaHdb = invoiceId,
-                    MaKho = "K01" // Kho mặc định
+                    MaKho = "K01",
+                    TrangThaiPxk = "Đã xuất kho"
                 };
 
                 await _context.Phieuxuatkhos.AddAsync(phieuXuatKho);
+
+                // Cập nhật tồn kho cho từng sản phẩm trong đơn hàng
+                foreach (var ct in existingOrder.CtDhs)
+                {
+                    var tonKho = await _context.CtTons
+                        .FirstOrDefaultAsync(t => t.MaSp == ct.MaSp && t.MaKho == "K01");
+                    
+                    if (tonKho != null)
+                    {
+                        tonKho.SoLuongTonKho -= ct.SoLuong ?? 0;
+                        if (tonKho.SoLuongTonKho < 0)
+                        {
+                            throw new InvalidOperationException($"Sản phẩm {ct.MaSp} không đủ tồn kho để xuất");
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Không tìm thấy tồn kho cho sản phẩm {ct.MaSp}");
+                    }
+                }
+
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
 
                 return invoiceId;
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
                 System.Diagnostics.Debug.WriteLine($"Error creating invoice for order {maDDH}: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
                 throw;
