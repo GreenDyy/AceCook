@@ -195,7 +195,7 @@ namespace AceCook
                     LoadCustomerManagement();
                     break;
                 case "orders":
-                    LoadOrderManagement();
+                    LoadOrderManagement(_currentEmployee);
                     break;
                 case "products":
                     LoadProductManagement();
@@ -252,11 +252,11 @@ namespace AceCook
             }
         }
 
-        private void LoadOrderManagement()
+        private void LoadOrderManagement(Nhanvien currentEmployee)
         {
             try
             {
-                var orderForm = new OrderManagementForm(_context);
+                var orderForm = new OrderManagementForm(_context, currentEmployee);
                 orderForm.TopLevel = false;
                 orderForm.FormBorderStyle = FormBorderStyle.None;
                 orderForm.Dock = DockStyle.Fill;

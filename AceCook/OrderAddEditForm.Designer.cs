@@ -39,7 +39,8 @@
             lblStatus = new Label();
             cboStatus = new ComboBox();
             grpProductSelection = new GroupBox();
-            lblStockInfo = new Label();
+            txtInventory = new TextBox();
+            label1 = new Label();
             btnAddProduct = new Button();
             btnRemoveProduct = new Button();
             numQuantity = new NumericUpDown();
@@ -51,9 +52,10 @@
             btnSave = new Button();
             btnCancel = new Button();
             grpOrderInfo = new GroupBox();
+            txtTenNv = new TextBox();
+            label2 = new Label();
+            lbStatus = new Label();
             grpOrderItems = new GroupBox();
-            label1 = new Label();
-            txtInventory = new TextBox();
             grpProductSelection.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numQuantity).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrderItems).BeginInit();
@@ -162,7 +164,6 @@
             // 
             grpProductSelection.Controls.Add(txtInventory);
             grpProductSelection.Controls.Add(label1);
-            grpProductSelection.Controls.Add(lblStockInfo);
             grpProductSelection.Controls.Add(btnAddProduct);
             grpProductSelection.Controls.Add(btnRemoveProduct);
             grpProductSelection.Controls.Add(numQuantity);
@@ -178,19 +179,25 @@
             grpProductSelection.TabStop = false;
             grpProductSelection.Text = "Chọn sản phẩm";
             // 
-            // lblStockInfo
+            // txtInventory
             // 
-            lblStockInfo.AutoSize = true;
-            lblStockInfo.ForeColor = Color.Blue;
-            lblStockInfo.Location = new Point(223, 139);
-            lblStockInfo.Margin = new Padding(6, 0, 6, 0);
-            lblStockInfo.Name = "lblStockInfo";
-            lblStockInfo.Size = new Size(0, 32);
-            lblStockInfo.TabIndex = 5;
+            txtInventory.Location = new Point(856, 61);
+            txtInventory.Name = "txtInventory";
+            txtInventory.Size = new Size(415, 39);
+            txtInventory.TabIndex = 13;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(725, 61);
+            label1.Name = "label1";
+            label1.Size = new Size(107, 32);
+            label1.TabIndex = 12;
+            label1.Text = "Tồn kho:";
             // 
             // btnAddProduct
             // 
-            btnAddProduct.Location = new Point(743, 128);
+            btnAddProduct.Location = new Point(47, 211);
             btnAddProduct.Margin = new Padding(6);
             btnAddProduct.Name = "btnAddProduct";
             btnAddProduct.Size = new Size(186, 64);
@@ -201,7 +208,7 @@
             // 
             // btnRemoveProduct
             // 
-            btnRemoveProduct.Location = new Point(955, 123);
+            btnRemoveProduct.Location = new Point(286, 211);
             btnRemoveProduct.Margin = new Padding(6);
             btnRemoveProduct.Name = "btnRemoveProduct";
             btnRemoveProduct.Size = new Size(186, 64);
@@ -212,7 +219,7 @@
             // 
             // numQuantity
             // 
-            numQuantity.Location = new Point(223, 132);
+            numQuantity.Location = new Point(223, 123);
             numQuantity.Margin = new Padding(6);
             numQuantity.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numQuantity.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
@@ -224,7 +231,7 @@
             // lblQuantity
             // 
             lblQuantity.AutoSize = true;
-            lblQuantity.Location = new Point(38, 144);
+            lblQuantity.Location = new Point(37, 128);
             lblQuantity.Margin = new Padding(6, 0, 6, 0);
             lblQuantity.Name = "lblQuantity";
             lblQuantity.Size = new Size(115, 32);
@@ -240,7 +247,6 @@
             cboProduct.Name = "cboProduct";
             cboProduct.Size = new Size(461, 40);
             cboProduct.TabIndex = 1;
-            cboProduct.SelectedIndexChanged += CboProduct_SelectedIndexChanged;
             // 
             // lblProduct
             // 
@@ -304,6 +310,9 @@
             // 
             // grpOrderInfo
             // 
+            grpOrderInfo.Controls.Add(txtTenNv);
+            grpOrderInfo.Controls.Add(label2);
+            grpOrderInfo.Controls.Add(lbStatus);
             grpOrderInfo.Controls.Add(lblStatus);
             grpOrderInfo.Controls.Add(dtpDeliveryDate);
             grpOrderInfo.Controls.Add(lblDeliveryDate);
@@ -322,6 +331,35 @@
             grpOrderInfo.TabStop = false;
             grpOrderInfo.Text = "Thông tin đơn hàng";
             // 
+            // txtTenNv
+            // 
+            txtTenNv.Enabled = false;
+            txtTenNv.Location = new Point(865, 143);
+            txtTenNv.Name = "txtTenNv";
+            txtTenNv.Size = new Size(406, 39);
+            txtTenNv.TabIndex = 11;
+            txtTenNv.TextChanged += txtTenNv_TextChanged;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(727, 147);
+            label2.Margin = new Padding(6, 0, 6, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(129, 32);
+            label2.TabIndex = 10;
+            label2.Text = "Nhân viên:";
+            // 
+            // lbStatus
+            // 
+            lbStatus.AutoSize = true;
+            lbStatus.Location = new Point(223, 320);
+            lbStatus.Margin = new Padding(6, 0, 6, 0);
+            lbStatus.Name = "lbStatus";
+            lbStatus.Size = new Size(140, 32);
+            lbStatus.TabIndex = 9;
+            lbStatus.Text = "Hoàn thành";
+            // 
             // grpOrderItems
             // 
             grpOrderItems.Controls.Add(btnCancel);
@@ -336,22 +374,6 @@
             grpOrderItems.TabIndex = 13;
             grpOrderItems.TabStop = false;
             grpOrderItems.Text = "Danh sách sản phẩm";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(38, 214);
-            label1.Name = "label1";
-            label1.Size = new Size(107, 32);
-            label1.TabIndex = 12;
-            label1.Text = "Tồn kho:";
-            // 
-            // txtInventory
-            // 
-            txtInventory.Location = new Point(223, 211);
-            txtInventory.Name = "txtInventory";
-            txtInventory.Size = new Size(200, 39);
-            txtInventory.TabIndex = 13;
             // 
             // OrderAddEditForm
             // 
@@ -406,8 +428,10 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.GroupBox grpOrderInfo;
         private System.Windows.Forms.GroupBox grpOrderItems;
-        private System.Windows.Forms.Label lblStockInfo;
         private TextBox txtInventory;
         private Label label1;
+        private Label lbStatus;
+        private TextBox txtTenNv;
+        private Label label2;
     }
 }

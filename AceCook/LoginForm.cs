@@ -141,9 +141,9 @@ namespace AceCook
                 btnLogin.Text = "ĐANG XỬ LÝ...";
                 //check connect string
 
-                //var context = new AppDbContext();
-                //var conn = context.Database.GetDbConnection().ConnectionString;
-                //MessageBox.Show(conn);
+                var context = new AppDbContext();
+                var conn = context.Database.GetDbConnection().ConnectionString;
+                MessageBox.Show(conn);
 
                 var (success, account, employee, permission) = await _authRepository.AuthenticateAsync(
                     txtUsername.Text.Trim(),
