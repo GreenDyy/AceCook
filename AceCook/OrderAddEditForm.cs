@@ -67,6 +67,10 @@ namespace AceCook
             _currentOrderId = order?.MaDdh;
             LoadOrderForEdit();
             SetupEmployeeInfo();
+            if (_isViewMode)
+            {
+                grpProductSelection.Visible = false;
+            }
         }
 
         private void InitializeRepositories()
@@ -93,19 +97,22 @@ namespace AceCook
             {
                 lblStatus.Visible = false;
             }
-            
+
             // Thiết lập thông tin nhân viên nếu có
             if (_currentEmployee != null)
             {
                 SetupEmployeeInfo();
             }
 
+            // Setup DataGridView ngay từ đầu
+            SetupOrderItemsDataGridView();
+
             // Debug controls trong form
             DebugFormControls();
 
             // Kiểm tra và sửa chữa lblTotalAmount
             ValidateAndFixTotalAmountLabel();
-            
+
             // Kiểm tra visibility của lblTotalAmount
             CheckTotalAmountVisibility();
 
@@ -127,7 +134,7 @@ namespace AceCook
                         System.Diagnostics.Debug.WriteLine($"Generated new order ID: {_currentOrderId}");
                     }
                 }
-                
+
                 // Force update tổng tiền sau khi form load
                 System.Diagnostics.Debug.WriteLine("Form loaded, updating total amount...");
                 UpdateTotalAmount();
@@ -147,7 +154,7 @@ namespace AceCook
                     // Hiển thị tên nhân viên trong txtTenNv
                     txtTenNv.Text = _currentEmployee.HoTenNv ?? "Không xác định";
                     txtTenNv.ReadOnly = true; // Không cho phép chỉnh sửa
-                    
+
                     System.Diagnostics.Debug.WriteLine($"Employee info set: {_currentEmployee.HoTenNv} ({_currentEmployee.MaNv})");
                 }
                 else
@@ -172,7 +179,7 @@ namespace AceCook
                     lblTotalAmount.Font = new Font("Segoe UI", 14, FontStyle.Bold);
                     lblTotalAmount.ForeColor = Color.FromArgb(46, 204, 113);
                     lblTotalAmount.Text = "Tổng tiền: 0 VNĐ";
-                    
+
                     System.Diagnostics.Debug.WriteLine("Using existing lblTotalAmount from Designer");
                 }
                 else
@@ -181,57 +188,57 @@ namespace AceCook
                 }
 
                 // Panel cho nút hành động (không cần panel tổng tiền nữa)
-                var pnlActions = new Panel
-                {
-                    Dock = DockStyle.Bottom,
-                    Height = 80,
-                    BackColor = Color.FromArgb(248, 249, 250),
-                    BorderStyle = BorderStyle.FixedSingle,
-                    Padding = new Padding(15)
-                };
+                // var pnlActions = new Panel
+                // {
+                //     Dock = DockStyle.Bottom,
+                //     Height = 80,
+                //     BackColor = Color.FromArgb(248, 249, 250),
+                //     BorderStyle = BorderStyle.FixedSingle,
+                //     Padding = new Padding(15)
+                // };
 
-                // Nút Lưu
-                btnSave = new Button
-                {
-                    Text = "💾 Lưu đơn hàng",
-                    Location = new Point(400, 20),
-                    Size = new Size(150, 40),
-                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                    BackColor = Color.FromArgb(46, 204, 113),
-                    ForeColor = Color.White,
-                    FlatStyle = FlatStyle.Flat,
-                    Cursor = Cursors.Hand
-                };
-                btnSave.FlatAppearance.BorderSize = 0;
+                // // Nút Lưu
+                // btnSave = new Button
+                // {
+                //     Text = "💾 Lưu đơn hàng",
+                //     Location = new Point(400, 20),
+                //     Size = new Size(150, 40),
+                //     Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                //     BackColor = Color.FromArgb(46, 204, 113),
+                //     ForeColor = Color.White,
+                //     FlatStyle = FlatStyle.Flat,
+                //     Cursor = Cursors.Hand
+                // };
+                // btnSave.FlatAppearance.BorderSize = 0;
 
-                // Nút Hủy/Đóng
-                btnCancel = new Button
-                {
-                    Text = "❌ Hủy",
-                    Location = new Point(570, 20),
-                    Size = new Size(120, 40),
-                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                    BackColor = Color.FromArgb(231, 76, 60),
-                    ForeColor = Color.White,
-                    FlatStyle = FlatStyle.Flat,
-                    Cursor = Cursors.Hand
-                };
-                btnCancel.FlatAppearance.BorderSize = 0;
+                // // Nút Hủy/Đóng
+                // btnCancel = new Button
+                // {
+                //     Text = "❌ Hủy",
+                //     Location = new Point(570, 20),
+                //     Size = new Size(120, 40),
+                //     Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                //     BackColor = Color.FromArgb(231, 76, 60),
+                //     ForeColor = Color.White,
+                //     FlatStyle = FlatStyle.Flat,
+                //     Cursor = Cursors.Hand
+                // };
+                // btnCancel.FlatAppearance.BorderSize = 0;
 
-                // Thêm controls vào panel
-                pnlActions.Controls.AddRange(new Control[]
-                {
-                    btnSave, btnCancel
-                });
+                // // Thêm controls vào panel
+                // pnlActions.Controls.AddRange(new Control[]
+                // {
+                //     btnSave, btnCancel
+                // });
 
-                // Thêm panel vào form
-                this.Controls.Add(pnlActions);
+                // // Thêm panel vào form
+                // this.Controls.Add(pnlActions);
 
-                // Gắn event handlers
-                btnSave.Click += btnSave_Click;
-                btnCancel.Click += btnCancel_Click;
+                // // Gắn event handlers
+                // btnSave.Click += btnSave_Click;
+                // btnCancel.Click += btnCancel_Click;
 
-                System.Diagnostics.Debug.WriteLine("Action controls setup completed");
+                // System.Diagnostics.Debug.WriteLine("Action controls setup completed");
             }
             catch (Exception ex)
             {
@@ -340,10 +347,10 @@ namespace AceCook
                     LoadOrderData();
                     LoadOrderItems();
                     RefreshOrderItemsGrid();
-                    
+
                     // Cập nhật tổng tiền ngay lập tức
                     UpdateTotalAmount();
-                    
+
                     System.Diagnostics.Debug.WriteLine($"Order loaded successfully. Items: {_orderItems.Count}, Total: {_orderItems.Sum(item => item.TotalPrice):N0}");
                 }
                 // Nếu là edit mode nhưng chưa có editingOrder, load từ database
@@ -374,10 +381,10 @@ namespace AceCook
                         LoadOrderData();
                         LoadOrderItems();
                         RefreshOrderItemsGrid();
-                        
+
                         // Cập nhật tổng tiền
                         UpdateTotalAmount();
-                        
+
                         System.Diagnostics.Debug.WriteLine($"Order loaded from database. Items: {_orderItems.Count}, Total: {_orderItems.Sum(item => item.TotalPrice):N0}");
                     }
                 }
@@ -392,10 +399,10 @@ namespace AceCook
                     // Tạo mới - generate order ID
                     _currentOrderId = await _orderRepository.GenerateOrderIdAsync();
                     txtOrderId.Text = _currentOrderId;
-                    
+
                     // Đảm bảo thông tin nhân viên được hiển thị
                     SetupEmployeeInfo();
-                    
+
                     System.Diagnostics.Debug.WriteLine($"New order mode - Generated ID: {_currentOrderId}");
                 }
             }
@@ -559,17 +566,17 @@ namespace AceCook
 
                 // Thêm hoặc cập nhật sản phẩm
                 AddOrUpdateOrderItem(selectedProduct, quantity);
-                
+
                 System.Diagnostics.Debug.WriteLine($"Product added/updated: {selectedProduct.TenSp}, Quantity: {quantity}, Total items: {_orderItems.Count}");
-                
+
                 RefreshOrderItemsGrid();
-                
+
                 // Cập nhật tổng tiền ngay lập tức
                 UpdateTotalAmount();
-                
+
                 // Force refresh tổng tiền
                 ForceRefreshTotalAmount();
-                
+
                 ClearProductSelection();
 
                 // Hiển thị thông báo thành công
@@ -618,7 +625,7 @@ namespace AceCook
                     var oldTotal = existingItem.TotalPrice;
                     existingItem.Quantity += quantity;
                     existingItem.TotalPrice = existingItem.Quantity * existingItem.UnitPrice;
-                    
+
                     System.Diagnostics.Debug.WriteLine($"Updated existing item: {product.TenSp}, Old total: {oldTotal:N0}, New total: {existingItem.TotalPrice:N0}");
                 }
                 else
@@ -632,11 +639,11 @@ namespace AceCook
                         UnitPrice = (double)(product.Gia ?? 0),
                         TotalPrice = quantity * (double)(product.Gia ?? 0)
                     };
-                    
+
                     _orderItems.Add(newItem);
                     System.Diagnostics.Debug.WriteLine($"Added new item: {product.TenSp}, Quantity: {quantity}, Unit price: {newItem.UnitPrice:N0}, Total: {newItem.TotalPrice:N0}");
                 }
-                
+
                 System.Diagnostics.Debug.WriteLine($"Total order items: {_orderItems.Count}, Total amount: {_orderItems.Sum(item => item.TotalPrice):N0}");
             }
             catch (Exception ex)
@@ -662,19 +669,19 @@ namespace AceCook
                         {
                             System.Diagnostics.Debug.WriteLine($"Removing product: {removedItem.ProductName}, Quantity: {removedItem.Quantity}, Total: {removedItem.TotalPrice:N0}");
                         }
-                        
+
                         _orderItems.RemoveAll(item => item.ProductId == productId);
-                        
+
                         System.Diagnostics.Debug.WriteLine($"Product removed. Remaining items: {_orderItems.Count}");
-                        
+
                         RefreshOrderItemsGrid();
-                        
+
                         // Cập nhật tổng tiền sau khi xóa
                         UpdateTotalAmount();
-                        
+
                         // Force refresh tổng tiền
                         ForceRefreshTotalAmount();
-                        
+
                         MessageBox.Show("Đã xóa sản phẩm khỏi đơn hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
@@ -695,8 +702,62 @@ namespace AceCook
             {
                 System.Diagnostics.Debug.WriteLine($"Refreshing grid with {_orderItems.Count} items");
 
-                // Clear và set lại DataSource
+                // Clear và setup lại DataGridView với cột tùy chỉnh
                 dgvOrderItems.DataSource = null;
+                dgvOrderItems.Columns.Clear();
+
+                // Setup DataGridView styling
+                SetupOrderItemsDataGridView();
+
+                // Tạo cột tùy chỉnh với tên tiếng Việt
+                dgvOrderItems.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "ProductId",
+                    HeaderText = "Mã SP",
+                    DataPropertyName = "ProductId",
+                    Width = 80,
+                    ReadOnly = true
+                });
+
+                dgvOrderItems.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "ProductName",
+                    HeaderText = "Tên sản phẩm",
+                    DataPropertyName = "ProductName",
+                    Width = 200,
+                    ReadOnly = true
+                });
+
+                dgvOrderItems.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "Quantity",
+                    HeaderText = "Số lượng",
+                    DataPropertyName = "Quantity",
+                    Width = 80,
+                    ReadOnly = _isViewMode
+                });
+
+                dgvOrderItems.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "UnitPrice",
+                    HeaderText = "Đơn giá (VNĐ)",
+                    DataPropertyName = "UnitPrice",
+                    Width = 120,
+                    ReadOnly = true,
+                    DefaultCellStyle = new DataGridViewCellStyle { Format = "N0" }
+                });
+
+                dgvOrderItems.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "TotalPrice",
+                    HeaderText = "Thành tiền (VNĐ)",
+                    DataPropertyName = "TotalPrice",
+                    Width = 140,
+                    ReadOnly = true,
+                    DefaultCellStyle = new DataGridViewCellStyle { Format = "N0" }
+                });
+
+                // Set DataSource sau khi tạo cột
                 dgvOrderItems.DataSource = _orderItems;
 
                 // Đảm bảo DataGridView hiển thị đúng
@@ -714,7 +775,7 @@ namespace AceCook
 
                 // Cập nhật thông tin tồn kho cho từng sản phẩm
                 UpdateStockInfoInGrid();
-                
+
                 // Cập nhật tổng tiền sau khi refresh grid
                 UpdateTotalAmount();
             }
@@ -722,6 +783,55 @@ namespace AceCook
             {
                 System.Diagnostics.Debug.WriteLine($"Error refreshing grid: {ex.Message}");
                 MessageBox.Show($"Lỗi khi cập nhật bảng dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void SetupOrderItemsDataGridView()
+        {
+            try
+            {
+                // Cấu hình cơ bản
+                dgvOrderItems.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dgvOrderItems.AllowUserToAddRows = false;
+                dgvOrderItems.AllowUserToDeleteRows = false;
+                dgvOrderItems.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dgvOrderItems.MultiSelect = false;
+                dgvOrderItems.BackgroundColor = Color.White;
+                dgvOrderItems.BorderStyle = BorderStyle.FixedSingle;
+                dgvOrderItems.GridColor = Color.LightGray;
+                dgvOrderItems.RowHeadersVisible = false;
+                dgvOrderItems.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+                dgvOrderItems.ColumnHeadersHeight = 45;
+                dgvOrderItems.RowTemplate.Height = 40;
+
+                // Font và style cho header
+                dgvOrderItems.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+                dgvOrderItems.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
+                dgvOrderItems.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dgvOrderItems.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+                // Font và style cho cells
+                dgvOrderItems.DefaultCellStyle.Font = new Font("Segoe UI", 9);
+                dgvOrderItems.DefaultCellStyle.BackColor = Color.White;
+                dgvOrderItems.DefaultCellStyle.ForeColor = Color.Black;
+                dgvOrderItems.DefaultCellStyle.SelectionBackColor = Color.LightGray;
+                dgvOrderItems.DefaultCellStyle.SelectionForeColor = Color.Black;
+                dgvOrderItems.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+
+                // Alternating row colors để dễ đọc
+                dgvOrderItems.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
+
+                // Thêm event handler cho việc chỉnh sửa số lượng (chỉ thêm một lần)
+                if (!_isViewMode)
+                {
+                    // Xóa event handler cũ trước khi thêm mới để tránh duplicate
+                    dgvOrderItems.CellEndEdit -= DgvOrderItems_CellEndEdit;
+                    dgvOrderItems.CellEndEdit += DgvOrderItems_CellEndEdit;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error setting up DataGridView: {ex.Message}");
             }
         }
 
@@ -752,8 +862,26 @@ namespace AceCook
                         }
                         else
                         {
-                            row.DefaultCellStyle.BackColor = Color.White;
+                            // Sử dụng màu alternating rows
+                            if (i % 2 == 0)
+                            {
+                                row.DefaultCellStyle.BackColor = Color.White;
+                            }
+                            else
+                            {
+                                row.DefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
+                            }
                             row.DefaultCellStyle.ForeColor = Color.Black;
+                        }
+
+                        // Thêm tooltip để hiển thị thông tin tồn kho
+                        if (availableStock < currentQuantity)
+                        {
+                            row.Cells["Quantity"].ToolTipText = $"Cảnh báo: Tồn kho hiện tại chỉ có {availableStock} sản phẩm!";
+                        }
+                        else
+                        {
+                            row.Cells["Quantity"].ToolTipText = $"Tồn kho hiện tại: {availableStock} sản phẩm";
                         }
                     }
                 }
@@ -777,7 +905,7 @@ namespace AceCook
                     var oldText = lblTotalAmount.Text;
                     lblTotalAmount.Text = $"Tổng tiền: {total:N0} VNĐ";
                     System.Diagnostics.Debug.WriteLine($"lblTotalAmount updated successfully: '{oldText}' -> '{lblTotalAmount.Text}'");
-                    
+
                     // Kiểm tra xem control có hiển thị không
                     System.Diagnostics.Debug.WriteLine($"lblTotalAmount visible: {lblTotalAmount.Visible}, Enabled: {lblTotalAmount.Enabled}");
                     System.Diagnostics.Debug.WriteLine($"lblTotalAmount location: {lblTotalAmount.Location}, Size: {lblTotalAmount.Size}");
@@ -785,7 +913,7 @@ namespace AceCook
                 else
                 {
                     System.Diagnostics.Debug.WriteLine("ERROR: lblTotalAmount is null - cannot update total amount");
-                    
+
                     // Tìm control trong form
                     var foundLabel = this.Controls.Find("lblTotalAmount", true).FirstOrDefault() as Label;
                     if (foundLabel != null)
@@ -875,7 +1003,7 @@ namespace AceCook
                 if (!string.IsNullOrEmpty(productId) && newQuantity > 0)
                 {
                     System.Diagnostics.Debug.WriteLine($"Editing quantity for product {productId}: {newQuantity}");
-                    
+
                     if (!await ValidateStock(productId, newQuantity))
                     {
                         var availableStock = await GetAvailableStock(productId);
@@ -889,14 +1017,14 @@ namespace AceCook
                         var oldTotal = item.TotalPrice;
                         item.Quantity = newQuantity;
                         item.TotalPrice = item.Quantity * item.UnitPrice;
-                        
+
                         System.Diagnostics.Debug.WriteLine($"Updated item: {item.ProductName}, Old total: {oldTotal:N0}, New total: {item.TotalPrice:N0}");
-                        
+
                         row.Cells["TotalPrice"].Value = item.TotalPrice;
-                        
+
                         // Cập nhật tổng tiền
                         UpdateTotalAmount();
-                        
+
                         // Force refresh tổng tiền
                         ForceRefreshTotalAmount();
                     }
@@ -997,7 +1125,6 @@ namespace AceCook
         {
             try
             {
-                MessageBox.Show("Đang tạo đơn hàng mới...", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 // Tạo đơn hàng mới
                 var order = new Dondathang
                 {
@@ -1028,7 +1155,7 @@ namespace AceCook
                                ));
 
                 // Hiển thị MessageBox
-                MessageBox.Show(orderLog, "Thông tin đơn hàng", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // MessageBox.Show(orderLog, "Thông tin đơn hàng", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 // Sử dụng repository để tạo đơn hàng
                 var success = await _orderRepository.AddOrderAsync(order);
@@ -1036,7 +1163,7 @@ namespace AceCook
                 if (success)
                 {
                     System.Diagnostics.Debug.WriteLine($"Order {_currentOrderId} created successfully with {_orderItems.Count} items");
-                    
+
                     try
                     {
                         // Tự động tạo hóa đơn bán với tổng tiền
@@ -1061,6 +1188,7 @@ namespace AceCook
                                       MessageBoxButtons.OK,
                                       MessageBoxIcon.Warning);
                     }
+                    MessageBox.Show("Đơn hàng đã được tạo thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
@@ -1098,7 +1226,7 @@ namespace AceCook
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                
+
                 try
                 {
                     // Tự động tạo hóa đơn bán với tổng tiền cập nhật
@@ -1241,7 +1369,7 @@ namespace AceCook
             try
             {
                 System.Diagnostics.Debug.WriteLine("=== Validating lblTotalAmount ===");
-                
+
                 // Kiểm tra lblTotalAmount từ Designer
                 if (lblTotalAmount != null)
                 {
@@ -1251,22 +1379,22 @@ namespace AceCook
                 {
                     System.Diagnostics.Debug.WriteLine("Designer lblTotalAmount is NULL");
                 }
-                
+
                 // Tìm tất cả Label có chứa "Tổng tiền" trong form
                 var allLabels = this.Controls.Find("", true).OfType<Label>().ToList();
                 var totalLabels = allLabels.Where(l => l.Text.Contains("Tổng tiền")).ToList();
-                
+
                 System.Diagnostics.Debug.WriteLine($"Found {totalLabels.Count} labels with 'Tổng tiền':");
                 foreach (var label in totalLabels)
                 {
                     System.Diagnostics.Debug.WriteLine($"  - Name: {label.Name}, Text: '{label.Text}', Location: {label.Location}");
                 }
-                
+
                 // Nếu không tìm thấy lblTotalAmount, tạo mới
                 if (lblTotalAmount == null || !lblTotalAmount.IsHandleCreated)
                 {
                     System.Diagnostics.Debug.WriteLine("Creating new lblTotalAmount...");
-                    
+
                     // Tìm grpOrderItems để đặt label vào
                     var grpOrderItems = this.Controls.OfType<GroupBox>().FirstOrDefault(g => g.Name == "grpOrderItems");
                     if (grpOrderItems != null)
@@ -1280,7 +1408,7 @@ namespace AceCook
                             AutoSize = true,
                             Location = new Point(37, 533)
                         };
-                        
+
                         grpOrderItems.Controls.Add(lblTotalAmount);
                         System.Diagnostics.Debug.WriteLine("New lblTotalAmount created and added to grpOrderItems");
                     }
@@ -1289,7 +1417,7 @@ namespace AceCook
                         System.Diagnostics.Debug.WriteLine("ERROR: grpOrderItems not found");
                     }
                 }
-                
+
                 System.Diagnostics.Debug.WriteLine("=== End Validation ===");
             }
             catch (Exception ex)
@@ -1305,11 +1433,11 @@ namespace AceCook
                 System.Diagnostics.Debug.WriteLine("=== DEBUG FORM CONTROLS ===");
                 System.Diagnostics.Debug.WriteLine($"Form name: {this.Name}, Text: {this.Text}");
                 System.Diagnostics.Debug.WriteLine($"Total controls: {this.Controls.Count}");
-                
+
                 foreach (Control control in this.Controls)
                 {
                     System.Diagnostics.Debug.WriteLine($"Control: {control.GetType().Name} - Name: {control.Name}, Text: {control.Text}");
-                    
+
                     if (control is GroupBox grp)
                     {
                         System.Diagnostics.Debug.WriteLine($"  GroupBox '{grp.Name}' has {grp.Controls.Count} controls:");
@@ -1319,7 +1447,7 @@ namespace AceCook
                         }
                     }
                 }
-                
+
                 // Tìm lblTotalAmount cụ thể
                 var totalAmountLabel = this.Controls.Find("lblTotalAmount", true).FirstOrDefault();
                 if (totalAmountLabel != null)
@@ -1330,7 +1458,7 @@ namespace AceCook
                 {
                     System.Diagnostics.Debug.WriteLine("lblTotalAmount NOT found in Controls.Find");
                 }
-                
+
                 System.Diagnostics.Debug.WriteLine("=== END DEBUG ===");
             }
             catch (Exception ex)
@@ -1344,17 +1472,17 @@ namespace AceCook
             try
             {
                 System.Diagnostics.Debug.WriteLine("ForceRefreshTotalAmount called");
-                
+
                 // Cập nhật tổng tiền từ order items
                 UpdateTotalAmount();
-                
+
                 // Force refresh UI
                 if (lblTotalAmount != null)
                 {
                     lblTotalAmount.Refresh();
                     System.Diagnostics.Debug.WriteLine($"Force refreshed lblTotalAmount: {lblTotalAmount.Text}");
                 }
-                
+
                 // Cũng refresh form
                 this.Refresh();
             }
@@ -1369,7 +1497,7 @@ namespace AceCook
             try
             {
                 System.Diagnostics.Debug.WriteLine("=== Checking Total Amount Visibility ===");
-                
+
                 if (lblTotalAmount != null)
                 {
                     System.Diagnostics.Debug.WriteLine($"lblTotalAmount properties:");
@@ -1380,7 +1508,7 @@ namespace AceCook
                     System.Diagnostics.Debug.WriteLine($"  - Size: {lblTotalAmount.Size}");
                     System.Diagnostics.Debug.WriteLine($"  - Parent: {lblTotalAmount.Parent?.Name ?? "NULL"}");
                     System.Diagnostics.Debug.WriteLine($"  - Handle: {lblTotalAmount.IsHandleCreated}");
-                    
+
                     // Kiểm tra xem có bị ẩn bởi parent control không
                     var parent = lblTotalAmount.Parent;
                     while (parent != null)
@@ -1393,17 +1521,17 @@ namespace AceCook
                 {
                     System.Diagnostics.Debug.WriteLine("lblTotalAmount is NULL");
                 }
-                
+
                 // Kiểm tra tất cả controls có chứa "Tổng tiền"
                 var allControls = this.Controls.Find("", true);
                 var totalLabels = allControls.OfType<Label>().Where(l => l.Text.Contains("Tổng tiền")).ToList();
-                
+
                 System.Diagnostics.Debug.WriteLine($"Found {totalLabels.Count} labels with 'Tổng tiền':");
                 foreach (var label in totalLabels)
                 {
                     System.Diagnostics.Debug.WriteLine($"  - {label.Name}: '{label.Text}' at {label.Location}, Visible={label.Visible}");
                 }
-                
+
                 System.Diagnostics.Debug.WriteLine("=== End Check ===");
             }
             catch (Exception ex)
