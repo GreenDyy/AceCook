@@ -588,6 +588,14 @@ namespace AceCook
         {
             try
             {
+                // Validate date range first
+                if (dtpStartDate.Value > dtpEndDate.Value)
+                {
+                    MessageBox.Show("Ngày bắt đầu không thể lớn hơn ngày kết thúc!", "Lỗi", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 List<Dondathang> orders;
 
                 // Apply status filter
@@ -608,15 +616,19 @@ namespace AceCook
                     orders = await _orderRepository.GetAllOrdersAsync();
                 }
 
-                // Apply date range filter - Fixed to work with DateOnly
+                // Apply date range filter - Improved logic
                 if (dtpStartDate.Value <= dtpEndDate.Value)
                 {
-                    var startDateOnly = DateOnly.FromDateTime(dtpStartDate.Value);
-                    var endDateOnly = DateOnly.FromDateTime(dtpEndDate.Value);
+                    var startDate = dtpStartDate.Value.Date;
+                    var endDate = dtpEndDate.Value.Date;
                     
-                    orders = orders.Where(o => o.NgayDat.HasValue &&
-                        o.NgayDat.Value >= startDateOnly &&
-                        o.NgayDat.Value <= endDateOnly)
+                    // Convert DateOnly to DateTime for comparison to avoid potential issues
+                    orders = orders.Where(o => o.NgayDat.HasValue)
+                        .Where(o => 
+                        {
+                            var orderDate = o.NgayDat.Value.ToDateTime(TimeOnly.MinValue);
+                            return orderDate >= startDate && orderDate <= endDate;
+                        })
                         .ToList();
                 }
 
@@ -625,7 +637,7 @@ namespace AceCook
                 {
                     var searchTerm = txtSearch.Text.ToLower();
                     orders = orders.Where(o => 
-                        o.MaDdh.ToLower().Contains(searchTerm) ||
+                        (o.MaDdh?.ToLower().Contains(searchTerm) ?? false) ||
                         (o.MaKhNavigation?.TenKh?.ToLower().Contains(searchTerm) ?? false) ||
                         (o.TrangThai?.ToLower().Contains(searchTerm) ?? false)
                     ).ToList();
