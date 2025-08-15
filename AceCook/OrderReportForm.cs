@@ -89,7 +89,7 @@ namespace AceCook
             {
                 Text = "đến:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(40, 25),
+                Size = new Size(50, 25),
                 Location = new Point(250, 15),
                 TextAlign = ContentAlignment.MiddleLeft
             };
