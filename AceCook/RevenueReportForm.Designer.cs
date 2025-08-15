@@ -300,7 +300,7 @@ namespace AceCook
             this.colAverage.MinimumWidth = 6;
             this.colAverage.Name = "colAverage";
             this.colAverage.ReadOnly = true;
-            this.colAverage.Width = 200;
+            this.colAverage.Width = 400;
             this.colAverage.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
             this.colAverage.DefaultCellStyle.Format = "N0";
             // 
