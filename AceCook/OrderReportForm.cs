@@ -107,7 +107,7 @@ namespace AceCook
             btnSearch = new Button
             {
                 Text = "🔍 Tìm kiếm",
-                Size = new Size(100, 35),
+                Size = new Size(120, 35),
                 Location = new Point(450, 12),
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(52, 152, 219),
@@ -121,8 +121,8 @@ namespace AceCook
             btnReset = new Button
             {
                 Text = "🔄 Làm mới",
-                Size = new Size(100, 35),
-                Location = new Point(560, 12),
+                Size = new Size(120, 35),
+                Location = new Point(470, 12),
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(95, 95, 95),
                 ForeColor = Color.White,
