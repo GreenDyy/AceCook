@@ -251,6 +251,7 @@ namespace AceCook
             this.dataGridViewDetails.Size = new System.Drawing.Size(1200, 440);
             this.dataGridViewDetails.TabIndex = 1;
             // 
+            //test
             // colDate
             // 
             this.colDate.HeaderText = "📅 Ngày";
