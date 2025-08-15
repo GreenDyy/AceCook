@@ -41,7 +41,6 @@ namespace AceCook
             this.dateTimePickerFrom = new System.Windows.Forms.DateTimePicker();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.lblSubtitle = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
             this.panelDetails = new System.Windows.Forms.Panel();
             this.dataGridViewDetails = new System.Windows.Forms.DataGridView();
@@ -64,13 +63,12 @@ namespace AceCook
             // 
             this.panelHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(130)))), ((int)(((byte)(246)))));
             this.panelHeader.Controls.Add(this.panelHeaderActions);
-            this.panelHeader.Controls.Add(this.lblSubtitle);
             this.panelHeader.Controls.Add(this.lblTitle);
             this.panelHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelHeader.Location = new System.Drawing.Point(0, 0);
             this.panelHeader.Name = "panelHeader";
             this.panelHeader.Padding = new System.Windows.Forms.Padding(40, 30, 40, 30);
-            this.panelHeader.Size = new System.Drawing.Size(1200, 160);
+            this.panelHeader.Size = new System.Drawing.Size(1200, 120);
             this.panelHeader.TabIndex = 0;
             // 
             // panelHeaderActions
@@ -188,23 +186,12 @@ namespace AceCook
             this.label3.TabIndex = 0;
             this.label3.Text = "Từ ngày:";
             // 
-            // lblSubtitle
-            // 
-            this.lblSubtitle.AutoSize = true;
-            this.lblSubtitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSubtitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(200)))));
-            this.lblSubtitle.Location = new System.Drawing.Point(45, 95);
-            this.lblSubtitle.Name = "lblSubtitle";
-            this.lblSubtitle.Size = new System.Drawing.Size(280, 28);
-            this.lblSubtitle.TabIndex = 1;
-            this.lblSubtitle.Text = "Thống kê doanh thu theo thời gian";
-            // 
             // lblTitle
             // 
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 28F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTitle.ForeColor = System.Drawing.Color.White;
-            this.lblTitle.Location = new System.Drawing.Point(40, 30);
+            this.lblTitle.Location = new System.Drawing.Point(40, 35);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(450, 62);
             this.lblTitle.TabIndex = 0;
@@ -368,7 +355,6 @@ namespace AceCook
 
         private Panel panelHeader;
         private Label lblTitle;
-        private Label lblSubtitle;
         private Panel panelHeaderActions;
         private Panel panelDateFilter;
         private Label label3;
