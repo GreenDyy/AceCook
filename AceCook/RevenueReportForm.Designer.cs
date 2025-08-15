@@ -240,6 +240,12 @@ namespace AceCook
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridViewDetails.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridViewDetails.ColumnHeadersHeight = 55;
+            this.dataGridViewDetails.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.dataGridViewDetails.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+                this.colDate,
+                this.colInvoices,
+                this.colRevenue,
+                this.colAverage});
             // Cell style
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
