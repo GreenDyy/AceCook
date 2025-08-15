@@ -156,16 +156,13 @@ namespace AceCook
             btnRefresh = CreateActionButton("🔄 Làm mới dữ liệu", Color.FromArgb(52, 152, 219));
             btnRefresh.Click += BtnRefresh_Click;
 
-            var btnViewDetails = CreateActionButton("👁️ Xem chi tiết", Color.FromArgb(108, 92, 231));
-            btnViewDetails.Click += BtnViewDetails_Click;
-
             btnEdit = CreateActionButton("✏️ Chỉnh sửa sản phẩm", Color.FromArgb(255, 193, 7));
             btnEdit.Click += BtnEdit_Click;
 
             btnDelete = CreateActionButton("🗑️ Xóa sản phẩm", Color.FromArgb(231, 76, 60));
             btnDelete.Click += BtnDelete_Click;
 
-            pnlActions.Controls.AddRange(new Control[] { btnAdd, btnRefresh, btnViewDetails, btnEdit, btnDelete });
+            pnlActions.Controls.AddRange(new Control[] { btnAdd, btnRefresh, btnEdit, btnDelete });
 
             // DataGridView
             dataGridViewProducts = new DataGridView
@@ -205,8 +202,8 @@ namespace AceCook
             var btn = new Button
             {
                 Text = text,
-                Width = 200,
-                Height = 40,
+                Width = 250,
+                Height = 60,
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = backColor,
                 ForeColor = Color.White,

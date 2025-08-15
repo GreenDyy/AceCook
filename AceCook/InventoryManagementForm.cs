@@ -6,100 +6,187 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AceCook.Models;
 using AceCook.Repositories;
+using AceCook.Helpers;
 using System.Collections.Generic;
 
 namespace AceCook
 {
     public partial class InventoryManagementForm : Form
     {
-        private readonly AppDbContext _context;
         private readonly InventoryRepository _inventoryRepository;
-        private List<CtTon> _currentInventory; // Lưu trữ dữ liệu hiện tại
+        private List<CtTon> _currentInventory;
+        private bool _isLoading = false;
 
         public InventoryManagementForm(AppDbContext context)
         {
-            _context = context;
-            _inventoryRepository = new InventoryRepository(context);
-            _currentInventory = new List<CtTon>(); // Khởi tạo danh sách rỗng
-            InitializeComponent();
-            _ = LoadInventory(); // Sử dụng async method
-        }
-
-        private async Task LoadInventory()
-        {
             try
             {
-                // Load data in parallel for better performance
-                var inventoryTask = _inventoryRepository.GetAllInventoryAsync();
-                var warehouseTask = LoadWarehouseData();
-                var productTypeTask = LoadProductTypeData();
-
-                // Wait for all tasks to complete
-                var inventory = await inventoryTask;
-                await warehouseTask;
-                await productTypeTask;
-
-                RefreshDataGridView(inventory);
-                await UpdateSummary(inventory);
+                _inventoryRepository = new InventoryRepository(context);
+                _currentInventory = new List<CtTon>();
+                InitializeComponent();
+                
+                // Sử dụng Task.Run để tránh blocking UI thread
+                Task.Run(async () => await LoadInventoryAsync());
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu tồn kho: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khởi tạo form: {ex.Message}", "Lỗi Khởi tạo",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private async Task LoadWarehouseData()
+        private async Task LoadInventoryAsync()
+        {
+            if (_isLoading) return;
+            
+            try
+            {
+                _isLoading = true;
+                
+                // Disable controls during loading
+                this.Invoke((MethodInvoker)delegate
+                {
+                    this.Cursor = Cursors.WaitCursor;
+                    this.Enabled = false;
+                });
+
+                // Test database connection first
+                if (!await DatabaseHelper.TestConnectionAsync(_inventoryRepository.GetType().GetField("_context", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(_inventoryRepository) as AppDbContext))
+                {
+                    MessageBox.Show("Không thể kết nối đến cơ sở dữ liệu. Vui lòng kiểm tra kết nối mạng và thử lại.", 
+                        "Lỗi Kết nối", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Load data with timeout
+                var inventoryTask = _inventoryRepository.GetAllInventoryAsync();
+                var inventory = await Task.WhenAny(inventoryTask, Task.Delay(30000)) == inventoryTask 
+                    ? await inventoryTask 
+                    : throw new TimeoutException("Timeout khi load dữ liệu tồn kho");
+
+                if (inventory == null || inventory.Count == 0)
+                {
+                    MessageBox.Show("Không có dữ liệu tồn kho nào được tìm thấy.", "Thông báo",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Load supporting data
+                await LoadWarehouseDataAsync();
+                await LoadProductTypeDataAsync();
+
+                // Update UI on main thread
+                this.Invoke((MethodInvoker)delegate
+                {
+                    RefreshDataGridView(inventory);
+                    UpdateSummaryUI(inventory);
+                    this.Text = $"Quản lý Tồn kho - {inventory.Count} sản phẩm";
+                });
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = ex switch
+                {
+                    TimeoutException => "Hệ thống quá tải, vui lòng thử lại sau.",
+                    DbUpdateException => "Lỗi cập nhật cơ sở dữ liệu. Vui lòng kiểm tra quyền truy cập.",
+                    InvalidOperationException => "Lỗi thao tác dữ liệu. Vui lòng kiểm tra cấu trúc database.",
+                    _ => $"Lỗi không xác định: {ex.Message}"
+                };
+
+                this.Invoke((MethodInvoker)delegate
+                {
+                    MessageBox.Show($"Lỗi khi tải dữ liệu tồn kho:\n{errorMessage}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                });
+            }
+            finally
+            {
+                _isLoading = false;
+                this.Invoke((MethodInvoker)delegate
+                {
+                    this.Cursor = Cursors.Default;
+                    this.Enabled = true;
+                });
+            }
+        }
+
+        private async Task<bool> TestDatabaseConnectionAsync()
+        {
+            try
+            {
+                // Test connection by trying to get a simple count
+                var count = await _inventoryRepository.GetTotalItemsAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private async Task LoadWarehouseDataAsync()
         {
             try
             {
                 var warehouses = await _inventoryRepository.GetAllWarehousesAsync();
-                cboWarehouseFilter.Items.Clear();
-                cboWarehouseFilter.Items.Add("Tất cả kho");
-                foreach (var warehouse in warehouses)
+                this.Invoke((MethodInvoker)delegate
                 {
-                    cboWarehouseFilter.Items.Add(warehouse.TenKho);
-                }
-                cboWarehouseFilter.SelectedIndex = 0;
+                    cboWarehouseFilter.Items.Clear();
+                    cboWarehouseFilter.Items.Add("Tất cả kho");
+                    foreach (var warehouse in warehouses)
+                    {
+                        cboWarehouseFilter.Items.Add(warehouse.TenKho);
+                    }
+                    cboWarehouseFilter.SelectedIndex = 0;
+                });
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải danh sách kho: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Invoke((MethodInvoker)delegate
+                {
+                    MessageBox.Show($"Lỗi khi tải danh sách kho: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                });
             }
         }
 
-        private async Task LoadProductTypeData()
+        private async Task LoadProductTypeDataAsync()
         {
             try
             {
                 var productTypes = await _inventoryRepository.GetAllProductTypesAsync();
-
-                cboProductTypeFilter.Items.Clear();
-                cboProductTypeFilter.Items.Add("Tất cả loại");
-                foreach (var type in productTypes)
+                this.Invoke((MethodInvoker)delegate
                 {
-                    cboProductTypeFilter.Items.Add(type);
-                }
-                cboProductTypeFilter.SelectedIndex = 0;
+                    cboProductTypeFilter.Items.Clear();
+                    cboProductTypeFilter.Items.Add("Tất cả loại");
+                    foreach (var type in productTypes)
+                    {
+                        cboProductTypeFilter.Items.Add(type);
+                    }
+                    cboProductTypeFilter.SelectedIndex = 0;
+                });
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải danh sách loại sản phẩm: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Invoke((MethodInvoker)delegate
+                {
+                    MessageBox.Show($"Lỗi khi tải danh sách loại sản phẩm: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                });
             }
         }
 
-        private async Task UpdateSummary(List<CtTon> inventory)
+        private void UpdateSummaryUI(List<CtTon> inventory)
         {
             try
             {
-                // Sử dụng Repository method để lấy thống kê
-                var (totalItems, totalValue, lowStockCount) = await _inventoryRepository.GetInventorySummaryAsync();
+                var totalItems = inventory.Sum(i => i.SoLuongTonKho ?? 0);
+                var totalValue = inventory.Sum(i => (i.SoLuongTonKho ?? 0) * (i.MaSpNavigation?.Gia ?? 0));
+                var lowStockCount = inventory.Count(i => (i.SoLuongTonKho ?? 0) <= 10);
 
                 lblTotalItems.Text = totalItems.ToString("N0");
                 lblTotalValue.Text = totalValue.ToString("N0") + " VNĐ";
-                
+
                 // Update low stock count in summary panel
                 var lowStockLabel = pnlSummary.Controls.OfType<Label>().FirstOrDefault(l => l.Text == "0");
                 if (lowStockLabel != null)
@@ -109,53 +196,48 @@ namespace AceCook
             }
             catch (Exception ex)
             {
-                // Fallback to local calculation if repository fails
-                var totalItems = inventory.Sum(i => i.SoLuongTonKho ?? 0);
-                var totalValue = inventory.Sum(i => (i.SoLuongTonKho ?? 0) * (i.MaSpNavigation?.Gia ?? 0));
-                var lowStockCount = inventory.Count(i => (i.SoLuongTonKho ?? 0) <= 10);
-
-                lblTotalItems.Text = totalItems.ToString("N0");
-                lblTotalValue.Text = totalValue.ToString("N0") + " VNĐ";
-                
-                var lowStockLabel = pnlSummary.Controls.OfType<Label>().FirstOrDefault(l => l.Text == "0");
-                if (lowStockLabel != null)
-                {
-                    lowStockLabel.Text = lowStockCount.ToString();
-                }
+                MessageBox.Show($"Lỗi khi cập nhật thống kê: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private async void TxtSearch_TextChanged(object sender, EventArgs e)
         {
-            await ApplyFilters();
+            if (_isLoading) return;
+            await ApplyFiltersAsync();
         }
 
         private async void CboWarehouseFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
-            await ApplyFilters();
+            if (_isLoading) return;
+            await ApplyFiltersAsync();
         }
 
         private async void CboProductTypeFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
-            await ApplyFilters();
+            if (_isLoading) return;
+            await ApplyFiltersAsync();
         }
 
-        private async Task ApplyFilters()
+        private async Task ApplyFiltersAsync()
         {
+            if (_isLoading) return;
+            
             try
             {
+                _isLoading = true;
+                this.Cursor = Cursors.WaitCursor;
+
                 var searchTerm = txtSearch.Text.Trim();
                 var selectedWarehouse = cboWarehouseFilter.SelectedItem?.ToString();
                 var selectedProductType = cboProductTypeFilter.SelectedItem?.ToString();
 
-                // Sử dụng Repository method để lấy dữ liệu đã được lọc
                 var inventory = await _inventoryRepository.GetFilteredInventoryAsync(
                     searchTerm, selectedWarehouse, selectedProductType);
 
                 RefreshDataGridView(inventory);
-                await UpdateSummary(inventory);
-                
-                // Update title with result count
+                UpdateSummaryUI(inventory);
+
                 var resultCount = inventory.Count;
                 var totalCount = await _inventoryRepository.GetTotalItemsAsync();
                 this.Text = $"Quản lý Tồn kho - Hiển thị {resultCount}/{totalCount} sản phẩm";
@@ -164,6 +246,11 @@ namespace AceCook
             {
                 MessageBox.Show($"Lỗi khi áp dụng bộ lọc: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                _isLoading = false;
+                this.Cursor = Cursors.Default;
             }
         }
 
@@ -175,11 +262,11 @@ namespace AceCook
                 txtSearch.Text = "";
                 cboWarehouseFilter.SelectedIndex = 0;
                 cboProductTypeFilter.SelectedIndex = 0;
-                
+
                 // Reload all data
-                await LoadInventory();
-                
-                MessageBox.Show("Đã làm mới dữ liệu thành công!", "Thông báo", 
+                await LoadInventoryAsync();
+
+                MessageBox.Show("Đã làm mới dữ liệu thành công!", "Thông báo",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -201,6 +288,7 @@ namespace AceCook
                 {
                     try
                     {
+                        this.Cursor = Cursors.WaitCursor;
                         var inventoryItem = await _inventoryRepository.GetInventoryByIdAsync(maSp, maKho);
                         if (inventoryItem != null)
                         {
@@ -216,6 +304,10 @@ namespace AceCook
                     {
                         MessageBox.Show($"Lỗi khi tải thông tin tồn kho: {ex.Message}", "Lỗi",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    finally
+                    {
+                        this.Cursor = Cursors.Default;
                     }
                 }
             }
@@ -253,15 +345,16 @@ namespace AceCook
                 {
                     try
                     {
+                        this.Cursor = Cursors.WaitCursor;
                         var inventoryItem = await _inventoryRepository.GetInventoryByIdAsync(maSp, maKho);
                         if (inventoryItem != null)
                         {
                             var nhapKhoForm = new InventoryAddEditForm(_inventoryRepository, InventoryOperationType.NhapKho, inventoryItem);
                             if (nhapKhoForm.ShowDialog() == DialogResult.OK)
                             {
-                                MessageBox.Show("Nhập kho thành công!", "Thông báo", 
+                                MessageBox.Show("Nhập kho thành công!", "Thông báo",
                                     MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                await LoadInventory();
+                                await LoadInventoryAsync();
                             }
                         }
                         else
@@ -275,11 +368,15 @@ namespace AceCook
                         MessageBox.Show($"Lỗi khi mở form nhập kho: {ex.Message}", "Lỗi",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+                    finally
+                    {
+                        this.Cursor = Cursors.Default;
+                    }
                 }
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn một sản phẩm để nhập kho!", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn một sản phẩm để nhập kho!", "Thông báo",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
@@ -296,15 +393,16 @@ namespace AceCook
                 {
                     try
                     {
+                        this.Cursor = Cursors.WaitCursor;
                         var inventoryItem = await _inventoryRepository.GetInventoryByIdAsync(maSp, maKho);
                         if (inventoryItem != null)
                         {
                             var xuatKhoForm = new InventoryAddEditForm(_inventoryRepository, InventoryOperationType.XuatKho, inventoryItem);
                             if (xuatKhoForm.ShowDialog() == DialogResult.OK)
                             {
-                                MessageBox.Show("Xuất kho thành công!", "Thông báo", 
+                                MessageBox.Show("Xuất kho thành công!", "Thông báo",
                                     MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                await LoadInventory();
+                                await LoadInventoryAsync();
                             }
                         }
                         else
@@ -318,11 +416,15 @@ namespace AceCook
                         MessageBox.Show($"Lỗi khi mở form xuất kho: {ex.Message}", "Lỗi",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+                    finally
+                    {
+                        this.Cursor = Cursors.Default;
+                    }
                 }
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn một sản phẩm để xuất kho!", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn một sản phẩm để xuất kho!", "Thông báo",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }

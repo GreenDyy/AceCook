@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Globalization;
 using AceCook.Models;
 using AceCook.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace AceCook
 {
@@ -143,15 +144,54 @@ namespace AceCook
             if (_operationType == InventoryOperationType.XuatKho)
             {
                 var currentStock = _currentInventory?.SoLuongTonKho ?? 0;
+                
+                // Kiểm tra xem có đủ hàng để xuất không
+                if (currentStock <= 0)
+                {
+                    MessageBox.Show("Kho đã hết hàng, không thể xuất kho!", 
+                        "Lỗi xác thực", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return false;
+                }
+                
                 if (changeAmount > currentStock)
                 {
                     MessageBox.Show($"Không thể xuất {changeAmount} sản phẩm! Chỉ còn {currentStock} trong kho.", 
                         "Lỗi xác thực", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return false;
                 }
+
+                // Kiểm tra số lượng sau khi xuất có âm không
+                var newStock = currentStock - changeAmount;
+                if (newStock < 0)
+                {
+                    MessageBox.Show($"Số lượng sau khi xuất không được âm! ({newStock})", 
+                        "Lỗi xác thực", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return false;
+                }
             }
 
             return true;
+        }
+
+        private async Task<bool> RefreshInventoryDataAsync()
+        {
+            try
+            {
+                // Refresh dữ liệu tồn kho từ database
+                var refreshedInventory = await _inventoryRepository.GetInventoryByIdAsync(_currentInventory.MaSp, _currentInventory.MaKho);
+                if (refreshedInventory != null)
+                {
+                    _currentInventory = refreshedInventory;
+                    LoadInventoryData();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to refresh inventory data: {ex.Message}");
+                return false;
+            }
         }
 
         private async void BtnSave_Click(object sender, EventArgs e)
@@ -163,6 +203,14 @@ namespace AceCook
             {
                 btnSave.Enabled = false;
                 Cursor = Cursors.WaitCursor;
+
+                // Refresh dữ liệu trước khi thực hiện thao tác
+                if (!await RefreshInventoryDataAsync())
+                {
+                    MessageBox.Show("Không thể cập nhật dữ liệu tồn kho. Vui lòng thử lại.", "Lỗi", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
                 var changeAmount = (int)numSoLuongThayDoi.Value;
                 var currentStock = _currentInventory?.SoLuongTonKho ?? 0;
@@ -178,9 +226,24 @@ namespace AceCook
                         break;
                 }
 
+                // Log thông tin trước khi update
+                System.Diagnostics.Debug.WriteLine($"Updating inventory: MaSP={_currentInventory.MaSp}, MaKho={_currentInventory.MaKho}");
+                System.Diagnostics.Debug.WriteLine($"Current stock: {currentStock}, Change: {changeAmount}, New stock: {newStock}");
+
                 // Update inventory
                 _currentInventory.SoLuongTonKho = newStock;
-                bool success = await _inventoryRepository.UpdateInventoryAsync(_currentInventory);
+                
+                bool success = false;
+                try
+                {
+                    success = await _inventoryRepository.UpdateInventoryAsync(_currentInventory);
+                }
+                catch (Exception updateEx)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Update failed: {updateEx.Message}");
+                    System.Diagnostics.Debug.WriteLine($"Stack trace: {updateEx.StackTrace}");
+                    throw;
+                }
 
                 if (success)
                 {
@@ -201,7 +264,17 @@ namespace AceCook
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}", "Lỗi", 
+                System.Diagnostics.Debug.WriteLine($"Save operation failed: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                
+                string errorMessage = ex switch
+                {
+                    InvalidOperationException => $"Lỗi thao tác: {ex.Message}",
+                    DbUpdateException => "Lỗi cập nhật cơ sở dữ liệu. Vui lòng kiểm tra quyền truy cập.",
+                    _ => $"Đã xảy ra lỗi: {ex.Message}"
+                };
+                
+                MessageBox.Show(errorMessage, "Lỗi", 
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally

@@ -38,7 +38,6 @@
             this.lblTotalItems = new System.Windows.Forms.Label();
             this.lblTotalValue = new System.Windows.Forms.Label();
             this.pnlSummary = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInventory)).BeginInit();
             this.pnlSummary.SuspendLayout();
             this.SuspendLayout();
@@ -60,7 +59,7 @@
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lblTitle.ForeColor = System.Drawing.Color.FromArgb(52, 73, 94);
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblTitle.Height = 70;
+            this.lblTitle.Height = 300;
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 
 
@@ -127,8 +126,8 @@
             this.cboProductTypeFilter.SelectedIndexChanged += new System.EventHandler(this.CboProductTypeFilter_SelectedIndexChanged);
 
             this.btnRefresh.Text = "🔄 Làm mới";
-            this.btnRefresh.Width = 100;
-            this.btnRefresh.Height = 35;
+            this.btnRefresh.Width = 200;
+            this.btnRefresh.Height = 40;
             this.btnRefresh.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(52, 152, 219);
             this.btnRefresh.ForeColor = System.Drawing.Color.White;
@@ -139,7 +138,7 @@
 
             pnlFilters.Controls.AddRange(new System.Windows.Forms.Control[] { 
                 lblSearch, this.txtSearch, lblWarehouse, this.cboWarehouseFilter,
-                lblProductType, this.cboProductTypeFilter, this.btnRefresh, this.btnExport
+                lblProductType, this.cboProductTypeFilter, this.btnRefresh
             });
 
             // Actions Panel
@@ -217,8 +216,8 @@
             var btn = new System.Windows.Forms.Button
             {
                 Text = text,
-                Width = 200,
-                Height = 40,
+                Width = 250,
+                Height = 60,
                 Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point),
                 BackColor = backColor,
                 ForeColor = System.Drawing.Color.White,
@@ -316,14 +315,6 @@
 
             this.dataGridViewInventory.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
             {
-                Name = "ThanhTien",
-                HeaderText = "Thành tiền",
-                Width = 160,
-                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
-            });
-
-            this.dataGridViewInventory.Columns.Add(new System.Windows.Forms.DataGridViewTextBoxColumn
-            {
                 Name = "TrangThai",
                 HeaderText = "Trạng thái",
                 Width = 120,
@@ -345,9 +336,6 @@
                 row.Cells["SoLuongTon"].Value = item.SoLuongTonKho ?? 0;
                 row.Cells["DonGia"].Value = (item.MaSpNavigation?.Gia ?? 0).ToString("N0") + " VNĐ";
                 
-                var thanhTien = (item.SoLuongTonKho ?? 0) * (item.MaSpNavigation?.Gia ?? 0);
-                row.Cells["ThanhTien"].Value = thanhTien.ToString("N0") + " VNĐ";
-
                 // Style status based on stock level
                 var status = GetStockStatus(item.SoLuongTonKho ?? 0);
                 row.Cells["TrangThai"].Value = status;
@@ -360,7 +348,7 @@
             if (stockLevel == 0) return "Hết hàng";
             if (stockLevel <= 10) return "Sắp hết";
             if (stockLevel <= 50) return "Trung bình";
-            return "Đủ hàng";
+            return "Còn hàng";
         }
 
         public void StyleStatusCell(System.Windows.Forms.DataGridViewCell cell, string status)
@@ -376,7 +364,7 @@
                 case "Trung bình":
                     cell.Style.ForeColor = System.Drawing.Color.Blue;
                     break;
-                case "Đủ hàng":
+                case "Còn hàng":
                     cell.Style.ForeColor = System.Drawing.Color.Green;
                     break;
             }
@@ -394,6 +382,5 @@
         private System.Windows.Forms.Label lblTotalItems;
         private System.Windows.Forms.Label lblTotalValue;
         private System.Windows.Forms.Panel pnlSummary;
-        private System.Windows.Forms.Label label1;
     }
 }
