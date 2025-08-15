@@ -123,7 +123,7 @@
             label3.Name = "label3";
             label3.Size = new Size(1010, 65);
             label3.TabIndex = 6;
-            label3.Text = "HỆ THỐNG QUẢN LÝ NHÀ HÀNG ACECOOK";
+            label3.Text = "HỆ THỐNG QUẢN LÝ BÁN HÀNG ACECOOK";
             label3.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panel1

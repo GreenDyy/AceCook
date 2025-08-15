@@ -214,7 +214,7 @@ namespace AceCook
             pnlActions.Controls.AddRange(new Control[] { btnCreateOrder, btnRefresh, btnEditOrder, btnDeleteOrder });
 
             // DataGridView
-            dataGridViewOrders = new DataGridView
+          dataGridViewOrders = new DataGridView
             {
                 Dock = DockStyle.Fill,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
@@ -231,6 +231,7 @@ namespace AceCook
                 ColumnHeadersHeight = 50,
                 RowTemplate = { Height = 50 }
             };
+
             dataGridViewOrders.DefaultCellStyle.Font = new Font("Segoe UI", 9);
             dataGridViewOrders.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
             dataGridViewOrders.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
