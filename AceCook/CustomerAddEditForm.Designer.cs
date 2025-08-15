@@ -49,6 +49,8 @@
             txtMaKH = new TextBox();
             lblTenKH = new Label();
             txtTenKH = new TextBox();
+            lblLoaiKH = new Label();
+            cmbLoaiKH = new ComboBox();
             lblSDTKH = new Label();
             txtSDTKH = new TextBox();
             lblDiaChiKH = new Label();
@@ -106,10 +108,34 @@
             txtTenKH.Size = new Size(645, 39);
             txtTenKH.TabIndex = 4;
             // 
+            // lblLoaiKH
+            // 
+            lblLoaiKH.AutoSize = true;
+            lblLoaiKH.Location = new Point(65, 320);
+            lblLoaiKH.Margin = new Padding(6, 0, 6, 0);
+            lblLoaiKH.Name = "lblLoaiKH";
+            lblLoaiKH.Size = new Size(188, 32);
+            lblLoaiKH.TabIndex = 5;
+            lblLoaiKH.Text = "Loại khách hàng:";
+            // 
+            // cmbLoaiKH
+            // 
+            cmbLoaiKH.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbLoaiKH.FormattingEnabled = true;
+            cmbLoaiKH.Items.AddRange(new object[] {
+            "Lẻ",
+            "Siêu thị",
+            "Đại lý"});
+            cmbLoaiKH.Location = new Point(325, 313);
+            cmbLoaiKH.Margin = new Padding(6, 7, 6, 7);
+            cmbLoaiKH.Name = "cmbLoaiKH";
+            cmbLoaiKH.Size = new Size(645, 39);
+            cmbLoaiKH.TabIndex = 6;
+            // 
             // lblSDTKH
             // 
             lblSDTKH.AutoSize = true;
-            lblSDTKH.Location = new Point(65, 325);
+            lblSDTKH.Location = new Point(65, 394);
             lblSDTKH.Margin = new Padding(6, 0, 6, 0);
             lblSDTKH.Name = "lblSDTKH";
             lblSDTKH.Size = new Size(161, 32);
@@ -118,7 +144,7 @@
             // 
             // txtSDTKH
             // 
-            txtSDTKH.Location = new Point(325, 317);
+            txtSDTKH.Location = new Point(325, 386);
             txtSDTKH.Margin = new Padding(6, 7, 6, 7);
             txtSDTKH.Name = "txtSDTKH";
             txtSDTKH.Size = new Size(645, 39);
@@ -127,7 +153,7 @@
             // lblDiaChiKH
             // 
             lblDiaChiKH.AutoSize = true;
-            lblDiaChiKH.Location = new Point(65, 399);
+            lblDiaChiKH.Location = new Point(65, 468);
             lblDiaChiKH.Margin = new Padding(6, 0, 6, 0);
             lblDiaChiKH.Name = "lblDiaChiKH";
             lblDiaChiKH.Size = new Size(92, 32);
@@ -136,7 +162,7 @@
             // 
             // txtDiaChiKH
             // 
-            txtDiaChiKH.Location = new Point(325, 391);
+            txtDiaChiKH.Location = new Point(325, 460);
             txtDiaChiKH.Margin = new Padding(6, 7, 6, 7);
             txtDiaChiKH.Multiline = true;
             txtDiaChiKH.Name = "txtDiaChiKH";
@@ -146,7 +172,7 @@
             // lblEmailKH
             // 
             lblEmailKH.AutoSize = true;
-            lblEmailKH.Location = new Point(65, 571);
+            lblEmailKH.Location = new Point(65, 640);
             lblEmailKH.Margin = new Padding(6, 0, 6, 0);
             lblEmailKH.Name = "lblEmailKH";
             lblEmailKH.Size = new Size(76, 32);
@@ -155,7 +181,7 @@
             // 
             // txtEmailKH
             // 
-            txtEmailKH.Location = new Point(325, 564);
+            txtEmailKH.Location = new Point(325, 633);
             txtEmailKH.Margin = new Padding(6, 7, 6, 7);
             txtEmailKH.Name = "txtEmailKH";
             txtEmailKH.Size = new Size(645, 39);
@@ -202,6 +228,8 @@
             Controls.Add(lblDiaChiKH);
             Controls.Add(txtSDTKH);
             Controls.Add(lblSDTKH);
+            Controls.Add(cmbLoaiKH);
+            Controls.Add(lblLoaiKH);
             Controls.Add(txtTenKH);
             Controls.Add(lblTenKH);
             Controls.Add(txtMaKH);

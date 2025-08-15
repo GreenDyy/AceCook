@@ -26,7 +26,7 @@ namespace AceCook
             _customerRepository = new CustomerRepository(context);
             InitializeComponent();
             SetupUI();
-            LoadCustomers();
+            _ = LoadCustomers(); // Sử dụng async method để load dữ liệu
         }
 
         private void InitializeComponent()
@@ -197,12 +197,16 @@ namespace AceCook
             return btn;
         }
 
-        private async void LoadCustomers()
+        private async Task LoadCustomers()
         {
             try
             {
                 _customers = await _customerRepository.GetAllCustomersAsync();
                 RefreshDataGridView(_customers);
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
@@ -213,69 +217,93 @@ namespace AceCook
 
         private void RefreshDataGridView(System.Collections.Generic.List<Khachhang> customers)
         {
-            dataGridViewCustomers.DataSource = null;
-            dataGridViewCustomers.Columns.Clear();
-
-            // Create custom columns
-            dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
+            try
             {
-                Name = "MaKh",
-                HeaderText = "Mã KH",
-                Width = 100
-            });
+                dataGridViewCustomers.DataSource = null;
+                dataGridViewCustomers.Columns.Clear();
 
-            dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "TenKh",
-                HeaderText = "Tên Khách Hàng",
-                Width = 200
-            });
+                // Create custom columns
+                dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "MaKh",
+                    HeaderText = "Mã KH",
+                    Width = 100
+                });
 
-            dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "DiaChiKh",
-                HeaderText = "Địa Chỉ",
-                Width = 250
-            });
+                dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "TenKh",
+                    HeaderText = "Tên Khách Hàng",
+                    Width = 200
+                });
 
-            dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Sdtkh",
-                HeaderText = "Số Điện Thoại",
-                Width = 150
-            });
+                dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "DiaChiKh",
+                    HeaderText = "Địa Chỉ",
+                    Width = 250
+                });
 
-            dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "EmailKh",
-                HeaderText = "Email",
-                Width = 200
-            });
+                dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "Sdtkh",
+                    HeaderText = "Số Điện Thoại",
+                    Width = 150
+                });
 
-            dataGridViewCustomers.Columns.Add(new DataGridViewButtonColumn
-            {
-                Name = "ViewDetails",
-                HeaderText = "Xem chi tiết",
-                Width = 100,
-                Text = "👁️ Xem",
-                UseColumnTextForButtonValue = true
-            });
+                dataGridViewCustomers.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "EmailKh",
+                    HeaderText = "Email",
+                    Width = 200
+                });
 
-            // Populate data
-            foreach (var customer in customers)
-            {
-                var rowIndex = dataGridViewCustomers.Rows.Add();
-                var row = dataGridViewCustomers.Rows[rowIndex];
+                dataGridViewCustomers.Columns.Add(new DataGridViewButtonColumn
+                {
+                    Name = "ViewDetails",
+                    HeaderText = "Xem chi tiết",
+                    Width = 100,
+                    Text = "👁️ Xem",
+                    UseColumnTextForButtonValue = true
+                });
 
-                row.Cells["MaKh"].Value = customer.MaKh;
-                row.Cells["TenKh"].Value = customer.TenKh;
-                row.Cells["DiaChiKh"].Value = customer.DiaChiKh;
-                row.Cells["Sdtkh"].Value = customer.Sdtkh;
-                row.Cells["EmailKh"].Value = customer.EmailKh;
+                // Populate data
+                if (customers != null && customers.Count > 0)
+                {
+                    foreach (var customer in customers)
+                    {
+                        try
+                        {
+                            if (customer != null)
+                            {
+                                var rowIndex = dataGridViewCustomers.Rows.Add();
+                                var row = dataGridViewCustomers.Rows[rowIndex];
+
+                                row.Cells["MaKh"].Value = customer.MaKh ?? "N/A";
+                                row.Cells["TenKh"].Value = customer.TenKh ?? "N/A";
+                                row.Cells["DiaChiKh"].Value = customer.DiaChiKh ?? "N/A";
+                                row.Cells["Sdtkh"].Value = customer.Sdtkh ?? "N/A";
+                                row.Cells["EmailKh"].Value = customer.EmailKh ?? "N/A";
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Error processing customer {customer?.MaKh}: {ex.Message}");
+                            // Bỏ qua dòng lỗi và tiếp tục
+                        }
+                    }
+                }
+
+                // Handle button clicks - chỉ đăng ký một lần
+                dataGridViewCustomers.CellClick -= DataGridViewCustomers_CellClick;
+                dataGridViewCustomers.CellClick += DataGridViewCustomers_CellClick;
             }
-
-            // Handle button clicks
-            dataGridViewCustomers.CellClick += DataGridViewCustomers_CellClick;
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in RefreshDataGridView: {ex.Message}");
+                MessageBox.Show($"Lỗi khi refresh DataGridView: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private async void DataGridViewCustomers_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -284,12 +312,29 @@ namespace AceCook
             {
                 try
                 {
-                    var customerId = dataGridViewCustomers.Rows[e.RowIndex].Cells["MaKh"].Value.ToString();
-                    var customer = await _customerRepository.GetCustomerByIdAsync(customerId);
-                    if (customer != null)
+                    var customerId = dataGridViewCustomers.Rows[e.RowIndex].Cells["MaKh"].Value?.ToString();
+                    if (!string.IsNullOrEmpty(customerId))
                     {
-                        ViewCustomerDetails(customer);
+                        var customer = await _customerRepository.GetCustomerByIdAsync(customerId);
+                        if (customer != null)
+                        {
+                            ViewCustomerDetails(customer);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Không thể tải thông tin khách hàng!", "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
+                    else
+                    {
+                        MessageBox.Show("Không thể lấy mã khách hàng!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch (Exception ex)
                 {
@@ -303,6 +348,13 @@ namespace AceCook
         {
             try
             {
+                if (customer == null)
+                {
+                    MessageBox.Show("Không có thông tin khách hàng để hiển thị!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 var viewForm = new CustomerAddEditForm(_customerRepository, FormMode.View, customer);
                 viewForm.ShowDialog();
             }
@@ -331,6 +383,10 @@ namespace AceCook
                     }
                 }
             }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi tìm kiếm: {ex.Message}", "Lỗi", 
@@ -338,21 +394,31 @@ namespace AceCook
             }
         }
 
-        private async void BtnSearch_Click(object sender, EventArgs e)
-        {
-            await ApplySearch();
-        }
-
         private async void BtnReset_Click(object sender, EventArgs e)
         {
-            txtSearch.Clear();
-            await ApplySearch();
+            try
+            {
+                txtSearch.Clear();
+                await ApplySearch();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in BtnReset_Click: {ex.Message}");
+            }
         }
 
         private async void BtnRefresh_Click(object sender, EventArgs e)
         {
-            txtSearch.Clear();
-            LoadCustomers();
+            try
+            {
+                txtSearch.Clear();
+                await LoadCustomers();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi làm mới dữ liệu: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private async Task ApplySearch()
@@ -367,8 +433,12 @@ namespace AceCook
                 }
                 else
                 {
-                    LoadCustomers();
+                    await LoadCustomers();
                 }
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
@@ -406,6 +476,10 @@ namespace AceCook
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Lỗi khi tải thông tin khách hàng: {ex.Message}", "Lỗi",
@@ -421,12 +495,20 @@ namespace AceCook
 
         private async void BtnAdd_Click(object sender, EventArgs e)
         {
-            var addForm = new CustomerAddEditForm(_customerRepository, FormMode.Add);
-            if (addForm.ShowDialog() == DialogResult.OK)
+            try
             {
-                MessageBox.Show("Thêm khách hàng thành công!", "Thông báo", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadCustomers();
+                var addForm = new CustomerAddEditForm(_customerRepository, FormMode.Add);
+                if (addForm.ShowDialog() == DialogResult.OK)
+                {
+                    MessageBox.Show("Thêm khách hàng thành công!", "Thông báo", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    await LoadCustomers();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở form thêm khách hàng: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -434,16 +516,44 @@ namespace AceCook
         {
             if (dataGridViewCustomers.SelectedRows.Count > 0)
             {
-                var selectedCustomer = dataGridViewCustomers.SelectedRows[0].DataBoundItem as Khachhang;
-                if (selectedCustomer != null)
+                try
                 {
-                    var editForm = new CustomerAddEditForm(_customerRepository, FormMode.Edit, selectedCustomer);
-                    if (editForm.ShowDialog() == DialogResult.OK)
+                    var selectedRow = dataGridViewCustomers.SelectedRows[0];
+                    var customerId = selectedRow.Cells["MaKh"].Value?.ToString();
+                    
+                    if (!string.IsNullOrEmpty(customerId))
                     {
-                        MessageBox.Show("Cập nhật khách hàng thành công!", "Thông báo", 
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadCustomers();
+                        var customer = await _customerRepository.GetCustomerByIdAsync(customerId);
+                        if (customer != null)
+                        {
+                            var editForm = new CustomerAddEditForm(_customerRepository, FormMode.Edit, customer);
+                            if (editForm.ShowDialog() == DialogResult.OK)
+                            {
+                                MessageBox.Show("Cập nhật khách hàng thành công!", "Thông báo", 
+                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                await LoadCustomers();
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Không thể tải thông tin khách hàng!", "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
+                    else
+                    {
+                        MessageBox.Show("Không thể lấy thông tin khách hàng đã chọn!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi tải thông tin khách hàng: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
@@ -457,35 +567,67 @@ namespace AceCook
         {
             if (dataGridViewCustomers.SelectedRows.Count > 0)
             {
-                var selectedCustomer = dataGridViewCustomers.SelectedRows[0].DataBoundItem as Khachhang;
-                if (selectedCustomer != null)
+                try
                 {
-                    var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa khách hàng '{selectedCustomer.TenKh}'?", 
-                        "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    var selectedRow = dataGridViewCustomers.SelectedRows[0];
+                    var customerId = selectedRow.Cells["MaKh"].Value?.ToString();
                     
-                    if (result == DialogResult.Yes)
+                    if (!string.IsNullOrEmpty(customerId))
                     {
-                        try
+                        var customer = await _customerRepository.GetCustomerByIdAsync(customerId);
+                        if (customer != null)
                         {
-                            bool success = await _customerRepository.DeleteCustomerAsync(selectedCustomer.MaKh);
-                            if (success)
+                            var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa khách hàng '{customer.TenKh}'?", 
+                                "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                            
+                            if (result == DialogResult.Yes)
                             {
-                                MessageBox.Show("Xóa khách hàng thành công!", "Thông báo", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                LoadCustomers();
-                            }
-                            else
-                            {
-                                MessageBox.Show("Lỗi khi xóa khách hàng!", "Lỗi", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                try
+                                {
+                                    bool success = await _customerRepository.DeleteCustomerAsync(customerId);
+                                    if (success)
+                                    {
+                                        MessageBox.Show("Xóa khách hàng thành công!", "Thông báo", 
+                                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                        await LoadCustomers();
+                                    }
+                                    else
+                                    {
+                                        MessageBox.Show("Lỗi khi xóa khách hàng!", "Lỗi", 
+                                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    }
+                                }
+                                catch (InvalidOperationException ex)
+                                {
+                                    MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show($"Lỗi khi xóa khách hàng: {ex.Message}", "Lỗi", 
+                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
                             }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            MessageBox.Show($"Lỗi khi xóa khách hàng: {ex.Message}", "Lỗi", 
+                            MessageBox.Show("Không thể tải thông tin khách hàng để xóa!", "Lỗi",
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
+                    else
+                    {
+                        MessageBox.Show("Không thể lấy thông tin khách hàng đã chọn!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi tải thông tin khách hàng: {ex.Message}", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else

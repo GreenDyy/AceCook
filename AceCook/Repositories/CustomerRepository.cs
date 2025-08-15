@@ -13,37 +13,115 @@ namespace AceCook.Repositories
 
         public CustomerRepository(AppDbContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public async Task<List<Khachhang>> GetAllCustomersAsync()
         {
-            return await _context.Khachhangs.ToListAsync();
+            try
+            {
+                return await _context.Khachhangs
+                    .AsNoTracking()
+                    .OrderBy(k => k.TenKh ?? "")
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in GetAllCustomersAsync: {ex.Message}");
+                throw new InvalidOperationException($"Không thể tải danh sách khách hàng: {ex.Message}", ex);
+            }
         }
 
         public async Task<Khachhang?> GetCustomerByIdAsync(string maKH)
         {
-            return await _context.Khachhangs.FirstOrDefaultAsync(k => k.MaKh == maKH);
+            try
+            {
+                if (string.IsNullOrWhiteSpace(maKH))
+                {
+                    return null;
+                }
+
+                return await _context.Khachhangs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(k => k.MaKh == maKH);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in GetCustomerByIdAsync: {ex.Message}");
+                throw new InvalidOperationException($"Không thể tải thông tin khách hàng: {ex.Message}", ex);
+            }
         }
 
         public async Task<List<Khachhang>> SearchCustomersAsync(string searchTerm)
         {
-            return await _context.Khachhangs
-                .Where(k => k.TenKh.Contains(searchTerm) || k.MaKh.Contains(searchTerm) || k.Sdtkh.Contains(searchTerm))
-                .ToListAsync();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    return await GetAllCustomersAsync();
+                }
+
+                var searchLower = searchTerm.ToLower();
+                return await _context.Khachhangs
+                    .AsNoTracking()
+                    .Where(k => (k.TenKh != null && k.TenKh.ToLower().Contains(searchLower)) || 
+                               (k.MaKh != null && k.MaKh.ToLower().Contains(searchLower)) ||
+                               (k.Sdtkh != null && k.Sdtkh.ToLower().Contains(searchLower)) ||
+                               (k.EmailKh != null && k.EmailKh.ToLower().Contains(searchLower)))
+                    .OrderBy(k => k.TenKh ?? "")
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in SearchCustomersAsync: {ex.Message}");
+                throw new InvalidOperationException($"Không thể tìm kiếm khách hàng: {ex.Message}", ex);
+            }
         }
 
         public async Task<bool> AddCustomerAsync(Khachhang customer)
         {
             try
             {
-                await _context.Khachhangs.AddAsync(customer);
-                await _context.SaveChangesAsync();
-                return true;
+                if (customer == null)
+                {
+                    throw new ArgumentNullException(nameof(customer));
+                }
+
+                // Validation
+                if (string.IsNullOrWhiteSpace(customer.MaKh) || string.IsNullOrWhiteSpace(customer.TenKh))
+                {
+                    throw new InvalidOperationException("Mã khách hàng và tên khách hàng không được để trống.");
+                }
+
+                // Check if customer already exists
+                var existingCustomer = await _context.Khachhangs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(k => k.MaKh == customer.MaKh);
+                
+                if (existingCustomer != null)
+                {
+                    throw new InvalidOperationException($"Khách hàng với mã '{customer.MaKh}' đã tồn tại.");
+                }
+
+                // Ensure all required fields are set
+                var newCustomer = new Khachhang
+                {
+                    MaKh = customer.MaKh.Trim(),
+                    TenKh = customer.TenKh?.Trim(),
+                    LoaiKh = customer.LoaiKh?.Trim(),
+                    Sdtkh = customer.Sdtkh?.Trim(),
+                    DiaChiKh = customer.DiaChiKh?.Trim(),
+                    EmailKh = customer.EmailKh?.Trim()
+                };
+
+                await _context.Khachhangs.AddAsync(newCustomer);
+                var result = await _context.SaveChangesAsync();
+                return result > 0;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                System.Diagnostics.Debug.WriteLine($"Error in AddCustomerAsync: {ex.Message}");
+                throw new InvalidOperationException($"Không thể thêm khách hàng: {ex.Message}", ex);
             }
         }
 
@@ -51,13 +129,41 @@ namespace AceCook.Repositories
         {
             try
             {
-                _context.Khachhangs.Update(customer);
-                await _context.SaveChangesAsync();
-                return true;
+                if (customer == null)
+                {
+                    throw new ArgumentNullException(nameof(customer));
+                }
+
+                // Validation
+                if (string.IsNullOrWhiteSpace(customer.MaKh) || string.IsNullOrWhiteSpace(customer.TenKh))
+                {
+                    throw new InvalidOperationException("Mã khách hàng và tên khách hàng không được để trống.");
+                }
+
+                // Check if customer exists
+                var existingCustomer = await _context.Khachhangs
+                    .FirstOrDefaultAsync(k => k.MaKh == customer.MaKh);
+                
+                if (existingCustomer == null)
+                {
+                    throw new InvalidOperationException($"Không tìm thấy khách hàng với mã '{customer.MaKh}'.");
+                }
+
+                // Update properties
+                existingCustomer.TenKh = customer.TenKh?.Trim();
+                existingCustomer.LoaiKh = customer.LoaiKh?.Trim();
+                existingCustomer.Sdtkh = customer.Sdtkh?.Trim();
+                existingCustomer.DiaChiKh = customer.DiaChiKh?.Trim();
+                existingCustomer.EmailKh = customer.EmailKh?.Trim();
+
+                _context.Khachhangs.Update(existingCustomer);
+                var result = await _context.SaveChangesAsync();
+                return result > 0;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                System.Diagnostics.Debug.WriteLine($"Error in UpdateCustomerAsync: {ex.Message}");
+                throw new InvalidOperationException($"Không thể cập nhật khách hàng: {ex.Message}", ex);
             }
         }
 
@@ -65,18 +171,74 @@ namespace AceCook.Repositories
         {
             try
             {
-                var customer = await _context.Khachhangs.FirstOrDefaultAsync(k => k.MaKh == maKH);
-                if (customer != null)
+                if (string.IsNullOrWhiteSpace(maKH))
                 {
-                    _context.Khachhangs.Remove(customer);
-                    await _context.SaveChangesAsync();
-                    return true;
+                    throw new ArgumentException("Mã khách hàng không được để trống.");
                 }
+
+                var customer = await _context.Khachhangs
+                    .FirstOrDefaultAsync(k => k.MaKh == maKH);
+                
+                if (customer == null)
+                {
+                    throw new InvalidOperationException($"Không tìm thấy khách hàng với mã '{maKH}'.");
+                }
+
+                // Check if customer is referenced in other tables
+                var hasReferences = await _context.Dondathangs.AnyAsync(dd => dd.MaKh == maKH);
+
+                if (hasReferences)
+                {
+                    throw new InvalidOperationException($"Không thể xóa khách hàng '{customer.TenKh}' vì đang được sử dụng trong hệ thống.");
+                }
+
+                _context.Khachhangs.Remove(customer);
+                var result = await _context.SaveChangesAsync();
+                return result > 0;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in DeleteCustomerAsync: {ex.Message}");
+                throw new InvalidOperationException($"Không thể xóa khách hàng: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<bool> CustomerExistsAsync(string maKH)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(maKH))
+                {
+                    return false;
+                }
+
+                return await _context.Khachhangs
+                    .AsNoTracking()
+                    .AnyAsync(k => k.MaKh == maKH);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in CustomerExistsAsync: {ex.Message}");
                 return false;
             }
-            catch
+        }
+
+        public async Task<List<string>> GetCustomerTypesAsync()
+        {
+            try
             {
-                return false;
+                return await _context.Khachhangs
+                    .AsNoTracking()
+                    .Where(k => !string.IsNullOrEmpty(k.LoaiKh))
+                    .Select(k => k.LoaiKh!)
+                    .Distinct()
+                    .OrderBy(type => type)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in GetCustomerTypesAsync: {ex.Message}");
+                throw new InvalidOperationException($"Không thể tải danh sách loại khách hàng: {ex.Message}", ex);
             }
         }
     }
