@@ -281,7 +281,7 @@ namespace AceCook
             var card = new Panel
             {
                 Width = 350, // Increased from 280 to 350 to accommodate longer Vietnamese text
-                Height = 40,
+                Height = 120,
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle,
                 // Margin = new Padding(20, 0, 20, 0)
