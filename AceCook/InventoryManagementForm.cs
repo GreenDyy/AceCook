@@ -53,8 +53,8 @@ namespace AceCook
                 // Test database connection first
                 if (!await DatabaseHelper.TestConnectionAsync(_inventoryRepository.GetType().GetField("_context", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(_inventoryRepository) as AppDbContext))
                 {
-                    MessageBox.Show("Không thể kết nối đến cơ sở dữ liệu. Vui lòng kiểm tra kết nối mạng và thử lại.", 
-                        "Lỗi Kết nối", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // MessageBox.Show("Không thể kết nối đến cơ sở dữ liệu. Vui lòng kiểm tra kết nối mạng và thử lại.", 
+                    //     "Lỗi Kết nối", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 

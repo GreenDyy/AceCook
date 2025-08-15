@@ -191,22 +191,22 @@ namespace AceCook
             pnlActions = new FlowLayoutPanel
             {
                 Dock = DockStyle.Top,
-                Height = 70,
+                Height = 90,
                 FlowDirection = FlowDirection.LeftToRight,
                 Padding = new Padding(15),
                 BackColor = Color.Transparent
             };
 
-            btnCreateOrder = CreateActionButton("➕ Tạo đơn hàng mới", Color.FromArgb(46, 204, 113));
+            btnCreateOrder = CreateActionButton("➕ Tạo đơn", Color.FromArgb(46, 204, 113));
             btnCreateOrder.Click += BtnCreateOrder_Click;
 
-            btnRefresh = CreateActionButton("🔄 Làm mới dữ liệu", Color.FromArgb(52, 152, 219));
+            btnRefresh = CreateActionButton("🔄 Làm mới", Color.FromArgb(52, 152, 219));
             btnRefresh.Click += BtnRefresh_Click;
 
-            var btnEditOrder = CreateActionButton("✏️ Chỉnh sửa đơn hàng", Color.FromArgb(255, 193, 7));
+            var btnEditOrder = CreateActionButton("✏️ Chỉnh sửa", Color.FromArgb(255, 193, 7));
             btnEditOrder.Click += BtnEditOrder_Click;
 
-            var btnDeleteOrder = CreateActionButton("🗑️ Xóa đơn hàng", Color.FromArgb(231, 76, 60));
+            var btnDeleteOrder = CreateActionButton("🗑️ Xóa", Color.FromArgb(231, 76, 60));
             btnDeleteOrder.Click += BtnDeleteOrder_Click;
 
             pnlActions.Controls.AddRange(new Control[] { btnCreateOrder, btnRefresh, btnEditOrder, btnDeleteOrder });
@@ -277,10 +277,14 @@ namespace AceCook
                 
                 RefreshDataGridView(orders);
             }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error in LoadOrders: {ex.Message}");
-                MessageBox.Show($"Lỗi khi tải dữ liệu đơn hàng: {ex.Message}\n\nChi tiết: {ex.StackTrace}", "Lỗi",
+                MessageBox.Show($"Lỗi khi tải dữ liệu đơn hàng: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -448,9 +452,13 @@ namespace AceCook
                         }
                     }
                 }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi xử lý thao tác: {ex.Message}\n\nChi tiết: {ex.StackTrace}", "Lỗi",
+                    MessageBox.Show($"Lỗi khi xử lý thao tác: {ex.Message}", "Lỗi",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally
@@ -531,6 +539,9 @@ namespace AceCook
         private async void DeleteOrder(Dondathang order)
         {
             var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa đơn hàng {order.MaDdh}?\n\n" +
+                                       $"Khách hàng: {order.MaKhNavigation?.TenKh ?? "N/A"}\n" +
+                                       $"Ngày đặt: {order.NgayDat?.ToString("dd/MM/yyyy") ?? "N/A"}\n" +
+                                       $"Trạng thái: {order.TrangThai ?? "N/A"}\n\n" +
                                        "Hành động này không thể hoàn tác!", 
                                        "Xác nhận xóa", 
                                        MessageBoxButtons.YesNo, 
@@ -751,6 +762,10 @@ namespace AceCook
                     MessageBox.Show("Không tìm thấy đơn hàng nào phù hợp với điều kiện tìm kiếm!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi áp dụng bộ lọc: {ex.Message}", 
@@ -799,11 +814,22 @@ namespace AceCook
                 {
                     _isProcessing = true;
                     var selectedRow = dataGridViewOrders.SelectedRows[0];
-                    var orderId = selectedRow.Cells["MaDdh"].Value.ToString();
+                    var orderId = selectedRow.Cells["MaDdh"].Value?.ToString();
                     var order = await _orderRepository.GetOrderByIdAsync(orderId);
                     
                     if (order != null)
                     {
+                        // Kiểm tra trạng thái đơn hàng
+                        if (order.TrangThai == "Hoàn thành" || order.TrangThai == "Đã giao")
+                        {
+                            MessageBox.Show($"Không thể chỉnh sửa đơn hàng có trạng thái '{order.TrangThai}'!\n\n" +
+                                          "Chỉ có thể xem chi tiết đơn hàng này.", 
+                                          "Không thể chỉnh sửa", 
+                                          MessageBoxButtons.OK, 
+                                          MessageBoxIcon.Warning);
+                            return;
+                        }
+                        
                         EditOrder(order);
                     }
                     else
@@ -839,11 +865,22 @@ namespace AceCook
                 {
                     _isProcessing = true;
                     var selectedRow = dataGridViewOrders.SelectedRows[0];
-                    var orderId = selectedRow.Cells["MaDdh"].Value.ToString();
+                    var orderId = selectedRow.Cells["MaDdh"].Value?.ToString();
                     var order = await _orderRepository.GetOrderByIdAsync(orderId);
 
                     if (order != null)
                     {
+                        // Kiểm tra trạng thái đơn hàng
+                        if (order.TrangThai == "Hoàn thành" || order.TrangThai == "Đã giao")
+                        {
+                            MessageBox.Show($"Không thể xóa đơn hàng có trạng thái '{order.TrangThai}'!\n\n" +
+                                          "Chỉ có thể xem chi tiết đơn hàng này.", 
+                                          "Không thể xóa", 
+                                          MessageBoxButtons.OK, 
+                                          MessageBoxIcon.Warning);
+                            return;
+                        }
+                        
                         DeleteOrder(order);
                     }
                     else

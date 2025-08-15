@@ -55,268 +55,12 @@ namespace AceCook
 
         private void SetupForm()
         {
-            SetupBasicControls();
             SetupComboBoxes();
             SetupDataGridView();
             SetupEventHandlers();
             SetDefaultValues();
             UpdateFormTitle();
-            SetupProductControls();
             SetupActionControls();
-        }
-
-        private void SetupBasicControls()
-        {
-            try
-            {
-                // Panel cho thông tin cơ bản
-                var pnlBasicInfo = new Panel
-                {
-                    Dock = DockStyle.Top,
-                    Height = 150,
-                    BackColor = Color.FromArgb(248, 249, 250),
-                    BorderStyle = BorderStyle.FixedSingle,
-                    Padding = new Padding(15)
-                };
-
-                // Label tiêu đề
-                var lblBasicInfo = new Label
-                {
-                    Text = "THÔNG TIN ĐƠN HÀNG",
-                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                    ForeColor = Color.FromArgb(52, 73, 94),
-                    AutoSize = true,
-                    Location = new Point(15, 15)
-                };
-
-                // Label và TextBox cho Mã đơn hàng
-                var lblOrderId = new Label
-                {
-                    Text = "Mã đơn hàng:",
-                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                    AutoSize = true,
-                    Location = new Point(15, 50)
-                };
-
-                txtOrderId = new TextBox
-                {
-                    Location = new Point(120, 48),
-                    Size = new Size(150, 25),
-                    Font = new Font("Segoe UI", 10),
-                    ReadOnly = true,
-                    BackColor = Color.LightGray
-                };
-
-                // Label và ComboBox cho Khách hàng
-                var lblCustomer = new Label
-                {
-                    Text = "Khách hàng:",
-                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                    AutoSize = true,
-                    Location = new Point(290, 50)
-                };
-
-                cboCustomer = new ComboBox
-                {
-                    Location = new Point(380, 48),
-                    Size = new Size(250, 25),
-                    Font = new Font("Segoe UI", 10),
-                    DropDownStyle = ComboBoxStyle.DropDownList
-                };
-
-                // Label và DateTimePicker cho Ngày đặt
-                var lblOrderDate = new Label
-                {
-                    Text = "Ngày đặt:",
-                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                    AutoSize = true,
-                    Location = new Point(15, 85)
-                };
-
-                dtpOrderDate = new DateTimePicker
-                {
-                    Location = new Point(120, 83),
-                    Size = new Size(150, 25),
-                    Font = new Font("Segoe UI", 10),
-                    Format = DateTimePickerFormat.Short
-                };
-
-                // Label và DateTimePicker cho Ngày giao
-                var lblDeliveryDate = new Label
-                {
-                    Text = "Ngày giao:",
-                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                    AutoSize = true,
-                    Location = new Point(290, 85)
-                };
-
-                dtpDeliveryDate = new DateTimePicker
-                {
-                    Location = new Point(380, 83),
-                    Size = new Size(150, 25),
-                    Font = new Font("Segoe UI", 10),
-                    Format = DateTimePickerFormat.Short
-                };
-
-                // Label và ComboBox cho Trạng thái
-                var lblStatus = new Label
-                {
-                    Text = "Trạng thái:",
-                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                    AutoSize = true,
-                    Location = new Point(550, 85)
-                };
-
-                cboStatus = new ComboBox
-                {
-                    Location = new Point(630, 83),
-                    Size = new Size(150, 25),
-                    Font = new Font("Segoe UI", 10),
-                    DropDownStyle = ComboBoxStyle.DropDownList
-                };
-
-                // Thêm controls vào panel
-                pnlBasicInfo.Controls.AddRange(new Control[] 
-                {
-                    lblBasicInfo, lblOrderId, txtOrderId, lblCustomer, cboCustomer,
-                    lblOrderDate, dtpOrderDate, lblDeliveryDate, dtpDeliveryDate,
-                    lblStatus, cboStatus
-                });
-
-                // Thêm panel vào form
-                this.Controls.Add(pnlBasicInfo);
-
-                System.Diagnostics.Debug.WriteLine("Basic controls setup completed");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error setting up basic controls: {ex.Message}");
-                MessageBox.Show($"Lỗi khi thiết lập controls cơ bản: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void SetupProductControls()
-        {
-            try
-            {
-                // Tạo panel cho việc thêm sản phẩm
-                var pnlAddProduct = new Panel
-                {
-                    Dock = DockStyle.Top,
-                    Height = 120,
-                    BackColor = Color.White,
-                    BorderStyle = BorderStyle.FixedSingle,
-                    Padding = new Padding(15)
-                };
-
-                // Label "Thêm sản phẩm"
-                var lblAddProduct = new Label
-                {
-                    Text = "THÊM SẢN PHẨM VÀO ĐƠN HÀNG",
-                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                    ForeColor = Color.FromArgb(52, 73, 94),
-                    AutoSize = true,
-                    Location = new Point(15, 15)
-                };
-
-                // Label "Sản phẩm"
-                var lblProduct = new Label
-                {
-                    Text = "Sản phẩm:",
-                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                    AutoSize = true,
-                    Location = new Point(15, 50)
-                };
-
-                // ComboBox sản phẩm
-                cboProduct = new ComboBox
-                {
-                    Location = new Point(100, 48),
-                    Size = new Size(250, 25),
-                    Font = new Font("Segoe UI", 10),
-                    DropDownStyle = ComboBoxStyle.DropDownList
-                };
-
-                // Label "Số lượng"
-                var lblQuantity = new Label
-                {
-                    Text = "Số lượng:",
-                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                    AutoSize = true,
-                    Location = new Point(370, 50)
-                };
-
-                // NumericUpDown cho số lượng
-                numQuantity = new NumericUpDown
-                {
-                    Location = new Point(450, 48),
-                    Size = new Size(100, 25),
-                    Font = new Font("Segoe UI", 10),
-                    Minimum = 1,
-                    Maximum = 9999,
-                    Value = 1
-                };
-
-                // Label hiển thị thông tin tồn kho
-                lblStockInfo = new Label
-                {
-                    Text = "Chọn sản phẩm để xem thông tin tồn kho",
-                    Font = new Font("Segoe UI", 9),
-                    ForeColor = Color.Gray,
-                    AutoSize = true,
-                    Location = new Point(100, 80)
-                };
-
-                // Nút thêm sản phẩm
-                btnAddProduct = new Button
-                {
-                    Text = "➕ Thêm vào đơn hàng",
-                    Location = new Point(570, 45),
-                    Size = new Size(150, 30),
-                    Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                    BackColor = Color.FromArgb(46, 204, 113),
-                    ForeColor = Color.White,
-                    FlatStyle = FlatStyle.Flat,
-                    Cursor = Cursors.Hand
-                };
-                btnAddProduct.FlatAppearance.BorderSize = 0;
-
-                // Nút xóa sản phẩm
-                btnRemoveProduct = new Button
-                {
-                    Text = "🗑️ Xóa sản phẩm",
-                    Location = new Point(730, 45),
-                    Size = new Size(130, 30),
-                    Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                    BackColor = Color.FromArgb(231, 76, 60),
-                    ForeColor = Color.White,
-                    FlatStyle = FlatStyle.Flat,
-                    Cursor = Cursors.Hand
-                };
-                btnRemoveProduct.FlatAppearance.BorderSize = 0;
-
-                // Thêm controls vào panel
-                pnlAddProduct.Controls.AddRange(new Control[] 
-                {
-                    lblAddProduct, lblProduct, cboProduct, lblQuantity, numQuantity,
-                    lblStockInfo, btnAddProduct, btnRemoveProduct
-                });
-
-                // Thêm panel vào form
-                this.Controls.Add(pnlAddProduct);
-
-                // Gắn event handlers
-                btnAddProduct.Click += btnAddProduct_Click;
-                btnRemoveProduct.Click += btnRemoveProduct_Click;
-                cboProduct.SelectedIndexChanged += CboProduct_SelectedIndexChanged;
-
-                System.Diagnostics.Debug.WriteLine("Product controls setup completed");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error setting up product controls: {ex.Message}");
-                MessageBox.Show($"Lỗi khi thiết lập controls sản phẩm: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         private void SetupActionControls()
@@ -327,7 +71,7 @@ namespace AceCook
                 var pnlActions = new Panel
                 {
                     Dock = DockStyle.Bottom,
-                    Height = 80,
+                    Height = 100,
                     BackColor = Color.FromArgb(248, 249, 250),
                     BorderStyle = BorderStyle.FixedSingle,
                     Padding = new Padding(15)
@@ -584,6 +328,21 @@ namespace AceCook
                 // Nếu có editingOrder, load dữ liệu trực tiếp
                 if (_editingOrder != null)
                 {
+                    // Kiểm tra trạng thái đơn hàng
+                    if (_isEditMode && (_editingOrder.TrangThai == "Hoàn thành" || _editingOrder.TrangThai == "Đã giao"))
+                    {
+                        MessageBox.Show($"Không thể chỉnh sửa đơn hàng có trạng thái '{_editingOrder.TrangThai}'!\n\n" +
+                                      "Chỉ có thể xem chi tiết đơn hàng này.", 
+                                      "Không thể chỉnh sửa", 
+                                      MessageBoxButtons.OK, 
+                                      MessageBoxIcon.Warning);
+                        
+                        // Chuyển sang view mode
+                        _isEditMode = false;
+                        _isViewMode = true;
+                        UpdateFormTitle();
+                    }
+                    
                     LoadOrderData();
                     LoadOrderItems();
                     RefreshOrderItemsGrid();
@@ -595,7 +354,25 @@ namespace AceCook
                     _editingOrder = await _orderRepository.GetOrderByIdAsync(_currentOrderId);
                     if (_editingOrder != null)
                     {
-                        MessageBox.Show($"Đang chỉnh sửa đơn hàng: {_editingOrder.MaDdh}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        // Kiểm tra trạng thái đơn hàng
+                        if (_editingOrder.TrangThai == "Hoàn thành" || _editingOrder.TrangThai == "Đã giao")
+                        {
+                            MessageBox.Show($"Không thể chỉnh sửa đơn hàng có trạng thái '{_editingOrder.TrangThai}'!\n\n" +
+                                          "Chỉ có thể xem chi tiết đơn hàng này.", 
+                                          "Không thể chỉnh sửa", 
+                                          MessageBoxButtons.OK, 
+                                          MessageBoxIcon.Warning);
+                            
+                            // Chuyển sang view mode
+                            _isEditMode = false;
+                            _isViewMode = true;
+                            UpdateFormTitle();
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Đang chỉnh sửa đơn hàng: {_editingOrder.MaDdh}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        
                         LoadOrderData();
                         LoadOrderItems();
                         RefreshOrderItemsGrid();
@@ -1033,6 +810,20 @@ namespace AceCook
 
             try
             {
+                // Kiểm tra trạng thái đơn hàng nếu đang edit
+                if (_isEditMode && _editingOrder != null)
+                {
+                    if (_editingOrder.TrangThai == "Hoàn thành" || _editingOrder.TrangThai == "Đã giao")
+                    {
+                        MessageBox.Show($"Không thể chỉnh sửa đơn hàng có trạng thái '{_editingOrder.TrangThai}'!\n\n" +
+                                      "Chỉ có thể xem chi tiết đơn hàng này.", 
+                                      "Không thể chỉnh sửa", 
+                                      MessageBoxButtons.OK, 
+                                      MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+
                 btnSave.Enabled = false;
                 btnSave.Text = "Đang lưu...";
 

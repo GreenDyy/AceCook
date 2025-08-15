@@ -128,12 +128,30 @@ namespace AceCook.Repositories
         {
             try
             {
+                // Kiểm tra trạng thái đơn hàng trước khi cho phép cập nhật
+                var existingOrder = await _context.Dondathangs
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(d => d.MaDdh == order.MaDdh);
+                
+                if (existingOrder != null)
+                {
+                    if (existingOrder.TrangThai == "Hoàn thành" || existingOrder.TrangThai == "Đã giao")
+                    {
+                        throw new InvalidOperationException($"Không thể cập nhật đơn hàng có trạng thái '{existingOrder.TrangThai}'!");
+                    }
+                }
+
                 _context.Dondathangs.Update(order);
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch
+            catch (InvalidOperationException)
             {
+                throw; // Re-throw business logic exceptions
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating order: {ex.Message}");
                 return false;
             }
         }
@@ -148,6 +166,12 @@ namespace AceCook.Repositories
                 
                 if (order != null)
                 {
+                    // Kiểm tra trạng thái đơn hàng trước khi cho phép xóa
+                    if (order.TrangThai == "Hoàn thành" || order.TrangThai == "Đã giao")
+                    {
+                        throw new InvalidOperationException($"Không thể xóa đơn hàng có trạng thái '{order.TrangThai}'!");
+                    }
+
                     // Xóa chi tiết đơn hàng trước
                     _context.CtDhs.RemoveRange(order.CtDhs);
                     _context.Dondathangs.Remove(order);
@@ -156,8 +180,13 @@ namespace AceCook.Repositories
                 }
                 return false;
             }
-            catch
+            catch (InvalidOperationException)
             {
+                throw; // Re-throw business logic exceptions
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error deleting order: {ex.Message}");
                 return false;
             }
         }
@@ -169,8 +198,14 @@ namespace AceCook.Repositories
                 var order = await _context.Dondathangs.FirstOrDefaultAsync(d => d.MaDdh == maDDH);
                 if (order != null)
                 {
+                    // Kiểm tra trạng thái hiện tại
+                    if (order.TrangThai == "Hoàn thành" || order.TrangThai == "Đã giao")
+                    {
+                        throw new InvalidOperationException($"Không thể thay đổi trạng thái đơn hàng đã hoàn thành!");
+                    }
+
                     order.TrangThai = newStatus;
-                    if (newStatus == "Đã giao")
+                    if (newStatus == "Đã giao" || newStatus == "Hoàn thành")
                     {
                         order.NgayGiao = DateOnly.FromDateTime(DateTime.Now);
                     }
@@ -179,8 +214,13 @@ namespace AceCook.Repositories
                 }
                 return false;
             }
-            catch
+            catch (InvalidOperationException)
             {
+                throw; // Re-throw business logic exceptions
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating order status: {ex.Message}");
                 return false;
             }
         }
