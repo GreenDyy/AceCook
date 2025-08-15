@@ -305,12 +305,12 @@ namespace AceCook
         {
             // Update summary statistics
             var totalOrders = orders.Count;
-            var completedOrders = orders.Count(o => o.TrangThai == "Đã giao");
+            var completedOrders = orders.Count(o => o.TrangThai == "Đã giao" || o.TrangThai == "Hoàn thành");
             var pendingOrders = orders.Count(o => o.TrangThai == "Đang xử lý" || o.TrangThai == "Chờ xử lý");
             var newOrders = orders.Count(o => string.IsNullOrEmpty(o.TrangThai) || o.TrangThai == "Mới");
             
             decimal totalRevenue = 0;
-            foreach (var order in orders.Where(o => o.TrangThai == "Đã giao"))
+            foreach (var order in orders.Where(o => o.TrangThai == "Đã giao" || o.TrangThai == "Hoàn thành"))
             {
                 if (order.CtDhs != null)
                 {
@@ -465,11 +465,15 @@ namespace AceCook
                 var percentage = totalOrders > 0 ? (count * 100.0 / totalOrders) : 0;
                 
                 decimal revenue = 0;
-                foreach (var order in group)
+                // Chỉ tính doanh thu cho đơn hàng hoàn thành
+                if (group.Key == "Đã giao" || group.Key == "Hoàn thành")
                 {
-                    if (order.CtDhs != null)
+                    foreach (var order in group)
                     {
-                        revenue += order.CtDhs.Sum(ct => (decimal)((ct.SoLuong ?? 0) * (ct.DonGia ?? 0)));
+                        if (order.CtDhs != null)
+                        {
+                            revenue += order.CtDhs.Sum(ct => (decimal)((ct.SoLuong ?? 0) * (ct.DonGia ?? 0)));
+                        }
                     }
                 }
 
@@ -485,7 +489,7 @@ namespace AceCook
 
         private void StyleStatusCell(DataGridViewCell cell, string status)
         {
-            if (status == "Đã giao")
+            if (status == "Đã giao" || status == "Hoàn thành")
             {
                 cell.Style.ForeColor = Color.Green;
                 cell.Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
