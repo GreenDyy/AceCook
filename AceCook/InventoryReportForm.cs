@@ -281,10 +281,11 @@ namespace AceCook
             var card = new Panel
             {
                 Width = 350, // Increased from 280 to 350 to accommodate longer Vietnamese text
-                Height = 120,
+                Height = 80,
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle,
                 // Margin = new Padding(20, 0, 20, 0)
+                Margin = new Padding(10, 0, 10, 0)
             };
 
             var accentLine = new Panel
@@ -300,9 +301,10 @@ namespace AceCook
                 Text = value,
                 Font = new Font("Segoe UI", 16, FontStyle.Bold),
                 ForeColor = Color.FromArgb(52, 73, 94),
-                Location = new Point(20, 15),
-                Size = new Size(320, 25), // Set fixed size instead of AutoSize to prevent overflow
-                TextAlign = ContentAlignment.MiddleLeft
+                Location = new Point(15, 10),
+                Size = new Size(320, 30), // Set fixed size instead of AutoSize to prevent overflow
+                TextAlign = ContentAlignment.MiddleLeft,
+                AutoSize = false
             };
 
             var lblTitle = new Label
@@ -310,9 +312,10 @@ namespace AceCook
                 Text = title,
                 Font = new Font("Segoe UI", 10),
                 ForeColor = Color.FromArgb(127, 140, 141),
-                Location = new Point(20, 45),
-                Size = new Size(320, 20), // Set fixed size instead of AutoSize to prevent overflow
-                TextAlign = ContentAlignment.MiddleLeft
+                Location = new Point(15, 45),
+                Size = new Size(325, 25), // Set fixed size instead of AutoSize to prevent overflow
+                TextAlign = ContentAlignment.MiddleLeft,
+                AutoSize = false
             };
 
             card.Controls.AddRange(new Control[] { accentLine, lblValue, lblTitle });
