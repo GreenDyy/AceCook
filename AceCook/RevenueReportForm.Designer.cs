@@ -117,7 +117,7 @@ namespace AceCook
             // 
             // panelDateFilter
             // 
-            this.panelDateFilter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(20)))));
+            this.panelDateFilter.BackColor = System.Drawing.Color.Transparent; // Xóa background màu vàng, để trong suốt
             this.panelDateFilter.Controls.Add(this.btnFilter);
             this.panelDateFilter.Controls.Add(this.dateTimePickerTo);
             this.panelDateFilter.Controls.Add(this.dateTimePickerFrom);
