@@ -23,6 +23,9 @@ namespace AceCook
 
         public ProductAddEditForm(ProductRepository productRepository, FormMode mode = FormMode.Add, Sanpham product = null)
         {
+            if (productRepository == null)
+                throw new ArgumentNullException(nameof(productRepository));
+
             InitializeComponent();
             _productRepository = productRepository;
             _mode = mode;
@@ -33,152 +36,184 @@ namespace AceCook
 
         private void InitializeForm()
         {
-            switch (_mode)
+            try
             {
-                case FormMode.Add:
-                    this.Text = "Thêm sản phẩm mới";
-                    lblTitle.Text = "Thêm sản phẩm mới";
-                    btnSave.Text = "Thêm";
-                    break;
-                case FormMode.Edit:
-                    this.Text = "Chỉnh sửa sản phẩm";
-                    lblTitle.Text = "Chỉnh sửa sản phẩm";
-                    btnSave.Text = "Cập nhật";
-                    LoadProductData();
-                    break;
-                case FormMode.View:
-                    this.Text = "Xem thông tin sản phẩm";
-                    lblTitle.Text = "Thông tin sản phẩm";
-                    btnSave.Visible = false;
-                    btnCancel.Text = "Đóng";
-                    SetControlsReadOnly(true);
-                    LoadProductData();
-                    break;
-            }
+                switch (_mode)
+                {
+                    case FormMode.Add:
+                        this.Text = "Thêm sản phẩm mới";
+                        lblTitle.Text = "Thêm sản phẩm mới";
+                        btnSave.Text = "Thêm";
+                        break;
+                    case FormMode.Edit:
+                        this.Text = "Chỉnh sửa sản phẩm";
+                        lblTitle.Text = "Chỉnh sửa sản phẩm";
+                        btnSave.Text = "Cập nhật";
+                        LoadProductData();
+                        break;
+                    case FormMode.View:
+                        this.Text = "Xem thông tin sản phẩm";
+                        lblTitle.Text = "Thông tin sản phẩm";
+                        btnSave.Visible = false;
+                        btnCancel.Text = "Đóng";
+                        SetControlsReadOnly(true);
+                        LoadProductData();
+                        break;
+                }
 
-            // Set default product type
-            if (cmbLoai.Items.Count > 0 && _mode == FormMode.Add)
+                // Set default product type
+                if (cmbLoai.Items.Count > 0 && _mode == FormMode.Add)
+                {
+                    cmbLoai.SelectedIndex = 0;
+                }
+            }
+            catch (Exception ex)
             {
-                cmbLoai.SelectedIndex = 0;
+                MessageBox.Show($"Lỗi khi khởi tạo form: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void LoadProductData()
         {
-            if (_currentProduct != null)
+            try
             {
-                txtMaSP.Text = _currentProduct.MaSp;
-                txtTenSP.Text = _currentProduct.TenSp;
-                txtMoTa.Text = _currentProduct.MoTa;
-                txtGia.Text = _currentProduct.Gia?.ToString("N0", CultureInfo.GetCultureInfo("vi-VN"));
-                txtDonVi.Text = _currentProduct.Dvtsp;
-                
-                if (!string.IsNullOrEmpty(_currentProduct.Loai))
+                if (_currentProduct != null)
                 {
-                    int index = cmbLoai.FindStringExact(_currentProduct.Loai);
-                    if (index != -1)
-                        cmbLoai.SelectedIndex = index;
-                    else
+                    txtMaSP.Text = _currentProduct.MaSp ?? "";
+                    txtTenSP.Text = _currentProduct.TenSp ?? "";
+                    txtMoTa.Text = _currentProduct.MoTa ?? "";
+                    txtGia.Text = _currentProduct.Gia?.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) ?? "";
+                    txtDonVi.Text = _currentProduct.Dvtsp ?? "";
+                    
+                    if (!string.IsNullOrEmpty(_currentProduct.Loai))
                     {
-                        // If category doesn't exist in predefined list, add it
-                        cmbLoai.Items.Add(_currentProduct.Loai);
-                        cmbLoai.SelectedItem = _currentProduct.Loai;
+                        int index = cmbLoai.FindStringExact(_currentProduct.Loai);
+                        if (index != -1)
+                            cmbLoai.SelectedIndex = index;
+                        else
+                        {
+                            // If category doesn't exist in predefined list, add it
+                            cmbLoai.Items.Add(_currentProduct.Loai);
+                            cmbLoai.SelectedItem = _currentProduct.Loai;
+                        }
+                    }
+
+                    // Disable MaSP for edit mode
+                    if (_mode == FormMode.Edit)
+                    {
+                        txtMaSP.ReadOnly = true;
+                        txtMaSP.BackColor = SystemColors.Control;
                     }
                 }
-
-                // Disable MaSP for edit mode
-                if (_mode == FormMode.Edit)
-                {
-                    txtMaSP.ReadOnly = true;
-                    txtMaSP.BackColor = SystemColors.Control;
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu sản phẩm: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void SetControlsReadOnly(bool readOnly)
         {
-            txtMaSP.ReadOnly = readOnly;
-            txtTenSP.ReadOnly = readOnly;
-            txtMoTa.ReadOnly = readOnly;
-            txtGia.ReadOnly = readOnly;
-            txtDonVi.ReadOnly = readOnly;
-            cmbLoai.Enabled = !readOnly;
-
-            if (readOnly)
+            try
             {
-                var backColor = SystemColors.Control;
-                txtMaSP.BackColor = backColor;
-                txtTenSP.BackColor = backColor;
-                txtMoTa.BackColor = backColor;
-                txtGia.BackColor = backColor;
-                txtDonVi.BackColor = backColor;
-                cmbLoai.BackColor = backColor;
+                txtMaSP.ReadOnly = readOnly;
+                txtTenSP.ReadOnly = readOnly;
+                txtMoTa.ReadOnly = readOnly;
+                txtGia.ReadOnly = readOnly;
+                txtDonVi.ReadOnly = readOnly;
+                cmbLoai.Enabled = !readOnly;
+
+                if (readOnly)
+                {
+                    var backColor = SystemColors.Control;
+                    txtMaSP.BackColor = backColor;
+                    txtTenSP.BackColor = backColor;
+                    txtMoTa.BackColor = backColor;
+                    txtGia.BackColor = backColor;
+                    txtDonVi.BackColor = backColor;
+                    cmbLoai.BackColor = backColor;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in SetControlsReadOnly: {ex.Message}");
             }
         }
 
         private bool ValidateInput()
         {
-            var errors = new List<string>();
+            try
+            {
+                var errors = new List<string>();
 
-            // Validate MaSP
-            if (string.IsNullOrWhiteSpace(txtMaSP.Text))
-            {
-                errors.Add("Mã sản phẩm không được để trống.");
-            }
-            else if (txtMaSP.Text.Length > 10)
-            {
-                errors.Add("Mã sản phẩm không được vượt quá 10 ký tự.");
-            }
-
-            // Validate TenSP
-            if (string.IsNullOrWhiteSpace(txtTenSP.Text))
-            {
-                errors.Add("Tên sản phẩm không được để trống.");
-            }
-            else if (txtTenSP.Text.Length > 50)
-            {
-                errors.Add("Tên sản phẩm không được vượt quá 50 ký tự.");
-            }
-
-            // Validate MoTa
-            if (!string.IsNullOrWhiteSpace(txtMoTa.Text) && txtMoTa.Text.Length > 100)
-            {
-                errors.Add("Mô tả không được vượt quá 100 ký tự.");
-            }
-
-            // Validate Gia
-            if (!string.IsNullOrWhiteSpace(txtGia.Text))
-            {
-                var giaText = txtGia.Text.Replace(",", "").Replace(".", "");
-                if (!decimal.TryParse(giaText, out decimal gia) || gia < 0)
+                // Validate MaSP
+                if (string.IsNullOrWhiteSpace(txtMaSP.Text))
                 {
-                    errors.Add("Giá phải là số dương.");
+                    errors.Add("Mã sản phẩm không được để trống.");
                 }
-                else if (gia > 999999999999999999)
+                else if (txtMaSP.Text.Length > 10)
                 {
-                    errors.Add("Giá quá lớn.");
+                    errors.Add("Mã sản phẩm không được vượt quá 10 ký tự.");
                 }
-            }
 
-            // Validate DonVi
-            if (!string.IsNullOrWhiteSpace(txtDonVi.Text) && txtDonVi.Text.Length > 20)
-            {
-                errors.Add("Đơn vị tính không được vượt quá 20 ký tự.");
-            }
+                // Validate TenSP
+                if (string.IsNullOrWhiteSpace(txtTenSP.Text))
+                {
+                    errors.Add("Tên sản phẩm không được để trống.");
+                }
+                else if (txtTenSP.Text.Length > 50)
+                {
+                    errors.Add("Tên sản phẩm không được vượt quá 50 ký tự.");
+                }
 
-            // Validate Loai
-            if (!string.IsNullOrWhiteSpace(cmbLoai.Text) && cmbLoai.Text.Length > 20)
-            {
-                errors.Add("Loại sản phẩm không được vượt quá 20 ký tự.");
-            }
+                // Validate MoTa
+                if (!string.IsNullOrWhiteSpace(txtMoTa.Text) && txtMoTa.Text.Length > 100)
+                {
+                    errors.Add("Mô tả không được vượt quá 100 ký tự.");
+                }
 
-            if (errors.Count > 0)
+                // Validate Gia
+                if (!string.IsNullOrWhiteSpace(txtGia.Text))
+                {
+                    var giaText = txtGia.Text.Replace(",", "").Replace(".", "");
+                    if (!decimal.TryParse(giaText, out decimal gia) || gia < 0)
+                    {
+                        errors.Add("Giá phải là số dương.");
+                    }
+                    else if (gia > 999999999999999999)
+                    {
+                        errors.Add("Giá quá lớn.");
+                    }
+                }
+
+                // Validate DonVi
+                if (!string.IsNullOrWhiteSpace(txtDonVi.Text) && txtDonVi.Text.Length > 20)
+                {
+                    errors.Add("Đơn vị tính không được vượt quá 20 ký tự.");
+                }
+
+                // Validate Loai
+                if (!string.IsNullOrWhiteSpace(cmbLoai.Text) && cmbLoai.Text.Length > 20)
+                {
+                    errors.Add("Loại sản phẩm không được vượt quá 20 ký tự.");
+                }
+
+                if (errors.Count > 0)
+                {
+                    MessageBox.Show(string.Join("\n", errors), "Lỗi xác thực", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
             {
-                MessageBox.Show(string.Join("\n", errors), "Lỗi xác thực", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"Lỗi khi xác thực dữ liệu: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
-
-            return true;
         }
 
         private async void btnSave_Click(object sender, EventArgs e)
@@ -204,7 +239,7 @@ namespace AceCook
                 var product = new Sanpham
                 {
                     MaSp = txtMaSP.Text.Trim(),
-                    TenSp = string.IsNullOrWhiteSpace(txtTenSP.Text) ? null : txtTenSP.Text.Trim(),
+                    TenSp = txtTenSP.Text.Trim(),
                     MoTa = string.IsNullOrWhiteSpace(txtMoTa.Text) ? null : txtMoTa.Text.Trim(),
                     Gia = gia,
                     Dvtsp = string.IsNullOrWhiteSpace(txtDonVi.Text) ? null : txtDonVi.Text.Trim(),
@@ -216,15 +251,6 @@ namespace AceCook
 
                 if (_mode == FormMode.Add)
                 {
-                    // Check if product already exists
-                    var existingProduct = await _productRepository.GetProductByIdAsync(product.MaSp);
-                    if (existingProduct != null)
-                    {
-                        MessageBox.Show("Mã sản phẩm đã tồn tại. Vui lòng chọn mã khác.", 
-                            "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
                     success = await _productRepository.AddProductAsync(product);
                     operation = "thêm";
                 }
@@ -248,6 +274,10 @@ namespace AceCook
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             catch (Exception ex)
             {
                 MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}", "Lỗi", 
@@ -262,8 +292,16 @@ namespace AceCook
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            try
+            {
+                this.DialogResult = DialogResult.Cancel;
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in btnCancel_Click: {ex.Message}");
+                this.Close();
+            }
         }
     }
 }
