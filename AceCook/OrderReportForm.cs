@@ -240,8 +240,9 @@ namespace AceCook
             // Actions Panel
             pnlActions = new Panel
             {
-                Size = new Size(1340, 60),
-                Location = new Point(30, 290),
+                Dock = DockStyle.Top,
+                Height = 90,
+                Padding = new Padding(15),
                 BackColor = Color.Transparent
             };
 

@@ -145,7 +145,7 @@
             var pnlActions = new System.Windows.Forms.FlowLayoutPanel
             {
                 Dock = System.Windows.Forms.DockStyle.Top,
-                Height = 70,
+                Height = 90,
                 FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight,
                 Padding = new System.Windows.Forms.Padding(15),
                 BackColor = System.Drawing.Color.Transparent

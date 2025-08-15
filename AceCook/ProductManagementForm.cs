@@ -34,14 +34,14 @@ namespace AceCook
         private void InitializeComponent()
         {
             this.SuspendLayout();
-            
+
             this.Text = "Quản lý Sản phẩm";
             this.Size = new Size(1400, 800);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(248, 249, 250);
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            
+
             this.ResumeLayout(false);
         }
 
@@ -83,7 +83,7 @@ namespace AceCook
 
             txtSearch = new TextBox
             {
-                Width = 250,
+                Width = 300,
                 Font = new Font("Segoe UI", 10),
                 PlaceholderText = "Mã SP, tên SP, mô tả...",
                 Margin = new Padding(0, 5, 20, 0)
@@ -101,7 +101,7 @@ namespace AceCook
 
             cboCategory = new ComboBox
             {
-                Width = 150,
+                Width = 180,
                 Font = new Font("Segoe UI", 10),
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Margin = new Padding(0, 5, 20, 0)
@@ -111,8 +111,8 @@ namespace AceCook
             btnClearFilter = new Button
             {
                 Text = "🔄 Xóa bộ lọc",
-                Width = 120,
-                Height = 35,
+                Width = 200,
+                Height = 40,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(149, 165, 166),
                 ForeColor = Color.White,
@@ -125,8 +125,8 @@ namespace AceCook
             btnRefresh = new Button
             {
                 Text = "🔄 Làm mới",
-                Width = 100,
-                Height = 35,
+                Width = 200,
+                Height = 40,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(52, 152, 219),
                 ForeColor = Color.White,
@@ -144,22 +144,22 @@ namespace AceCook
             var pnlActions = new FlowLayoutPanel
             {
                 Dock = DockStyle.Top,
-                Height = 70,
+                Height = 90,
                 FlowDirection = FlowDirection.LeftToRight,
                 Padding = new Padding(15),
                 BackColor = Color.Transparent
             };
 
-            btnAdd = CreateActionButton("➕ Thêm sản phẩm mới", Color.FromArgb(46, 204, 113));
+            btnAdd = CreateActionButton("➕ Thêm mới", Color.FromArgb(46, 204, 113));
             btnAdd.Click += BtnAdd_Click;
 
-            btnRefresh = CreateActionButton("🔄 Làm mới dữ liệu", Color.FromArgb(52, 152, 219));
+            btnRefresh = CreateActionButton("🔄 Làm mới", Color.FromArgb(52, 152, 219));
             btnRefresh.Click += BtnRefresh_Click;
 
-            btnEdit = CreateActionButton("✏️ Chỉnh sửa sản phẩm", Color.FromArgb(255, 193, 7));
+            btnEdit = CreateActionButton("✏️ Chỉnh sửa", Color.FromArgb(255, 193, 7));
             btnEdit.Click += BtnEdit_Click;
 
-            btnDelete = CreateActionButton("🗑️ Xóa sản phẩm", Color.FromArgb(231, 76, 60));
+            btnDelete = CreateActionButton("🗑️ Xóa", Color.FromArgb(231, 76, 60));
             btnDelete.Click += BtnDelete_Click;
 
             pnlActions.Controls.AddRange(new Control[] { btnAdd, btnRefresh, btnEdit, btnDelete });
@@ -222,7 +222,7 @@ namespace AceCook
                 // Load products first
                 _products = await _productRepository.GetAllProductsAsync();
                 RefreshDataGridView(_products);
-                
+
                 // Then load categories
                 await LoadCategories();
             }
@@ -232,7 +232,7 @@ namespace AceCook
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -242,7 +242,7 @@ namespace AceCook
             try
             {
                 var categories = await _productRepository.GetProductCategoriesAsync();
-                
+
                 // Update UI trên main thread
                 if (this.InvokeRequired)
                 {
@@ -262,7 +262,7 @@ namespace AceCook
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải danh sách loại sản phẩm: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tải danh sách loại sản phẩm: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -297,7 +297,7 @@ namespace AceCook
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải danh sách sản phẩm: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tải danh sách sản phẩm: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -405,7 +405,7 @@ namespace AceCook
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error in RefreshDataGridView: {ex.Message}");
-                MessageBox.Show($"Lỗi khi refresh DataGridView: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi refresh DataGridView: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -490,7 +490,7 @@ namespace AceCook
                         }
                     };
                 }
-                
+
                 // Reset timer
                 _searchTimer.Stop();
                 _searchTimer.Start();
@@ -516,7 +516,7 @@ namespace AceCook
         private async Task ApplyFilters()
         {
             if (_isSearching) return;
-            
+
             try
             {
                 _isSearching = true;
@@ -540,7 +540,7 @@ namespace AceCook
                 }
 
                 RefreshDataGridView(filteredProducts);
-                
+
                 // Update title với số lượng kết quả
                 var resultCount = filteredProducts.Count;
                 this.Text = $"Quản lý Sản phẩm - Hiển thị {resultCount} sản phẩm";
@@ -552,7 +552,7 @@ namespace AceCook
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error in ApplyFilters: {ex.Message}");
-                MessageBox.Show($"Lỗi khi áp dụng bộ lọc: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi áp dụng bộ lọc: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
@@ -584,7 +584,7 @@ namespace AceCook
                     // Get the selected product ID from the first column
                     var selectedRow = dataGridViewProducts.SelectedRows[0];
                     var productId = selectedRow.Cells["MaSp"].Value?.ToString();
-                    
+
                     if (!string.IsNullOrEmpty(productId))
                     {
                         var product = await _productRepository.GetProductByIdAsync(productId);
@@ -641,7 +641,7 @@ namespace AceCook
                 var addForm = new ProductAddEditForm(_productRepository, FormMode.Add);
                 if (addForm.ShowDialog() == DialogResult.OK)
                 {
-                    MessageBox.Show("Thêm sản phẩm thành công!", "Thông báo", 
+                    MessageBox.Show("Thêm sản phẩm thành công!", "Thông báo",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     await LoadDataAsync();
                 }
@@ -661,7 +661,7 @@ namespace AceCook
                 {
                     var selectedRow = dataGridViewProducts.SelectedRows[0];
                     var productId = selectedRow.Cells["MaSp"].Value?.ToString();
-                    
+
                     if (!string.IsNullOrEmpty(productId))
                     {
                         var product = await _productRepository.GetProductByIdAsync(productId);
@@ -670,7 +670,7 @@ namespace AceCook
                             var editForm = new ProductAddEditForm(_productRepository, FormMode.Edit, product);
                             if (editForm.ShowDialog() == DialogResult.OK)
                             {
-                                MessageBox.Show("Cập nhật sản phẩm thành công!", "Thông báo", 
+                                MessageBox.Show("Cập nhật sản phẩm thành công!", "Thông báo",
                                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 await LoadDataAsync();
                             }
@@ -699,7 +699,7 @@ namespace AceCook
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn một sản phẩm để chỉnh sửa", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn một sản phẩm để chỉnh sửa", "Thông báo",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
@@ -712,15 +712,15 @@ namespace AceCook
                 {
                     var selectedRow = dataGridViewProducts.SelectedRows[0];
                     var productId = selectedRow.Cells["MaSp"].Value?.ToString();
-                    
+
                     if (!string.IsNullOrEmpty(productId))
                     {
                         var product = await _productRepository.GetProductByIdAsync(productId);
                         if (product != null)
                         {
-                            var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa sản phẩm '{product.TenSp}'?", 
+                            var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa sản phẩm '{product.TenSp}'?",
                                 "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                            
+
                             if (result == DialogResult.Yes)
                             {
                                 try
@@ -728,13 +728,13 @@ namespace AceCook
                                     bool success = await _productRepository.DeleteProductAsync(productId);
                                     if (success)
                                     {
-                                        MessageBox.Show("Xóa sản phẩm thành công!", "Thông báo", 
+                                        MessageBox.Show("Xóa sản phẩm thành công!", "Thông báo",
                                             MessageBoxButtons.OK, MessageBoxIcon.Information);
                                         await LoadDataAsync();
                                     }
                                     else
                                     {
-                                        MessageBox.Show("Lỗi khi xóa sản phẩm!", "Lỗi", 
+                                        MessageBox.Show("Lỗi khi xóa sản phẩm!", "Lỗi",
                                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     }
                                 }
@@ -744,7 +744,7 @@ namespace AceCook
                                 }
                                 catch (Exception ex)
                                 {
-                                    MessageBox.Show($"Lỗi khi xóa sản phẩm: {ex.Message}", "Lỗi", 
+                                    MessageBox.Show($"Lỗi khi xóa sản phẩm: {ex.Message}", "Lỗi",
                                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 }
                             }
@@ -773,7 +773,7 @@ namespace AceCook
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn một sản phẩm để xóa", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn một sản phẩm để xóa", "Thông báo",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
@@ -796,4 +796,4 @@ namespace AceCook
             base.Dispose(disposing);
         }
     }
-} 
+}

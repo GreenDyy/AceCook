@@ -32,14 +32,14 @@ namespace AceCook
         private void InitializeComponent()
         {
             this.SuspendLayout();
-            
+
             this.Text = "Quản lý Khách hàng";
             this.Size = new Size(1400, 800);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(248, 249, 250);
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            
+
             this.ResumeLayout(false);
         }
 
@@ -106,7 +106,7 @@ namespace AceCook
             {
                 Text = "🔄 Làm mới",
                 Width = 200,
-                Height = 35,
+                Height = 40,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(95, 95, 95),
                 ForeColor = Color.White,
@@ -124,25 +124,25 @@ namespace AceCook
             var pnlActions = new FlowLayoutPanel
             {
                 Dock = DockStyle.Top,
-                Height = 70,
+                Height = 90,
                 FlowDirection = FlowDirection.LeftToRight,
                 Padding = new Padding(15),
                 BackColor = Color.Transparent
             };
 
-            btnAdd = CreateActionButton("➕ Thêm khách hàng mới", Color.FromArgb(46, 204, 113));
+            btnAdd = CreateActionButton("➕ Thêm mới", Color.FromArgb(46, 204, 113));
             btnAdd.Click += BtnAdd_Click;
 
-            btnRefresh = CreateActionButton("🔄 Làm mới dữ liệu", Color.FromArgb(52, 152, 219));
+            btnRefresh = CreateActionButton("🔄 Làm mới", Color.FromArgb(52, 152, 219));
             btnRefresh.Click += BtnRefresh_Click;
 
             var btnViewDetails = CreateActionButton("👁️ Xem chi tiết", Color.FromArgb(108, 92, 231));
             btnViewDetails.Click += BtnViewDetails_Click;
 
-            btnEdit = CreateActionButton("✏️ Chỉnh sửa khách hàng", Color.FromArgb(255, 193, 7));
+            btnEdit = CreateActionButton("✏️ Chỉnh sửa", Color.FromArgb(255, 193, 7));
             btnEdit.Click += BtnEdit_Click;
 
-            btnDelete = CreateActionButton("🗑️ Xóa khách hàng", Color.FromArgb(231, 76, 60));
+            btnDelete = CreateActionButton("🗑️ Xóa", Color.FromArgb(231, 76, 60));
             btnDelete.Click += BtnDelete_Click;
 
             pnlActions.Controls.AddRange(new Control[] { btnAdd, btnRefresh, btnViewDetails, btnEdit, btnDelete });
@@ -210,7 +210,7 @@ namespace AceCook
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu khách hàng: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tải dữ liệu khách hàng: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -301,7 +301,7 @@ namespace AceCook
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error in RefreshDataGridView: {ex.Message}");
-                MessageBox.Show($"Lỗi khi refresh DataGridView: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi refresh DataGridView: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -389,7 +389,7 @@ namespace AceCook
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tìm kiếm: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tìm kiếm: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -442,7 +442,7 @@ namespace AceCook
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tìm kiếm: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tìm kiếm: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -456,7 +456,7 @@ namespace AceCook
                     // Get the selected customer ID from the first column
                     var selectedRow = dataGridViewCustomers.SelectedRows[0];
                     var customerId = selectedRow.Cells["MaKh"].Value?.ToString();
-                    
+
                     if (!string.IsNullOrEmpty(customerId))
                     {
                         var customer = await _customerRepository.GetCustomerByIdAsync(customerId);
@@ -500,7 +500,7 @@ namespace AceCook
                 var addForm = new CustomerAddEditForm(_customerRepository, FormMode.Add);
                 if (addForm.ShowDialog() == DialogResult.OK)
                 {
-                    MessageBox.Show("Thêm khách hàng thành công!", "Thông báo", 
+                    MessageBox.Show("Thêm khách hàng thành công!", "Thông báo",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     await LoadCustomers();
                 }
@@ -520,7 +520,7 @@ namespace AceCook
                 {
                     var selectedRow = dataGridViewCustomers.SelectedRows[0];
                     var customerId = selectedRow.Cells["MaKh"].Value?.ToString();
-                    
+
                     if (!string.IsNullOrEmpty(customerId))
                     {
                         var customer = await _customerRepository.GetCustomerByIdAsync(customerId);
@@ -529,7 +529,7 @@ namespace AceCook
                             var editForm = new CustomerAddEditForm(_customerRepository, FormMode.Edit, customer);
                             if (editForm.ShowDialog() == DialogResult.OK)
                             {
-                                MessageBox.Show("Cập nhật khách hàng thành công!", "Thông báo", 
+                                MessageBox.Show("Cập nhật khách hàng thành công!", "Thông báo",
                                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 await LoadCustomers();
                             }
@@ -558,7 +558,7 @@ namespace AceCook
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn một khách hàng để chỉnh sửa", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn một khách hàng để chỉnh sửa", "Thông báo",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
@@ -571,15 +571,15 @@ namespace AceCook
                 {
                     var selectedRow = dataGridViewCustomers.SelectedRows[0];
                     var customerId = selectedRow.Cells["MaKh"].Value?.ToString();
-                    
+
                     if (!string.IsNullOrEmpty(customerId))
                     {
                         var customer = await _customerRepository.GetCustomerByIdAsync(customerId);
                         if (customer != null)
                         {
-                            var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa khách hàng '{customer.TenKh}'?", 
+                            var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa khách hàng '{customer.TenKh}'?",
                                 "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                            
+
                             if (result == DialogResult.Yes)
                             {
                                 try
@@ -587,13 +587,13 @@ namespace AceCook
                                     bool success = await _customerRepository.DeleteCustomerAsync(customerId);
                                     if (success)
                                     {
-                                        MessageBox.Show("Xóa khách hàng thành công!", "Thông báo", 
+                                        MessageBox.Show("Xóa khách hàng thành công!", "Thông báo",
                                             MessageBoxButtons.OK, MessageBoxIcon.Information);
                                         await LoadCustomers();
                                     }
                                     else
                                     {
-                                        MessageBox.Show("Lỗi khi xóa khách hàng!", "Lỗi", 
+                                        MessageBox.Show("Lỗi khi xóa khách hàng!", "Lỗi",
                                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     }
                                 }
@@ -603,7 +603,7 @@ namespace AceCook
                                 }
                                 catch (Exception ex)
                                 {
-                                    MessageBox.Show($"Lỗi khi xóa khách hàng: {ex.Message}", "Lỗi", 
+                                    MessageBox.Show($"Lỗi khi xóa khách hàng: {ex.Message}", "Lỗi",
                                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 }
                             }
@@ -618,7 +618,7 @@ namespace AceCook
                     {
                         MessageBox.Show("Không thể lấy thông tin khách hàng đã chọn!", "Lỗi",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                    }
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -632,9 +632,9 @@ namespace AceCook
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn một khách hàng để xóa", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn một khách hàng để xóa", "Thông báo",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
     }
-} 
+}
