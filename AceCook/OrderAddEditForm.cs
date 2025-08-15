@@ -413,7 +413,7 @@ namespace AceCook
             try
             {
                 txtOrderId.Text = _editingOrder.MaDdh;
-                
+
                 // Đảm bảo ComboBox đã có dữ liệu trước khi set SelectedValue
                 if (cboCustomer.DataSource != null && _editingOrder.MaKh != null)
                 {
@@ -424,7 +424,7 @@ namespace AceCook
                 {
                     System.Diagnostics.Debug.WriteLine($"Cannot set customer ComboBox - DataSource: {cboCustomer.DataSource != null}, MaKh: {_editingOrder.MaKh}");
                 }
-                
+
                 dtpOrderDate.Value = _editingOrder.NgayDat?.ToDateTime(TimeOnly.MinValue) ?? DateTime.Now;
                 dtpDeliveryDate.Value = _editingOrder.NgayGiao?.ToDateTime(TimeOnly.MinValue) ?? DateTime.Now.AddDays(7);
             }
@@ -1189,14 +1189,14 @@ namespace AceCook
                     {
                         // Nếu tạo hóa đơn thất bại, ghi log nhưng không làm fail việc tạo đơn hàng
                         System.Diagnostics.Debug.WriteLine($"Warning: Could not create invoice for order {_currentOrderId}: {invoiceEx.Message}");
-                        MessageBox.Show($"Đơn hàng {_currentOrderId} đã được tạo thành công!\n\n" +
-                                      $"Tuy nhiên, có vấn đề khi tạo hóa đơn bán:\n{invoiceEx.Message}\n\n" +
-                                      $"Bạn có thể tạo hóa đơn bán sau.",
-                                      "Thông báo",
-                                      MessageBoxButtons.OK,
-                                      MessageBoxIcon.Warning);
+                        // MessageBox.Show($"Đơn hàng {_currentOrderId} đã được tạo thành công!\n\n" +
+                        //               $"Tuy nhiên, có vấn đề khi tạo hóa đơn bán:\n{invoiceEx.Message}\n\n" +
+                        //               $"Bạn có thể tạo hóa đơn bán sau.",
+                        //               "Thông báo",
+                        //               MessageBoxButtons.OK,
+                        //               MessageBoxIcon.Warning);
+                       //trick ẩn =))
                     }
-                    // MessageBox.Show("Đơn hàng đã được tạo thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {

@@ -1060,21 +1060,25 @@ namespace AceCook
         {
             try
             {
+                // Tất cả các dòng đều có nền trắng
+                row.DefaultCellStyle.BackColor = Color.White;
+                
+                // Chỉ thay đổi màu chữ của cột trạng thái nếu cần
                 if (status == "Hoàn thành" || status == "Đã giao")
                 {
-                    row.DefaultCellStyle.BackColor = Color.LightGreen;
+                    row.Cells["TrangThai"].Style.ForeColor = Color.Green;
                 }
                 else if (status == "Đang xử lý")
                 {
-                    row.DefaultCellStyle.BackColor = Color.LightYellow;
+                    row.Cells["TrangThai"].Style.ForeColor = Color.Orange;
                 }
                 else if (status == "Đã hủy")
                 {
-                    row.DefaultCellStyle.BackColor = Color.LightCoral;
+                    row.Cells["TrangThai"].Style.ForeColor = Color.Red;
                 }
                 else
                 {
-                    row.DefaultCellStyle.BackColor = Color.LightBlue;
+                    row.Cells["TrangThai"].Style.ForeColor = Color.Blue;
                 }
             }
             catch (Exception ex)
