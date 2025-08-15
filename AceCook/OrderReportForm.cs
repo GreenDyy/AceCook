@@ -260,6 +260,7 @@ namespace AceCook
             };
             btnExportReport.FlatAppearance.BorderSize = 0;
             btnExportReport.Click += BtnExportReport_Click;
+            btnExportReport.Visible = false; // Ẩn button xuất báo cáo
 
             btnRefresh = new Button
             {
@@ -274,6 +275,7 @@ namespace AceCook
             };
             btnRefresh.FlatAppearance.BorderSize = 0;
             btnRefresh.Click += BtnRefresh_Click;
+            btnRefresh.Visible = false; // Ẩn button làm mới
 
             pnlActions.Controls.AddRange(new Control[] { btnExportReport, btnRefresh });
 
@@ -344,7 +346,7 @@ namespace AceCook
 
             // Add controls to form - update to include new table
             this.Controls.AddRange(new Control[] { 
-                lblTitle, pnlFilters, pnlSummary, pnlActions, 
+                lblTitle, pnlFilters, pnlSummary, // pnlActions, // Comment out để ẩn panel
                 dataGridViewOrderReport, dataGridViewOrderSummary, dataGridViewOrderStatistics // Add new table
             });
 
