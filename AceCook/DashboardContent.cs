@@ -345,7 +345,7 @@ namespace AceCook
             var detailTitle = new Label
             {
                 Text = "Chi tiết doanh thu theo ngày",
-                Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 ForeColor = Color.FromArgb(52, 73, 94),
                 Size = new Size(300, 30),
                 Location = new Point(0, 0),
