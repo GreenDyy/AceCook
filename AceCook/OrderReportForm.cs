@@ -79,7 +79,7 @@ namespace AceCook
             dtpStartDate = new DateTimePicker
             {
                 Size = new Size(130, 30),
-                Location = new Point(100, 12),
+                Location = new Point(120, 12),
                 Font = new Font("Segoe UI", 10),
                 Format = DateTimePickerFormat.Short,
                 Value = DateTime.Now.AddDays(-30)
