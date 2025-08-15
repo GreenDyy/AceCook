@@ -106,7 +106,7 @@ namespace AceCook
                 Font = new Font("Segoe UI", 10),
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            cboStatusFilter.Items.AddRange(new object[] { "Tất cả", "Đơn hàng mới", "Đã hoàn thành" });
+            cboStatusFilter.Items.AddRange(new object[] { "Tất cả", "Đang xử lý", "Chờ xử lý", "Đã giao" });
             cboStatusFilter.SelectedIndex = 0;
             cboStatusFilter.SelectedIndexChanged += CboStatusFilter_SelectedIndexChanged;
 
@@ -351,6 +351,7 @@ namespace AceCook
             var totalOrders = orders.Count;
             var completedOrders = orders.Count(o => o.TrangThai == "Đã giao");
             var pendingOrders = orders.Count(o => o.TrangThai == "Đang xử lý" || o.TrangThai == "Chờ xử lý");
+            var newOrders = orders.Count(o => string.IsNullOrEmpty(o.TrangThai) || o.TrangThai == "Mới");
             
             decimal totalRevenue = 0;
             foreach (var order in orders.Where(o => o.TrangThai == "Đã giao"))
@@ -362,8 +363,8 @@ namespace AceCook
             }
 
             lblTotalOrders.Text = $"Tổng đơn hàng: {totalOrders}";
-            lblCompletedOrders.Text = $"Đã hoàn thành: {completedOrders}";
-            lblPendingOrders.Text = $"Đơn hàng mới: {pendingOrders}";
+            lblCompletedOrders.Text = $"Đã giao: {completedOrders}";
+            lblPendingOrders.Text = $"Đang xử lý: {pendingOrders}";
             lblTotalRevenue.Text = $"Tổng doanh thu: {totalRevenue:N0} VNĐ";
 
             // Refresh detailed report
@@ -443,7 +444,7 @@ namespace AceCook
                 row.Cells["CustomerInfo"].Value = order.MaKhNavigation?.TenKh ?? "N/A";
                 row.Cells["NgayDat"].Value = order.NgayDat?.ToString("dd/MM/yyyy");
                 row.Cells["NgayGiao"].Value = order.NgayGiao?.ToString("dd/MM/yyyy") ?? "Chưa giao";
-                row.Cells["TrangThai"].Value = order.TrangThai ?? "Đơn hàng mới";
+                row.Cells["TrangThai"].Value = order.TrangThai ?? "Mới";
                 
                 // Calculate total amount
                 decimal totalAmount = 0;
@@ -457,7 +458,7 @@ namespace AceCook
                 row.Cells["ItemCount"].Value = itemCount;
 
                 // Style status column
-                StyleStatusCell(row.Cells["TrangThai"], order.TrangThai ?? "Đơn hàng mới");
+                StyleStatusCell(row.Cells["TrangThai"], order.TrangThai ?? "Mới");
             }
         }
 
@@ -496,7 +497,7 @@ namespace AceCook
             });
 
             // Group by status
-            var statusGroups = orders.GroupBy(o => o.TrangThai ?? "Đơn hàng mới");
+            var statusGroups = orders.GroupBy(o => o.TrangThai ?? "Mới");
             var totalOrders = orders.Count;
 
             foreach (var group in statusGroups)
@@ -528,14 +529,24 @@ namespace AceCook
 
         private void StyleStatusCell(DataGridViewCell cell, string status)
         {
-            if (status == "Đã hoàn thành")
+            if (status == "Đã giao")
             {
                 cell.Style.ForeColor = Color.Green;
                 cell.Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
             }
-            else if (status == "Đơn hàng mới")
+            else if (status == "Đang xử lý")
+            {
+                cell.Style.ForeColor = Color.Orange;
+                cell.Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+            }
+            else if (status == "Chờ xử lý")
             {
                 cell.Style.ForeColor = Color.Blue;
+                cell.Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+            }
+            else if (string.IsNullOrEmpty(status) || status == "Mới")
+            {
+                cell.Style.ForeColor = Color.DarkBlue;
                 cell.Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
             }
             else
@@ -597,12 +608,15 @@ namespace AceCook
                     orders = await _orderRepository.GetAllOrdersAsync();
                 }
 
-                // Apply date range filter
+                // Apply date range filter - Fixed to work with DateOnly
                 if (dtpStartDate.Value <= dtpEndDate.Value)
                 {
+                    var startDateOnly = DateOnly.FromDateTime(dtpStartDate.Value);
+                    var endDateOnly = DateOnly.FromDateTime(dtpEndDate.Value);
+                    
                     orders = orders.Where(o => o.NgayDat.HasValue &&
-                        o.NgayDat.Value.ToDateTime(TimeOnly.MinValue) >= dtpStartDate.Value &&
-                        o.NgayDat.Value.ToDateTime(TimeOnly.MinValue) <= dtpEndDate.Value.AddDays(1).AddSeconds(-1))
+                        o.NgayDat.Value >= startDateOnly &&
+                        o.NgayDat.Value <= endDateOnly)
                         .ToList();
                 }
 
@@ -659,13 +673,9 @@ namespace AceCook
                 Width = 446
             });
 
-            // Apply date range filter (using the current date picker values)
-            var startDate = dtpStartDate.Value.Date;
-            var endDate = dtpEndDate.Value.Date.AddDays(1).AddSeconds(-1);
-            
-            var filteredOrders = orders.Where(o => o.NgayDat.HasValue &&
-                o.NgayDat.Value.ToDateTime(TimeOnly.MinValue) >= startDate &&
-                o.NgayDat.Value.ToDateTime(TimeOnly.MinValue) <= endDate).ToList();
+            // Note: orders parameter already contains filtered data from ApplyFilters(),
+            // so we don't need to apply date filter again here
+            var filteredOrders = orders;
 
             // Group orders by customer and calculate statistics
             var topCustomers = filteredOrders
