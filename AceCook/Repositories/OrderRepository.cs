@@ -383,22 +383,38 @@ namespace AceCook.Repositories
 
         public async Task<decimal> GetTotalRevenueAsync(DateTime startDate, DateTime endDate)
         {
-            return await _context.Dondathangs
+            var startDateOnly = DateOnly.FromDateTime(startDate);
+            var endDateOnly = DateOnly.FromDateTime(endDate);
+            
+            // Materialize the query first to avoid EF translation issues
+            var orders = await _context.Dondathangs
+                .Include(d => d.CtDhs)
+                .Where(d => d.NgayDat.HasValue && d.TrangThai == "Đã giao")
+                .ToListAsync();
+                
+            return orders
                 .Where(d => d.NgayDat.HasValue &&
-                            d.NgayDat.Value.ToDateTime(TimeOnly.MinValue) >= startDate &&
-                            d.NgayDat.Value.ToDateTime(TimeOnly.MinValue) <= endDate &&
-                            d.TrangThai == "Đã giao")
+                           d.NgayDat.Value >= startDateOnly &&
+                           d.NgayDat.Value <= endDateOnly)
                 .SelectMany(d => d.CtDhs)
-                .SumAsync(ct => (decimal)((ct.SoLuong ?? 0) * (ct.DonGia ?? 0)));
+                .Sum(ct => (decimal)((ct.SoLuong ?? 0) * (ct.DonGia ?? 0)));
         }
 
         public async Task<int> GetTotalOrdersAsync(DateTime startDate, DateTime endDate)
         {
-            return await _context.Dondathangs
+            var startDateOnly = DateOnly.FromDateTime(startDate);
+            var endDateOnly = DateOnly.FromDateTime(endDate);
+            
+            // Materialize the query first to avoid EF translation issues
+            var orders = await _context.Dondathangs
+                .Where(d => d.NgayDat.HasValue)
+                .ToListAsync();
+                
+            return orders
                 .Where(d => d.NgayDat.HasValue &&
-                            d.NgayDat.Value.ToDateTime(TimeOnly.MinValue) >= startDate &&
-                            d.NgayDat.Value.ToDateTime(TimeOnly.MinValue) <= endDate)
-                .CountAsync();
+                           d.NgayDat.Value >= startDateOnly &&
+                           d.NgayDat.Value <= endDateOnly)
+                .Count();
         }
 
         public async Task<List<Khachhang>> GetAllCustomersAsync()
@@ -467,14 +483,6 @@ namespace AceCook.Repositories
                 query = query.Where(d => d.TrangThai == status);
             }
 
-            // Apply date range filter - sử dụng DateTime để tránh lỗi LINQ translation
-            if (startDate.HasValue && endDate.HasValue)
-            {
-                query = query.Where(d => d.NgayDat.HasValue &&
-                                       d.NgayDat.Value.ToDateTime(TimeOnly.MinValue) >= startDate.Value &&
-                                       d.NgayDat.Value.ToDateTime(TimeOnly.MinValue) <= endDate.Value);
-            }
-
             // Apply search filter
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
@@ -487,7 +495,22 @@ namespace AceCook.Repositories
                 );
             }
 
-            return await query.OrderByDescending(d => d.NgayDat).ToListAsync();
+            // Get all orders first, then apply date filter in memory to avoid EF translation issues
+            var allOrders = await query.ToListAsync();
+            
+            // Apply date range filter in memory
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                var startDateOnly = DateOnly.FromDateTime(startDate.Value);
+                var endDateOnly = DateOnly.FromDateTime(endDate.Value);
+                
+                allOrders = allOrders.Where(d => d.NgayDat.HasValue &&
+                                               d.NgayDat.Value >= startDateOnly &&
+                                               d.NgayDat.Value <= endDateOnly)
+                                   .ToList();
+            }
+
+            return allOrders.OrderByDescending(d => d.NgayDat).ToList();
         }
 
         // Class để chứa kết quả thống kê trạng thái

@@ -13,15 +13,16 @@ namespace AceCook
     {
         private readonly ReportRepository _reportRepository;
         private DataGridView dataGridViewInventory;
-        private DateTimePicker dtpFromDate;
-        private DateTimePicker dtpToDate;
-        private ComboBox cboWarehouse;
-        private TextBox txtSearch;
-        private Button btnGenerateReport;
-        private Button btnExportExcel;
-        private Button btnPrintReport;
-        private Button btnRefreshData;
-        private Button btnClearFilters;
+        // Xóa các controls không cần thiết
+        // private DateTimePicker dtpFromDate;
+        // private DateTimePicker dtpToDate;
+        // private ComboBox cboWarehouse;
+        // private TextBox txtSearch;
+        // private Button btnGenerateReport;
+        // private Button btnExportExcel;
+        // private Button btnPrintReport;
+        // private Button btnRefreshData;
+        // private Button btnClearFilters;
         private Label lblFormTitle;
         private Label lblTotalValueAmount;
         private Label lblTotalItemsCount;
@@ -72,135 +73,135 @@ namespace AceCook
                 Padding = new Padding(20, 0, 0, 0)
             };
 
-            // Filter Panel
-            var pnlFilter = new Panel
-            {
-                Dock = DockStyle.Top,
-                Height = 120,
-                BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle,
-                Padding = new Padding(20)
-            };
+            // Xóa toàn bộ Filter Panel
+            // var pnlFilter = new Panel
+            // {
+            //     Dock = DockStyle.Top,
+            //     Height = 120,
+            //     BackColor = Color.White,
+            //     BorderStyle = BorderStyle.FixedSingle,
+            //     Padding = new Padding(20)
+            // };
 
             // Date Range Group
-            var grpDateRange = new GroupBox
-            {
-                Text = "Khoảng thời gian",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Location = new Point(10, 10),
-                Size = new Size(350, 90)
-            };
+            // var grpDateRange = new GroupBox
+            // {
+            //     Text = "Khoảng thời gian",
+            //     Font = new Font("Segoe UI", 10, FontStyle.Bold),
+            //     Location = new Point(10, 10),
+            //     Size = new Size(350, 90)
+            // };
 
-            var lblFromDate = new Label
-            {
-                Text = "Từ ngày:",
-                Font = new Font("Segoe UI", 9),
-                Location = new Point(15, 25),
-                Size = new Size(60, 20)
-            };
+            // var lblFromDate = new Label
+            // {
+            //     Text = "Từ ngày:",
+            //     Font = new Font("Segoe UI", 9),
+            //     Location = new Point(15, 25),
+            //     Size = new Size(60, 20)
+            // };
 
-            dtpFromDate = new DateTimePicker
-            {
-                Font = new Font("Segoe UI", 9),
-                Location = new Point(80, 23),
-                Size = new Size(120, 25),
-                Value = DateTime.Now.AddMonths(-1)
-            };
+            // dtpFromDate = new DateTimePicker
+            // {
+            //     Font = new Font("Segoe UI", 9),
+            //     Location = new Point(80, 23),
+            //     Size = new Size(120, 25),
+            //     Value = DateTime.Now.AddMonths(-1)
+            // };
 
-            var lblToDate = new Label
-            {
-                Text = "Đến ngày:",
-                Font = new Font("Segoe UI", 9),
-                Location = new Point(15, 55),
-                Size = new Size(60, 20)
-            };
+            // var lblToDate = new Label
+            // {
+            //     Text = "Đến ngày:",
+            //     Font = new Font("Segoe UI", 9),
+            //     Location = new Point(15, 55),
+            //     Size = new Size(60, 20)
+            // };
 
-            dtpToDate = new DateTimePicker
-            {
-                Font = new Font("Segoe UI", 9),
-                Location = new Point(80, 53),
-                Size = new Size(120, 25),
-                Value = DateTime.Now
-            };
+            // dtpToDate = new DateTimePicker
+            // {
+            //     Font = new Font("Segoe UI", 9),
+            //     Location = new Point(80, 53),
+            //     Size = new Size(120, 25),
+            //     Value = DateTime.Now
+            // };
 
-            grpDateRange.Controls.AddRange(new Control[] { lblFromDate, dtpFromDate, lblToDate, dtpToDate });
+            // grpDateRange.Controls.AddRange(new Control[] { lblFromDate, dtpFromDate, lblToDate, dtpToDate });
 
             // Search Group
-            var grpSearch = new GroupBox
-            {
-                Text = "Tìm kiếm & Lọc",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Location = new Point(380, 10),
-                Size = new Size(400, 90)
-            };
+            // var grpSearch = new GroupBox
+            // {
+            //     Text = "Tìm kiếm & Lọc",
+            //     Font = new Font("Segoe UI", 10, FontStyle.Bold),
+            //     Location = new Point(380, 10),
+            //     Size = new Size(400, 90)
+            // };
 
-            var lblSearch = new Label
-            {
-                Text = "Tìm kiếm:",
-                Font = new Font("Segoe UI", 9),
-                Location = new Point(15, 25),
-                Size = new Size(60, 20)
-            };
+            // var lblSearch = new Label
+            // {
+            //     Text = "Tìm kiếm:",
+            //     Font = new Font("Segoe UI", 9),
+            //     Location = new Point(15, 25),
+            //     Size = new Size(60, 20)
+            // };
 
-            txtSearch = new TextBox
-            {
-                Font = new Font("Segoe UI", 9),
-                Location = new Point(80, 23),
-                Size = new Size(150, 25),
-                PlaceholderText = "Mã SP, tên SP..."
-            };
-            txtSearch.TextChanged += OnSearchTextChanged;
+            // txtSearch = new TextBox
+            // {
+            //     Font = new Font("Segoe UI", 9),
+            //     Location = new Point(80, 23),
+            //     Size = new Size(150, 25),
+            //     PlaceholderText = "Mã SP, tên SP..."
+            // };
+            // txtSearch.TextChanged += OnSearchTextChanged;
 
-            var lblWarehouse = new Label
-            {
-                Text = "Kho:",
-                Font = new Font("Segoe UI", 9),
-                Location = new Point(15, 55),
-                Size = new Size(60, 20)
-            };
+            // var lblWarehouse = new Label
+            // {
+            //     Text = "Kho:",
+            //     Font = new Font("Segoe UI", 9),
+            //     Location = new Point(15, 55),
+            //     Size = new Size(60, 20)
+            // };
 
-            cboWarehouse = new ComboBox
-            {
-                Font = new Font("Segoe UI", 9),
-                Location = new Point(80, 53),
-                Size = new Size(150, 25),
-                DropDownStyle = ComboBoxStyle.DropDownList
-            };
-            cboWarehouse.SelectedIndexChanged += OnWarehouseSelectionChanged;
+            // cboWarehouse = new ComboBox
+            // {
+            //     Font = new Font("Segoe UI", 9),
+            //     Location = new Point(80, 53),
+            //     Size = new Size(150, 25),
+            //     DropDownStyle = ComboBoxStyle.DropDownList
+            // };
+            // cboWarehouse.SelectedIndexChanged += OnWarehouseSelectionChanged;
 
-            btnClearFilters = new Button
-            {
-                Text = "🔄 Xóa bộ lọc",
-                Font = new Font("Segoe UI", 9),
-                Location = new Point(250, 23),
-                Size = new Size(100, 25),
-                BackColor = Color.FromArgb(149, 165, 166),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnClearFilters.FlatAppearance.BorderSize = 0;
-            btnClearFilters.Click += OnClearFiltersClick;
+            // btnClearFilters = new Button
+            // {
+            //     Text = "🔄 Xóa bộ lọc",
+            //     Font = new Font("Segoe UI", 9),
+            //     Location = new Point(250, 23),
+            //     Size = new Size(100, 25),
+            //     BackColor = Color.FromArgb(149, 165, 166),
+            //     ForeColor = Color.White,
+            //     FlatStyle = FlatStyle.Flat
+            // };
+            // btnClearFilters.FlatAppearance.BorderSize = 0;
+            // btnClearFilters.Click += OnClearFiltersClick;
 
-            grpSearch.Controls.AddRange(new Control[] { lblSearch, txtSearch, lblWarehouse, cboWarehouse, btnClearFilters });
+            // grpSearch.Controls.AddRange(new Control[] { lblSearch, txtSearch, lblWarehouse, cboWarehouse, btnClearFilters });
 
             // Action Buttons
-            btnGenerateReport = CreateStyledActionButton("📊 Tạo báo cáo", Color.FromArgb(46, 204, 113));
-            btnGenerateReport.Location = new Point(800, 25);
-            btnGenerateReport.Click += OnGenerateReportClick;
+            // btnGenerateReport = CreateStyledActionButton("📊 Tạo báo cáo", Color.FromArgb(46, 204, 113));
+            // btnGenerateReport.Location = new Point(800, 25);
+            // btnGenerateReport.Click += OnGenerateReportClick;
 
-            btnExportExcel = CreateStyledActionButton("📤 Xuất Excel", Color.FromArgb(52, 152, 219));
-            btnExportExcel.Location = new Point(800, 60);
-            btnExportExcel.Click += OnExportExcelClick;
+            // btnExportExcel = CreateStyledActionButton("📤 Xuất Excel", Color.FromArgb(52, 152, 219));
+            // btnExportExcel.Location = new Point(800, 60);
+            // btnExportExcel.Click += OnExportExcelClick;
 
-            btnPrintReport = CreateStyledActionButton("🖨️ In báo cáo", Color.FromArgb(155, 89, 182));
-            btnPrintReport.Location = new Point(920, 25);
-            btnPrintReport.Click += OnPrintReportClick;
+            // btnPrintReport = CreateStyledActionButton("🖨️ In báo cáo", Color.FromArgb(155, 89, 182));
+            // btnPrintReport.Location = new Point(920, 25);
+            // btnPrintReport.Click += OnPrintReportClick;
 
-            btnRefreshData = CreateStyledActionButton("🔄 Làm mới", Color.FromArgb(241, 196, 15));
-            btnRefreshData.Location = new Point(920, 60);
-            btnRefreshData.Click += OnRefreshDataClick;
+            // btnRefreshData = CreateStyledActionButton("🔄 Làm mới", Color.FromArgb(241, 196, 15));
+            // btnRefreshData.Location = new Point(920, 60);
+            // btnRefreshData.Click += OnRefreshDataClick;
 
-            pnlFilter.Controls.AddRange(new Control[] { grpDateRange, grpSearch, btnGenerateReport, btnExportExcel, btnPrintReport, btnRefreshData });
+            // pnlFilter.Controls.AddRange(new Control[] { grpDateRange, grpSearch, btnGenerateReport, btnExportExcel, btnPrintReport, btnRefreshData });
 
             // Statistics Panel
             var pnlStats = new FlowLayoutPanel
@@ -254,8 +255,8 @@ namespace AceCook
             dataGridViewInventory.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219);
             dataGridViewInventory.DefaultCellStyle.SelectionForeColor = Color.White;
 
-            // Add all to form
-            this.Controls.AddRange(new Control[] { dataGridViewInventory, pnlStats, pnlFilter, lblFormTitle });
+            // Add only remaining controls to form (không có pnlFilter)
+            this.Controls.AddRange(new Control[] { dataGridViewInventory, pnlStats, lblFormTitle });
         }
 
         private Button CreateStyledActionButton(string text, Color backColor)
@@ -320,7 +321,7 @@ namespace AceCook
         {
             try
             {
-                await LoadWarehouseOptionsAsync();
+                // Xóa LoadWarehouseOptionsAsync vì không còn cần thiết
                 await GenerateInventoryReportAsync();
             }
             catch (Exception ex)
@@ -330,27 +331,13 @@ namespace AceCook
             }
         }
 
-        private async Task LoadWarehouseOptionsAsync()
-        {
-            await Task.Run(() =>
-            {
-                this.Invoke((MethodInvoker)delegate
-                {
-                    cboWarehouse.Items.Clear();
-                    cboWarehouse.Items.Add("Tất cả kho");
-                    cboWarehouse.Items.Add("Kho A");
-                    cboWarehouse.Items.Add("Kho B");
-                    cboWarehouse.SelectedIndex = 0;
-                });
-            });
-        }
-
         private async Task GenerateInventoryReportAsync()
         {
             try
             {
-                var fromDate = dtpFromDate.Value;
-                var toDate = dtpToDate.Value;
+                // Sử dụng ngày mặc định thay vì từ DateTimePicker
+                var fromDate = DateTime.Now.AddMonths(-1);
+                var toDate = DateTime.Now;
 
                 await Task.Run(() =>
                 {
@@ -475,77 +462,15 @@ namespace AceCook
             lblOutOfStockCount.Text = outOfStock.ToString();
         }
 
-        private void ApplyCurrentFilters()
-        {
-            if (_inventoryReportData == null) return;
+        // Xóa ApplyCurrentFilters method vì không còn filter
 
-            var filteredData = _inventoryReportData.AsEnumerable();
-
-            // Apply search filter
-            var searchText = txtSearch.Text.Trim().ToLower();
-            if (!string.IsNullOrEmpty(searchText))
-            {
-                filteredData = filteredData.Where(d => 
-                    d.MaSP.ToLower().Contains(searchText) ||
-                    d.TenSanPham.ToLower().Contains(searchText) ||
-                    d.Loai.ToLower().Contains(searchText));
-            }
-
-            // Apply warehouse filter
-            var selectedWarehouse = cboWarehouse.SelectedItem?.ToString();
-            if (selectedWarehouse != "Tất cả kho" && !string.IsNullOrEmpty(selectedWarehouse))
-            {
-                filteredData = filteredData.Where(d => 
-                    d.ChiTietTheoKho.Contains(selectedWarehouse));
-            }
-
-            var result = filteredData.ToList();
-            RefreshInventoryDataGrid(result);
-            UpdateReportStatistics(result);
-        }
-
-        // Event Handlers
-        private async void OnGenerateReportClick(object sender, EventArgs e)
-        {
-            await GenerateInventoryReportAsync();
-        }
-
-        private void OnExportExcelClick(object sender, EventArgs e)
-        {
-            MessageBox.Show("Chức năng xuất Excel sẽ được phát triển trong phiên bản tiếp theo.", 
-                "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void OnPrintReportClick(object sender, EventArgs e)
-        {
-            MessageBox.Show("Chức năng in báo cáo sẽ được phát triển trong phiên bản tiếp theo.", 
-                "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private async void OnRefreshDataClick(object sender, EventArgs e)
-        {
-            await LoadInitialDataAsync();
-        }
-
-        private void OnClearFiltersClick(object sender, EventArgs e)
-        {
-            txtSearch.Clear();
-            cboWarehouse.SelectedIndex = 0;
-            if (_inventoryReportData != null)
-            {
-                RefreshInventoryDataGrid(_inventoryReportData);
-                UpdateReportStatistics(_inventoryReportData);
-            }
-        }
-
-        private void OnSearchTextChanged(object sender, EventArgs e)
-        {
-            ApplyCurrentFilters();
-        }
-
-        private void OnWarehouseSelectionChanged(object sender, EventArgs e)
-        {
-            ApplyCurrentFilters();
-        }
+        // Xóa tất cả Event Handlers cho các button và filter controls
+        // private async void OnGenerateReportClick(object sender, EventArgs e)
+        // private void OnExportExcelClick(object sender, EventArgs e)
+        // private void OnPrintReportClick(object sender, EventArgs e)
+        // private async void OnRefreshDataClick(object sender, EventArgs e)
+        // private void OnClearFiltersClick(object sender, EventArgs e)
+        // private void OnSearchTextChanged(object sender, EventArgs e)
+        // private void OnWarehouseSelectionChanged(object sender, EventArgs e)
     }
 }

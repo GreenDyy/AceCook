@@ -617,23 +617,17 @@ namespace AceCook
                     orders = await _orderRepository.GetAllOrdersAsync();
                 }
 
-                // Apply date range filter - Alternative approach
+                // Apply date range filter - Fixed approach
                 if (dtpStartDate.Value <= dtpEndDate.Value)
                 {
-                    var startDate = dtpStartDate.Value.Date;
-                    var endDate = dtpEndDate.Value.Date;
+                    var startDateOnly = DateOnly.FromDateTime(dtpStartDate.Value.Date);
+                    var endDateOnly = DateOnly.FromDateTime(dtpEndDate.Value.Date);
                     
-                    // Filter in memory after converting to list
-                    orders = orders.ToList().Where(o => o.NgayDat.HasValue)
-                        .Where(o => 
-                        {
-                            // Convert DateOnly to DateTime for comparison
-                            var orderDateTime = new DateTime(o.NgayDat.Value.Year, 
-                                                           o.NgayDat.Value.Month, 
-                                                           o.NgayDat.Value.Day);
-                            return orderDateTime >= startDate && orderDateTime <= endDate;
-                        })
-                        .ToList();
+                    // Filter in memory after ensuring we have a materialized list
+                    orders = orders.ToList().Where(o => o.NgayDat.HasValue && 
+                                                       o.NgayDat.Value >= startDateOnly && 
+                                                       o.NgayDat.Value <= endDateOnly)
+                                           .ToList();
                 }
 
                 // Apply search filter
