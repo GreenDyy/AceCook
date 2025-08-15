@@ -93,7 +93,7 @@ namespace AceCook
 
             txtSearch = new TextBox
             {
-                Width = 250,
+                Width = 300,
                 Font = new Font("Segoe UI", 10),
                 PlaceholderText = "Mã đơn hàng, tên KH, trạng thái...",
                 Margin = new Padding(0, 5, 20, 0)
@@ -110,7 +110,7 @@ namespace AceCook
 
             cboStatusFilter = new ComboBox
             {
-                Width = 150,
+                Width = 180,
                 Font = new Font("Segoe UI", 10),
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Margin = new Padding(0, 5, 20, 0)
@@ -129,7 +129,7 @@ namespace AceCook
 
             dtpStartDate = new DateTimePicker
             {
-                Width = 120,
+                Width = 200,
                 Font = new Font("Segoe UI", 10),
                 Format = DateTimePickerFormat.Short,
                 Value = DateTime.Now.AddDays(-30),
@@ -146,7 +146,7 @@ namespace AceCook
 
             dtpEndDate = new DateTimePicker
             {
-                Width = 120,
+                Width = 200,
                 Font = new Font("Segoe UI", 10),
                 Format = DateTimePickerFormat.Short,
                 Value = DateTime.Now,
@@ -156,8 +156,8 @@ namespace AceCook
             btnSearch = new Button
             {
                 Text = "🔍 Tìm kiếm",
-                Width = 120,
-                Height = 35,
+               Width = 200,
+                Height = 40,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(52, 152, 219),
                 ForeColor = Color.White,
@@ -170,8 +170,8 @@ namespace AceCook
             btnReset = new Button
             {
                 Text = "🔄 Làm mới",
-                Width = 100,
-                Height = 35,
+                Width = 200,
+                Height = 40,
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(95, 95, 95),
                 ForeColor = Color.White,
