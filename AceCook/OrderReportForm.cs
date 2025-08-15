@@ -122,7 +122,7 @@ namespace AceCook
             {
                 Text = "🔄 Làm mới",
                 Size = new Size(120, 35),
-                Location = new Point(470, 12),
+                Location = new Point(580, 12),
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(95, 95, 95),
                 ForeColor = Color.White,
