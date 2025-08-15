@@ -30,7 +30,6 @@ namespace AceCook
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panelHeader = new System.Windows.Forms.Panel();
             this.panelHeaderActions = new System.Windows.Forms.Panel();
             this.btnPrint = new System.Windows.Forms.Button();
@@ -41,7 +40,6 @@ namespace AceCook
             this.dateTimePickerFrom = new System.Windows.Forms.DateTimePicker();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.lblSubtitle = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
             this.panelDetails = new System.Windows.Forms.Panel();
             this.dataGridViewDetails = new System.Windows.Forms.DataGridView();
@@ -52,27 +50,24 @@ namespace AceCook
             this.panelDetailsHeader = new System.Windows.Forms.Panel();
             this.lblPeriod = new System.Windows.Forms.Label();
             this.lblDetailsTitle = new System.Windows.Forms.Label();
-            this.pictureBox7 = new System.Windows.Forms.PictureBox();
             this.panelHeader.SuspendLayout();
             this.panelHeaderActions.SuspendLayout();
             this.panelDateFilter.SuspendLayout();
             this.panelDetails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDetails)).BeginInit();
             this.panelDetailsHeader.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
             this.SuspendLayout();
             // 
             // panelHeader
             // 
             this.panelHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(130)))), ((int)(((byte)(246)))));
             this.panelHeader.Controls.Add(this.panelHeaderActions);
-            this.panelHeader.Controls.Add(this.lblSubtitle);
             this.panelHeader.Controls.Add(this.lblTitle);
             this.panelHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelHeader.Location = new System.Drawing.Point(0, 0);
             this.panelHeader.Name = "panelHeader";
             this.panelHeader.Padding = new System.Windows.Forms.Padding(40, 30, 40, 30);
-            this.panelHeader.Size = new System.Drawing.Size(1200, 160);
+            this.panelHeader.Size = new System.Drawing.Size(1200, 180); // Sửa từ 160 thành 180 để khớp với panelDetails.Location
             this.panelHeader.TabIndex = 0;
             // 
             // panelHeaderActions
@@ -83,7 +78,7 @@ namespace AceCook
             this.panelHeaderActions.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelHeaderActions.Location = new System.Drawing.Point(600, 30);
             this.panelHeaderActions.Name = "panelHeaderActions";
-            this.panelHeaderActions.Size = new System.Drawing.Size(570, 120);
+            this.panelHeaderActions.Size = new System.Drawing.Size(570, 120); // Sửa từ 100 thành 120 để khớp với chiều cao mới
             this.panelHeaderActions.TabIndex = 2;
             // 
             // btnPrint
@@ -94,9 +89,9 @@ namespace AceCook
             this.btnPrint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPrint.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPrint.ForeColor = System.Drawing.Color.White;
-            this.btnPrint.Location = new System.Drawing.Point(440, 70);
+            this.btnPrint.Location = new System.Drawing.Point(450, 50); // Điều chỉnh vị trí
             this.btnPrint.Name = "btnPrint";
-            this.btnPrint.Size = new System.Drawing.Size(120, 35);
+            this.btnPrint.Size = new System.Drawing.Size(110, 35);
             this.btnPrint.TabIndex = 2;
             this.btnPrint.Text = "📄 In báo cáo";
             this.btnPrint.UseVisualStyleBackColor = false;
@@ -111,9 +106,9 @@ namespace AceCook
             this.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExportExcel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnExportExcel.ForeColor = System.Drawing.Color.White;
-            this.btnExportExcel.Location = new System.Drawing.Point(440, 25);
+            this.btnExportExcel.Location = new System.Drawing.Point(450, 10); // Điều chỉnh vị trí
             this.btnExportExcel.Name = "btnExportExcel";
-            this.btnExportExcel.Size = new System.Drawing.Size(120, 35);
+            this.btnExportExcel.Size = new System.Drawing.Size(110, 35);
             this.btnExportExcel.TabIndex = 1;
             this.btnExportExcel.Text = "📊 Xuất Excel";
             this.btnExportExcel.UseVisualStyleBackColor = false;
@@ -122,17 +117,18 @@ namespace AceCook
             // 
             // panelDateFilter
             // 
-            this.panelDateFilter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(20)))));
+            this.panelDateFilter.BackColor = System.Drawing.Color.Transparent; // Xóa background màu vàng, để trong suốt
             this.panelDateFilter.Controls.Add(this.btnFilter);
             this.panelDateFilter.Controls.Add(this.dateTimePickerTo);
             this.panelDateFilter.Controls.Add(this.dateTimePickerFrom);
             this.panelDateFilter.Controls.Add(this.label4);
             this.panelDateFilter.Controls.Add(this.label3);
-            this.panelDateFilter.Location = new System.Drawing.Point(20, 15);
+            this.panelDateFilter.Location = new System.Drawing.Point(20, 10); // Điều chỉnh vị trí
             this.panelDateFilter.Name = "panelDateFilter";
             this.panelDateFilter.Padding = new System.Windows.Forms.Padding(20);
-            this.panelDateFilter.Size = new System.Drawing.Size(420, 100);
+            this.panelDateFilter.Size = new System.Drawing.Size(420, 85); // Điều chỉnh kích thước
             this.panelDateFilter.TabIndex = 0;
+            this.panelDateFilter.Visible = true; // Đảm bảo visible
             // 
             // btnFilter
             // 
@@ -190,23 +186,12 @@ namespace AceCook
             this.label3.TabIndex = 0;
             this.label3.Text = "Từ ngày:";
             // 
-            // lblSubtitle
-            // 
-            this.lblSubtitle.AutoSize = true;
-            this.lblSubtitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSubtitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(200)))));
-            this.lblSubtitle.Location = new System.Drawing.Point(45, 95);
-            this.lblSubtitle.Name = "lblSubtitle";
-            this.lblSubtitle.Size = new System.Drawing.Size(280, 28);
-            this.lblSubtitle.TabIndex = 1;
-            this.lblSubtitle.Text = "Thống kê doanh thu theo thời gian";
-            // 
             // lblTitle
             // 
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 28F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTitle.ForeColor = System.Drawing.Color.White;
-            this.lblTitle.Location = new System.Drawing.Point(40, 30);
+            this.lblTitle.Location = new System.Drawing.Point(40, 50); // Căn giữa theo chiều cao mới
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(450, 62);
             this.lblTitle.TabIndex = 0;
@@ -272,7 +257,7 @@ namespace AceCook
             this.colDate.MinimumWidth = 6;
             this.colDate.Name = "colDate";
             this.colDate.ReadOnly = true;
-            this.colDate.Width = 180;
+            this.colDate.Width = 300;
             this.colDate.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             // 
             // colInvoices
@@ -290,7 +275,7 @@ namespace AceCook
             this.colRevenue.MinimumWidth = 6;
             this.colRevenue.Name = "colRevenue";
             this.colRevenue.ReadOnly = true;
-            this.colRevenue.Width = 200;
+            this.colRevenue.Width = 300;
             this.colRevenue.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
             this.colRevenue.DefaultCellStyle.Format = "N0";
             // 
@@ -309,20 +294,20 @@ namespace AceCook
             this.panelDetailsHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(126)))), ((int)(((byte)(234)))));
             this.panelDetailsHeader.Controls.Add(this.lblPeriod);
             this.panelDetailsHeader.Controls.Add(this.lblDetailsTitle);
-            this.panelDetailsHeader.Controls.Add(this.pictureBox7);
             this.panelDetailsHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelDetailsHeader.Location = new System.Drawing.Point(0, 0);
             this.panelDetailsHeader.Name = "panelDetailsHeader";
             this.panelDetailsHeader.Padding = new System.Windows.Forms.Padding(20);
             this.panelDetailsHeader.Size = new System.Drawing.Size(1200, 80);
             this.panelDetailsHeader.TabIndex = 0;
+            this.panelDetailsHeader.Visible = false; // Ẩn phần header chi tiết
             // 
             // lblPeriod
             // 
             this.lblPeriod.AutoSize = true;
             this.lblPeriod.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPeriod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(200)))));
-            this.lblPeriod.Location = new System.Drawing.Point(85, 45);
+            this.lblPeriod.Location = new System.Drawing.Point(25, 45);
             this.lblPeriod.Name = "lblPeriod";
             this.lblPeriod.Size = new System.Drawing.Size(336, 20);
             this.lblPeriod.TabIndex = 2;
@@ -333,20 +318,11 @@ namespace AceCook
             this.lblDetailsTitle.AutoSize = true;
             this.lblDetailsTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDetailsTitle.ForeColor = System.Drawing.Color.White;
-            this.lblDetailsTitle.Location = new System.Drawing.Point(85, 20);
+            this.lblDetailsTitle.Location = new System.Drawing.Point(25, 20);
             this.lblDetailsTitle.Name = "lblDetailsTitle";
             this.lblDetailsTitle.Size = new System.Drawing.Size(308, 37);
             this.lblDetailsTitle.TabIndex = 1;
             this.lblDetailsTitle.Text = "Chi tiết doanh thu theo ngày";
-            // 
-            // pictureBox7
-            // 
-            this.pictureBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(50)))));
-            this.pictureBox7.Location = new System.Drawing.Point(20, 25);
-            this.pictureBox7.Name = "pictureBox7";
-            this.pictureBox7.Size = new System.Drawing.Size(50, 50);
-            this.pictureBox7.TabIndex = 0;
-            this.pictureBox7.TabStop = false;
             // 
             // RevenueReportForm
             // 
@@ -372,7 +348,6 @@ namespace AceCook
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDetails)).EndInit();
             this.panelDetailsHeader.ResumeLayout(false);
             this.panelDetailsHeader.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -381,7 +356,6 @@ namespace AceCook
 
         private Panel panelHeader;
         private Label lblTitle;
-        private Label lblSubtitle;
         private Panel panelHeaderActions;
         private Panel panelDateFilter;
         private Label label3;
@@ -395,7 +369,6 @@ namespace AceCook
         private Panel panelDetailsHeader;
         private Label lblPeriod;
         private Label lblDetailsTitle;
-        private PictureBox pictureBox7;
         private DataGridView dataGridViewDetails;
         private DataGridViewTextBoxColumn colDate;
         private DataGridViewTextBoxColumn colInvoices;

@@ -24,8 +24,6 @@ namespace AceCook
         private DateTimePicker dtpEndDate = null!;
         private Button btnSearch = null!;
         private Button btnReset = null!;
-        private Button btnExportReport = null!;
-        private Button btnRefresh = null!;
         private Label lblTitle = null!;
         private Label lblSearch = null!;
         private Label lblStatusFilter = null!;
@@ -108,7 +106,7 @@ namespace AceCook
                 Font = new Font("Segoe UI", 10),
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            cboStatusFilter.Items.AddRange(new object[] { "Tất cả", "Đơn hàng mới", "Đã hoàn thành" });
+            cboStatusFilter.Items.AddRange(new object[] { "Tất cả", "Đang xử lý", "Chờ xử lý", "Đã giao" });
             cboStatusFilter.SelectedIndex = 0;
             cboStatusFilter.SelectedIndexChanged += CboStatusFilter_SelectedIndexChanged;
 
@@ -248,41 +246,11 @@ namespace AceCook
                 BackColor = Color.Transparent
             };
 
-            btnExportReport = new Button
-            {
-                Text = "📊 Xuất báo cáo",
-                Size = new Size(200, 60),
-                Location = new Point(0, 0),
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnExportReport.FlatAppearance.BorderSize = 0;
-            btnExportReport.Click += BtnExportReport_Click;
-
-            btnRefresh = new Button
-            {
-                Text = "🔄 Làm mới dữ liệu",
-                Size = new Size(200, 60),
-                Location = new Point(220, 0),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(52, 152, 219),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnRefresh.FlatAppearance.BorderSize = 0;
-            btnRefresh.Click += BtnRefresh_Click;
-
-            pnlActions.Controls.AddRange(new Control[] { btnExportReport, btnRefresh });
-
             // Main DataGridView for detailed report
             dataGridViewOrderReport = new DataGridView
             {
                 Size = new Size(1340, 250), // Giảm từ 300 xuống 250
-                Location = new Point(30, 370),
+                Location = new Point(30, 290), // Thay đổi từ 370 xuống 290 để loại bỏ khoảng trống
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -302,7 +270,7 @@ namespace AceCook
             dataGridViewOrderSummary = new DataGridView
             {
                 Size = new Size(1340, 100), // Giảm từ 120 xuống 100
-                Location = new Point(30, 640), // Điều chỉnh vị trí: 370 + 250 + 20 = 640
+                Location = new Point(30, 560), // Điều chỉnh: 290 + 250 + 20 = 560
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -322,7 +290,7 @@ namespace AceCook
             dataGridViewOrderStatistics = new DataGridView
             {
                 Size = new Size(1340, 150), // Giảm từ 200 xuống 150
-                Location = new Point(30, 760), // Điều chỉnh vị trí: 640 + 100 + 20 = 760
+                Location = new Point(30, 680), // Điều chỉnh: 560 + 100 + 20 = 680
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -345,12 +313,12 @@ namespace AceCook
 
             // Add controls to form - update to include new table
             this.Controls.AddRange(new Control[] { 
-                lblTitle, pnlFilters, pnlSummary, pnlActions, 
+                lblTitle, pnlFilters, pnlSummary, // pnlActions, // Comment out để ẩn panel
                 dataGridViewOrderReport, dataGridViewOrderSummary, dataGridViewOrderStatistics // Add new table
             });
 
             // Adjust form height to fit screen better
-            this.Size = new Size(1400, 950); // Giảm từ 1080 xuống 950
+            this.Size = new Size(1400, 870); // Điều chỉnh từ 950 xuống 870 do đã loại bỏ khoảng trống
         }
 
         private void StyleDataGridView(DataGridView dgv)
@@ -384,6 +352,7 @@ namespace AceCook
             var totalOrders = orders.Count;
             var completedOrders = orders.Count(o => o.TrangThai == "Đã giao");
             var pendingOrders = orders.Count(o => o.TrangThai == "Đang xử lý" || o.TrangThai == "Chờ xử lý");
+            var newOrders = orders.Count(o => string.IsNullOrEmpty(o.TrangThai) || o.TrangThai == "Mới");
             
             decimal totalRevenue = 0;
             foreach (var order in orders.Where(o => o.TrangThai == "Đã giao"))
@@ -395,8 +364,8 @@ namespace AceCook
             }
 
             lblTotalOrders.Text = $"Tổng đơn hàng: {totalOrders}";
-            lblCompletedOrders.Text = $"Đã hoàn thành: {completedOrders}";
-            lblPendingOrders.Text = $"Đơn hàng mới: {pendingOrders}";
+            lblCompletedOrders.Text = $"Đã giao: {completedOrders}";
+            lblPendingOrders.Text = $"Đang xử lý: {pendingOrders}";
             lblTotalRevenue.Text = $"Tổng doanh thu: {totalRevenue:N0} VNĐ";
 
             // Refresh detailed report
@@ -476,7 +445,7 @@ namespace AceCook
                 row.Cells["CustomerInfo"].Value = order.MaKhNavigation?.TenKh ?? "N/A";
                 row.Cells["NgayDat"].Value = order.NgayDat?.ToString("dd/MM/yyyy");
                 row.Cells["NgayGiao"].Value = order.NgayGiao?.ToString("dd/MM/yyyy") ?? "Chưa giao";
-                row.Cells["TrangThai"].Value = order.TrangThai ?? "Đơn hàng mới";
+                row.Cells["TrangThai"].Value = order.TrangThai ?? "Mới";
                 
                 // Calculate total amount
                 decimal totalAmount = 0;
@@ -490,7 +459,7 @@ namespace AceCook
                 row.Cells["ItemCount"].Value = itemCount;
 
                 // Style status column
-                StyleStatusCell(row.Cells["TrangThai"], order.TrangThai ?? "Đơn hàng mới");
+                StyleStatusCell(row.Cells["TrangThai"], order.TrangThai ?? "Mới");
             }
         }
 
@@ -529,7 +498,7 @@ namespace AceCook
             });
 
             // Group by status
-            var statusGroups = orders.GroupBy(o => o.TrangThai ?? "Đơn hàng mới");
+            var statusGroups = orders.GroupBy(o => o.TrangThai ?? "Mới");
             var totalOrders = orders.Count;
 
             foreach (var group in statusGroups)
@@ -561,14 +530,24 @@ namespace AceCook
 
         private void StyleStatusCell(DataGridViewCell cell, string status)
         {
-            if (status == "Đã hoàn thành")
+            if (status == "Đã giao")
             {
                 cell.Style.ForeColor = Color.Green;
                 cell.Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
             }
-            else if (status == "Đơn hàng mới")
+            else if (status == "Đang xử lý")
+            {
+                cell.Style.ForeColor = Color.Orange;
+                cell.Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+            }
+            else if (status == "Chờ xử lý")
             {
                 cell.Style.ForeColor = Color.Blue;
+                cell.Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+            }
+            else if (string.IsNullOrEmpty(status) || status == "Mới")
+            {
+                cell.Style.ForeColor = Color.DarkBlue;
                 cell.Style.Font = new Font("Segoe UI", 9, FontStyle.Bold);
             }
             else
@@ -606,30 +585,18 @@ namespace AceCook
             await ApplyFilters();
         }
 
-        private void BtnRefresh_Click(object? sender, EventArgs e)
-        {
-            LoadReportData();
-        }
-
-        private void BtnExportReport_Click(object? sender, EventArgs e)
-        {
-            try
-            {
-                // This would be implemented to export to Excel or PDF
-                MessageBox.Show("Chức năng xuất báo cáo sẽ được triển khai trong phiên bản tiếp theo!", 
-                    "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi xuất báo cáo: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         private async Task ApplyFilters()
         {
             try
             {
+                // Validate date range first
+                if (dtpStartDate.Value > dtpEndDate.Value)
+                {
+                    MessageBox.Show("Ngày bắt đầu không thể lớn hơn ngày kết thúc!", "Lỗi", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 List<Dondathang> orders;
 
                 // Apply status filter
@@ -650,12 +617,22 @@ namespace AceCook
                     orders = await _orderRepository.GetAllOrdersAsync();
                 }
 
-                // Apply date range filter
+                // Apply date range filter - Alternative approach
                 if (dtpStartDate.Value <= dtpEndDate.Value)
                 {
-                    orders = orders.Where(o => o.NgayDat.HasValue &&
-                        o.NgayDat.Value.ToDateTime(TimeOnly.MinValue) >= dtpStartDate.Value &&
-                        o.NgayDat.Value.ToDateTime(TimeOnly.MinValue) <= dtpEndDate.Value.AddDays(1).AddSeconds(-1))
+                    var startDate = dtpStartDate.Value.Date;
+                    var endDate = dtpEndDate.Value.Date;
+                    
+                    // Filter in memory after converting to list
+                    orders = orders.ToList().Where(o => o.NgayDat.HasValue)
+                        .Where(o => 
+                        {
+                            // Convert DateOnly to DateTime for comparison
+                            var orderDateTime = new DateTime(o.NgayDat.Value.Year, 
+                                                           o.NgayDat.Value.Month, 
+                                                           o.NgayDat.Value.Day);
+                            return orderDateTime >= startDate && orderDateTime <= endDate;
+                        })
                         .ToList();
                 }
 
@@ -664,7 +641,7 @@ namespace AceCook
                 {
                     var searchTerm = txtSearch.Text.ToLower();
                     orders = orders.Where(o => 
-                        o.MaDdh.ToLower().Contains(searchTerm) ||
+                        (o.MaDdh?.ToLower().Contains(searchTerm) ?? false) ||
                         (o.MaKhNavigation?.TenKh?.ToLower().Contains(searchTerm) ?? false) ||
                         (o.TrangThai?.ToLower().Contains(searchTerm) ?? false)
                     ).ToList();
@@ -712,13 +689,9 @@ namespace AceCook
                 Width = 446
             });
 
-            // Apply date range filter (using the current date picker values)
-            var startDate = dtpStartDate.Value.Date;
-            var endDate = dtpEndDate.Value.Date.AddDays(1).AddSeconds(-1);
-            
-            var filteredOrders = orders.Where(o => o.NgayDat.HasValue &&
-                o.NgayDat.Value.ToDateTime(TimeOnly.MinValue) >= startDate &&
-                o.NgayDat.Value.ToDateTime(TimeOnly.MinValue) <= endDate).ToList();
+            // Note: orders parameter already contains filtered data from ApplyFilters(),
+            // so we don't need to apply date filter again here
+            var filteredOrders = orders;
 
             // Group orders by customer and calculate statistics
             var topCustomers = filteredOrders
