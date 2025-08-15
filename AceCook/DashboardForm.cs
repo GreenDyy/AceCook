@@ -117,27 +117,28 @@ namespace AceCook
             // Dashboard
             //var dashboardNode = CreateMenuNode("📊 Dashboard", "dashboard", Color.FromArgb(52, 152, 219));
 
-            // Kinh doanh
-            var businessNode = CreateMenuNode("💼 Kinh doanh", "business", Color.FromArgb(46, 204, 113));
-            businessNode.Nodes.Add(CreateMenuNode("👥 Quản lý khách hàng", "customers", Color.FromArgb(46, 204, 113)));
-            businessNode.Nodes.Add(CreateMenuNode("📋 Quản lý đơn hàng", "orders", Color.FromArgb(46, 204, 113)));
+            // 💼 Kinh doanh
+            var businessNode = CreateMenuNode("💼 Kinh doanh", "business", Color.FromArgb(52, 152, 219));
+            businessNode.Nodes.Add(CreateMenuNode("👥 Quản lý khách hàng", "customers", Color.FromArgb(41, 128, 185)));
+            businessNode.Nodes.Add(CreateMenuNode("📋 Quản lý đơn hàng", "orders", Color.FromArgb(41, 128, 185)));
 
-            // Kho hàng
-            var warehouseNode = CreateMenuNode("🏪 Kho hàng", "warehouse", Color.FromArgb(155, 89, 182));
-            warehouseNode.Nodes.Add(CreateMenuNode("📦 Quản lý sản phẩm", "products", Color.FromArgb(155, 89, 182)));
-            warehouseNode.Nodes.Add(CreateMenuNode("📊 Quản lý tồn kho", "inventory", Color.FromArgb(155, 89, 182)));
+            // 🏪 Kho hàng
+            var warehouseNode = CreateMenuNode("🏪 Kho hàng", "warehouse", Color.FromArgb(142, 68, 173));
+            warehouseNode.Nodes.Add(CreateMenuNode("📦 Quản lý sản phẩm", "products", Color.FromArgb(136, 84, 208)));
+            warehouseNode.Nodes.Add(CreateMenuNode("📊 Quản lý tồn kho", "inventory", Color.FromArgb(136, 84, 208)));
 
-            // Nhà cung cấp
-            var supplierNode = CreateMenuNode("🚚 Nhà cung cấp", "suppliers", Color.FromArgb(230, 126, 34));
+            // 🚚 Nhà cung cấp
+            var supplierNode = CreateMenuNode("🚚 Nhà cung cấp", "suppliers", Color.FromArgb(26, 188, 156));
 
-            // Báo cáo
-            var reportNode = CreateMenuNode("📈 Báo cáo", "reports", Color.FromArgb(231, 76, 60));
-            reportNode.Nodes.Add(CreateMenuNode("💰 Báo cáo doanh thu", "revenue_report", Color.FromArgb(231, 76, 60)));
-            reportNode.Nodes.Add(CreateMenuNode("📊 Báo cáo tồn kho", "inventory_report", Color.FromArgb(231, 76, 60)));
-            reportNode.Nodes.Add(CreateMenuNode("📋 Báo cáo đơn hàng", "order_report", Color.FromArgb(231, 76, 60)));
+            // 📈 Báo cáo
+            var reportNode = CreateMenuNode("📈 Báo cáo", "reports", Color.FromArgb(241, 196, 15));
+            reportNode.Nodes.Add(CreateMenuNode("💰 Báo cáo doanh thu", "revenue_report", Color.FromArgb(243, 156, 18)));
+            reportNode.Nodes.Add(CreateMenuNode("📊 Báo cáo tồn kho", "inventory_report", Color.FromArgb(243, 156, 18)));
+            reportNode.Nodes.Add(CreateMenuNode("📋 Báo cáo đơn hàng", "order_report", Color.FromArgb(243, 156, 18)));
 
-            // Đăng xuất
-            var logoutNode = CreateMenuNode("🚪 Đăng xuất", "logout", Color.FromArgb(220, 53, 69));
+            // 🚪 Đăng xuất
+            var logoutNode = CreateMenuNode("🚪 Đăng xuất", "logout", Color.FromArgb(231, 76, 60));
+
 
             // Thêm nodes vào TreeView
             //treeViewMenu.Nodes.Add(dashboardNode);
@@ -162,13 +163,13 @@ namespace AceCook
                 ForeColor = color,
                 NodeFont = new Font("Segoe UI", 10, FontStyle.Regular)
             };
-            
+
             // Thêm tooltip cho nút đăng xuất
             if (tag == "logout")
             {
                 node.ToolTipText = "Đăng xuất khỏi hệ thống và quay về màn hình đăng nhập";
             }
-            
+
             return node;
         }
 
@@ -417,7 +418,7 @@ namespace AceCook
         private void ShowComingSoonContent(string title)
         {
             panelContent.Controls.Clear();
-            
+
             var panel = new Panel
             {
                 Dock = DockStyle.Fill,
@@ -440,7 +441,7 @@ namespace AceCook
         private void ShowErrorContent(string title, string errorMessage)
         {
             panelContent.Controls.Clear();
-            
+
             var panel = new Panel
             {
                 Dock = DockStyle.Fill,
@@ -482,9 +483,9 @@ namespace AceCook
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            var result = MessageBox.Show("Bạn có chắc chắn muốn thoát?", "Xác nhận thoát", 
+            var result = MessageBox.Show("Bạn có chắc chắn muốn thoát?", "Xác nhận thoát",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            
+
             if (result == DialogResult.Yes)
             {
                 Application.Exit();

@@ -156,16 +156,13 @@ namespace AceCook
             btnRefresh = CreateActionButton("🔄 Làm mới dữ liệu", Color.FromArgb(52, 152, 219));
             btnRefresh.Click += BtnRefresh_Click;
 
-            var btnViewDetails = CreateActionButton("👁️ Xem chi tiết", Color.FromArgb(108, 92, 231));
-            btnViewDetails.Click += BtnViewDetails_Click;
-
             btnEdit = CreateActionButton("✏️ Chỉnh sửa sản phẩm", Color.FromArgb(255, 193, 7));
             btnEdit.Click += BtnEdit_Click;
 
             btnDelete = CreateActionButton("🗑️ Xóa sản phẩm", Color.FromArgb(231, 76, 60));
             btnDelete.Click += BtnDelete_Click;
 
-            pnlActions.Controls.AddRange(new Control[] { btnAdd, btnRefresh, btnViewDetails, btnEdit, btnDelete });
+            pnlActions.Controls.AddRange(new Control[] { btnAdd, btnRefresh, btnEdit, btnDelete });
 
             // DataGridView
             dataGridViewProducts = new DataGridView
@@ -205,8 +202,8 @@ namespace AceCook
             var btn = new Button
             {
                 Text = text,
-                Width = 200,
-                Height = 40,
+                Width = 250,
+                Height = 60,
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = backColor,
                 ForeColor = Color.White,
@@ -228,6 +225,10 @@ namespace AceCook
                 
                 // Then load categories
                 await LoadCategories();
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
@@ -254,6 +255,10 @@ namespace AceCook
                 {
                     UpdateCategoryComboBox(categories);
                 }
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
@@ -285,6 +290,10 @@ namespace AceCook
             {
                 _products = await _productRepository.GetAllProductsAsync();
                 RefreshDataGridView(_products);
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
@@ -362,25 +371,28 @@ namespace AceCook
                 });
 
                 // Populate data
-                if (products != null)
+                if (products != null && products.Count > 0)
                 {
                     foreach (var product in products)
                     {
                         try
                         {
-                            var rowIndex = dataGridViewProducts.Rows.Add();
-                            var row = dataGridViewProducts.Rows[rowIndex];
+                            if (product != null)
+                            {
+                                var rowIndex = dataGridViewProducts.Rows.Add();
+                                var row = dataGridViewProducts.Rows[rowIndex];
 
-                            row.Cells["MaSp"].Value = product.MaSp ?? "N/A";
-                            row.Cells["TenSp"].Value = product.TenSp ?? "N/A";
-                            row.Cells["MoTa"].Value = product.MoTa ?? "N/A";
-                            row.Cells["Gia"].Value = (product.Gia ?? 0).ToString("N0") + " VNĐ";
-                            row.Cells["DVTSP"].Value = product.Dvtsp ?? "N/A";
-                            row.Cells["Loai"].Value = product.Loai ?? "N/A";
+                                row.Cells["MaSp"].Value = product.MaSp ?? "N/A";
+                                row.Cells["TenSp"].Value = product.TenSp ?? "N/A";
+                                row.Cells["MoTa"].Value = product.MoTa ?? "N/A";
+                                row.Cells["Gia"].Value = (product.Gia ?? 0).ToString("N0") + " VNĐ";
+                                row.Cells["DVTSP"].Value = product.Dvtsp ?? "N/A";
+                                row.Cells["Loai"].Value = product.Loai ?? "N/A";
+                            }
                         }
                         catch (Exception ex)
                         {
-                            System.Diagnostics.Debug.WriteLine($"Error processing product {product.MaSp}: {ex.Message}");
+                            System.Diagnostics.Debug.WriteLine($"Error processing product {product?.MaSp}: {ex.Message}");
                             // Bỏ qua dòng lỗi và tiếp tục
                         }
                     }
@@ -404,12 +416,29 @@ namespace AceCook
             {
                 try
                 {
-                    var productId = dataGridViewProducts.Rows[e.RowIndex].Cells["MaSp"].Value.ToString();
-                    var product = await _productRepository.GetProductByIdAsync(productId);
-                    if (product != null)
+                    var productId = dataGridViewProducts.Rows[e.RowIndex].Cells["MaSp"].Value?.ToString();
+                    if (!string.IsNullOrEmpty(productId))
                     {
-                        ViewProductDetails(product);
+                        var product = await _productRepository.GetProductByIdAsync(productId);
+                        if (product != null)
+                        {
+                            ViewProductDetails(product);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Không thể tải thông tin sản phẩm!", "Lỗi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
+                    else
+                    {
+                        MessageBox.Show("Không thể lấy mã sản phẩm!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch (Exception ex)
                 {
@@ -423,6 +452,13 @@ namespace AceCook
         {
             try
             {
+                if (product == null)
+                {
+                    MessageBox.Show("Không có thông tin sản phẩm để hiển thị!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 var viewForm = new ProductAddEditForm(_productRepository, FormMode.View, product);
                 viewForm.ShowDialog();
             }
@@ -467,7 +503,14 @@ namespace AceCook
 
         private void CboCategory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _ = ApplyFilters();
+            try
+            {
+                _ = ApplyFilters();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in CboCategory_SelectedIndexChanged: {ex.Message}");
+            }
         }
 
         private async Task ApplyFilters()
@@ -502,6 +545,10 @@ namespace AceCook
                 var resultCount = filteredProducts.Count;
                 this.Text = $"Quản lý Sản phẩm - Hiển thị {resultCount} sản phẩm";
             }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error in ApplyFilters: {ex.Message}");
@@ -516,8 +563,16 @@ namespace AceCook
 
         private void BtnClearFilter_Click(object sender, EventArgs e)
         {
-            txtSearch.Clear();
-            cboCategory.SelectedIndex = 0;
+            try
+            {
+                txtSearch.Clear();
+                cboCategory.SelectedIndex = 0;
+                _ = ApplyFilters(); // Apply filters after clearing
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in BtnClearFilter_Click: {ex.Message}");
+            }
         }
 
         private async void BtnViewDetails_Click(object sender, EventArgs e)
@@ -549,6 +604,10 @@ namespace AceCook
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Lỗi khi tải thông tin sản phẩm: {ex.Message}", "Lỗi",
@@ -564,7 +623,15 @@ namespace AceCook
 
         private async void BtnRefresh_Click(object sender, EventArgs e)
         {
-            await LoadDataAsync();
+            try
+            {
+                await LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi làm mới dữ liệu: {ex.Message}", "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private async void BtnAdd_Click(object sender, EventArgs e)
@@ -620,6 +687,10 @@ namespace AceCook
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Lỗi khi tải thông tin sản phẩm: {ex.Message}", "Lỗi",
@@ -667,6 +738,10 @@ namespace AceCook
                                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     }
                                 }
+                                catch (InvalidOperationException ex)
+                                {
+                                    MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
                                 catch (Exception ex)
                                 {
                                     MessageBox.Show($"Lỗi khi xóa sản phẩm: {ex.Message}", "Lỗi", 
@@ -686,6 +761,10 @@ namespace AceCook
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Lỗi khi tải thông tin sản phẩm: {ex.Message}", "Lỗi",
@@ -703,7 +782,16 @@ namespace AceCook
         {
             if (disposing)
             {
-                _searchTimer?.Dispose();
+                try
+                {
+                    _searchTimer?.Stop();
+                    _searchTimer?.Dispose();
+                    _searchTimer = null;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error disposing search timer: {ex.Message}");
+                }
             }
             base.Dispose(disposing);
         }

@@ -247,8 +247,8 @@ namespace AceCook
             var btn = new Button
             {
                 Text = text,
-                Width = 200,
-                Height = 40,
+                Width = 250,
+                Height = 60,
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 BackColor = backColor,
                 ForeColor = Color.White,
