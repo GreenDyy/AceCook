@@ -52,14 +52,12 @@ namespace AceCook
             this.panelDetailsHeader = new System.Windows.Forms.Panel();
             this.lblPeriod = new System.Windows.Forms.Label();
             this.lblDetailsTitle = new System.Windows.Forms.Label();
-            this.pictureBox7 = new System.Windows.Forms.PictureBox();
             this.panelHeader.SuspendLayout();
             this.panelHeaderActions.SuspendLayout();
             this.panelDateFilter.SuspendLayout();
             this.panelDetails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDetails)).BeginInit();
             this.panelDetailsHeader.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
             this.SuspendLayout();
             // 
             // panelHeader
@@ -309,7 +307,6 @@ namespace AceCook
             this.panelDetailsHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(126)))), ((int)(((byte)(234)))));
             this.panelDetailsHeader.Controls.Add(this.lblPeriod);
             this.panelDetailsHeader.Controls.Add(this.lblDetailsTitle);
-            this.panelDetailsHeader.Controls.Add(this.pictureBox7);
             this.panelDetailsHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelDetailsHeader.Location = new System.Drawing.Point(0, 0);
             this.panelDetailsHeader.Name = "panelDetailsHeader";
@@ -322,7 +319,7 @@ namespace AceCook
             this.lblPeriod.AutoSize = true;
             this.lblPeriod.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPeriod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(200)))));
-            this.lblPeriod.Location = new System.Drawing.Point(85, 45);
+            this.lblPeriod.Location = new System.Drawing.Point(25, 45);
             this.lblPeriod.Name = "lblPeriod";
             this.lblPeriod.Size = new System.Drawing.Size(336, 20);
             this.lblPeriod.TabIndex = 2;
@@ -333,20 +330,11 @@ namespace AceCook
             this.lblDetailsTitle.AutoSize = true;
             this.lblDetailsTitle.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDetailsTitle.ForeColor = System.Drawing.Color.White;
-            this.lblDetailsTitle.Location = new System.Drawing.Point(85, 20);
+            this.lblDetailsTitle.Location = new System.Drawing.Point(25, 20);
             this.lblDetailsTitle.Name = "lblDetailsTitle";
             this.lblDetailsTitle.Size = new System.Drawing.Size(308, 37);
             this.lblDetailsTitle.TabIndex = 1;
             this.lblDetailsTitle.Text = "Chi tiết doanh thu theo ngày";
-            // 
-            // pictureBox7
-            // 
-            this.pictureBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(50)))));
-            this.pictureBox7.Location = new System.Drawing.Point(20, 25);
-            this.pictureBox7.Name = "pictureBox7";
-            this.pictureBox7.Size = new System.Drawing.Size(50, 50);
-            this.pictureBox7.TabIndex = 0;
-            this.pictureBox7.TabStop = false;
             // 
             // RevenueReportForm
             // 
@@ -372,7 +360,6 @@ namespace AceCook
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDetails)).EndInit();
             this.panelDetailsHeader.ResumeLayout(false);
             this.panelDetailsHeader.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -395,7 +382,6 @@ namespace AceCook
         private Panel panelDetailsHeader;
         private Label lblPeriod;
         private Label lblDetailsTitle;
-        private PictureBox pictureBox7;
         private DataGridView dataGridViewDetails;
         private DataGridViewTextBoxColumn colDate;
         private DataGridViewTextBoxColumn colInvoices;
