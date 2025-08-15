@@ -26,8 +26,14 @@ namespace AceCook.Repositories
                 Details = new List<RevenueReportDetail>()
             };
 
+            // Get all orders first, then filter in memory to avoid EF translation issues
+            var startDateOnly = DateOnly.FromDateTime(fromDate);
+            var endDateOnly = DateOnly.FromDateTime(toDate);
+            
             var orders = _context.Hoadonbans
-                .Where(h => h.NgayLap.HasValue && h.NgayLap.Value >= DateOnly.FromDateTime(fromDate) && h.NgayLap.Value <= DateOnly.FromDateTime(toDate))
+                .Where(h => h.NgayLap.HasValue)
+                .ToList()
+                .Where(h => h.NgayLap.Value >= startDateOnly && h.NgayLap.Value <= endDateOnly)
                 .ToList();
 
             foreach (var order in orders)
@@ -112,8 +118,13 @@ namespace AceCook.Repositories
                 Details = new List<OrderReportDetail>()
             };
 
+            // Get all orders first, then filter in memory to avoid EF translation issues
+            var startDateOnly = DateOnly.FromDateTime(fromDate);
+            var endDateOnly = DateOnly.FromDateTime(toDate);
+            
             var orders = _context.Dondathangs
-                .Where(d => d.NgayDat >= DateOnly.FromDateTime(fromDate) && d.NgayDat <= DateOnly.FromDateTime(toDate))
+                .ToList()
+                .Where(d => d.NgayDat.HasValue && d.NgayDat.Value >= startDateOnly && d.NgayDat.Value <= endDateOnly)
                 .ToList();
 
             foreach (var order in orders)

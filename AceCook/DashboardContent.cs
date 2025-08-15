@@ -417,14 +417,15 @@ namespace AceCook
             {
                 // Load total revenue - Using DateHelper for safe DateOnly operations
                 var (startDate, endDate) = DateHelper.GetLast30Days();
-                var totalRevenue = await _context.Hoadonbans
-                    .Where(h => h.NgayLap.HasValue && h.NgayLap.Value >= startDate)
-                    .SumAsync(h => h.TongTien ?? 0);
-
-                // Load total invoices
-                var totalInvoices = await _context.Hoadonbans
-                    .Where(h => h.NgayLap.HasValue && h.NgayLap.Value >= startDate)
-                    .CountAsync();
+                
+                // Get all invoices first, then filter in memory to avoid EF translation issues
+                var invoices = await _context.Hoadonbans
+                    .Where(h => h.NgayLap.HasValue)
+                    .ToListAsync();
+                    
+                var filteredInvoices = invoices.Where(h => h.NgayLap.HasValue && h.NgayLap.Value >= startDate).ToList();
+                var totalRevenue = filteredInvoices.Sum(h => h.TongTien ?? 0);
+                var totalInvoices = filteredInvoices.Count;
 
                 // Update summary cards
                 UpdateSummaryCard(0, $"{totalRevenue:N0} ₫");
@@ -449,11 +450,17 @@ namespace AceCook
             {
                 // Load daily revenue data for the last 30 days - Using DateHelper
                 var (startDate, endDate) = DateHelper.GetLast30Days();
-                var dailyRevenue = await _context.Hoadonbans
-                    .Where(h => h.NgayLap.HasValue && h.NgayLap.Value >= startDate)
-                    .GroupBy(h => h.NgayLap.Value)
-                    .Select(g => new { Date = g.Key, Revenue = g.Sum(h => h.TongTien ?? 0) })
+                
+                // Get all invoices first, then filter and group in memory
+                var invoices = await _context.Hoadonbans
+                    .Where(h => h.NgayLap.HasValue)
                     .ToListAsync();
+                    
+                var dailyRevenue = invoices
+                    .Where(h => h.NgayLap.HasValue && h.NgayLap.Value >= startDate)
+                    .GroupBy(h => h.NgayLap!.Value)
+                    .Select(g => new { Date = g.Key, Revenue = g.Sum(h => h.TongTien ?? 0) })
+                    .ToList();
 
                 // Update chart data
                 UpdateChartData(dailyRevenue);
@@ -471,9 +478,15 @@ namespace AceCook
             {
                 // Load detailed daily revenue - Using DateHelper
                 var (startDate, endDate) = DateHelper.GetLast30Days();
-                var dailyDetails = await _context.Hoadonbans
+                
+                // Get all invoices first, then filter and group in memory
+                var invoices = await _context.Hoadonbans
+                    .Where(h => h.NgayLap.HasValue)
+                    .ToListAsync();
+                    
+                var dailyDetails = invoices
                     .Where(h => h.NgayLap.HasValue && h.NgayLap.Value >= startDate)
-                    .GroupBy(h => h.NgayLap.Value)
+                    .GroupBy(h => h.NgayLap!.Value)
                     .Select(g => new 
                     { 
                         Date = g.Key, 
@@ -482,7 +495,7 @@ namespace AceCook
                         AverageRevenue = g.Average(h => h.TongTien ?? 0)
                     })
                     .OrderByDescending(x => x.Date)
-                    .ToListAsync();
+                    .ToList();
 
                 // Update detail grid
                 UpdateDetailGrid(dailyDetails);
