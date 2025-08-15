@@ -18,15 +18,11 @@ namespace AceCook
         private DataGridView dataGridViewOrderReport = null!;
         private DataGridView dataGridViewOrderSummary = null!;
         private DataGridView dataGridViewOrderStatistics = null!; // Bảng mới
-        private TextBox txtSearch = null!;
-        private ComboBox cboStatusFilter = null!;
         private DateTimePicker dtpStartDate = null!;
         private DateTimePicker dtpEndDate = null!;
         private Button btnSearch = null!;
         private Button btnReset = null!;
         private Label lblTitle = null!;
-        private Label lblSearch = null!;
-        private Label lblStatusFilter = null!;
         private Label lblDateRange = null!;
         private Label lblTotalOrders = null!;
         private Label lblTotalRevenue = null!;
@@ -70,60 +66,20 @@ namespace AceCook
                 BorderStyle = BorderStyle.FixedSingle
             };
 
-            // Search controls
-            lblSearch = new Label
-            {
-                Text = "Tìm kiếm:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(80, 25),
-                Location = new Point(20, 15),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            txtSearch = new TextBox
-            {
-                Size = new Size(200, 30),
-                Location = new Point(110, 12),
-                Font = new Font("Segoe UI", 10),
-                PlaceholderText = "Mã đơn hàng, tên KH..."
-            };
-            txtSearch.TextChanged += TxtSearch_TextChanged;
-
-            // Status filter
-            lblStatusFilter = new Label
-            {
-                Text = "Trạng thái:",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Size = new Size(80, 25),
-                Location = new Point(330, 15),
-                TextAlign = ContentAlignment.MiddleLeft
-            };
-
-            cboStatusFilter = new ComboBox
-            {
-                Size = new Size(150, 30),
-                Location = new Point(420, 12),
-                Font = new Font("Segoe UI", 10),
-                DropDownStyle = ComboBoxStyle.DropDownList
-            };
-            cboStatusFilter.Items.AddRange(new object[] { "Tất cả", "Đang xử lý", "Chờ xử lý", "Đã giao" });
-            cboStatusFilter.SelectedIndex = 0;
-            cboStatusFilter.SelectedIndexChanged += CboStatusFilter_SelectedIndexChanged;
-
             // Date range
             lblDateRange = new Label
             {
                 Text = "Từ ngày:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 Size = new Size(70, 25),
-                Location = new Point(590, 15),
+                Location = new Point(20, 15),
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
             dtpStartDate = new DateTimePicker
             {
                 Size = new Size(130, 30),
-                Location = new Point(670, 12),
+                Location = new Point(100, 12),
                 Font = new Font("Segoe UI", 10),
                 Format = DateTimePickerFormat.Short,
                 Value = DateTime.Now.AddDays(-30)
@@ -134,14 +90,14 @@ namespace AceCook
                 Text = "đến:",
                 Font = new Font("Segoe UI", 10, FontStyle.Bold),
                 Size = new Size(40, 25),
-                Location = new Point(820, 15),
+                Location = new Point(250, 15),
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
             dtpEndDate = new DateTimePicker
             {
                 Size = new Size(130, 30),
-                Location = new Point(870, 12),
+                Location = new Point(300, 12),
                 Font = new Font("Segoe UI", 10),
                 Format = DateTimePickerFormat.Short,
                 Value = DateTime.Now
@@ -152,7 +108,7 @@ namespace AceCook
             {
                 Text = "🔍 Tìm kiếm",
                 Size = new Size(100, 35),
-                Location = new Point(1020, 12),
+                Location = new Point(450, 12),
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(52, 152, 219),
                 ForeColor = Color.White,
@@ -166,7 +122,7 @@ namespace AceCook
             {
                 Text = "🔄 Làm mới",
                 Size = new Size(100, 35),
-                Location = new Point(1130, 12),
+                Location = new Point(560, 12),
                 Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 BackColor = Color.FromArgb(95, 95, 95),
                 ForeColor = Color.White,
@@ -178,7 +134,6 @@ namespace AceCook
 
             // Add controls to filters panel
             pnlFilters.Controls.AddRange(new Control[] { 
-                lblSearch, txtSearch, lblStatusFilter, cboStatusFilter,
                 lblDateRange, dtpStartDate, lblToDate, dtpEndDate,
                 btnSearch, btnReset
             });
@@ -558,19 +513,6 @@ namespace AceCook
             }
         }
 
-        private void TxtSearch_TextChanged(object? sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtSearch.Text))
-            {
-                LoadReportData();
-            }
-        }
-
-        private async void CboStatusFilter_SelectedIndexChanged(object? sender, EventArgs e)
-        {
-            await ApplyFilters();
-        }
-
         private async void BtnSearch_Click(object? sender, EventArgs e)
         {
             await ApplyFilters();
@@ -578,8 +520,6 @@ namespace AceCook
 
         private async void BtnReset_Click(object? sender, EventArgs e)
         {
-            txtSearch.Text = "";
-            cboStatusFilter.SelectedIndex = 0;
             dtpStartDate.Value = DateTime.Now.AddDays(-30);
             dtpEndDate.Value = DateTime.Now;
             await ApplyFilters();
@@ -597,25 +537,7 @@ namespace AceCook
                     return;
                 }
 
-                List<Dondathang> orders;
-
-                // Apply status filter
-                if (cboStatusFilter.SelectedIndex > 0)
-                {
-                    var status = cboStatusFilter.SelectedItem?.ToString();
-                    if (!string.IsNullOrEmpty(status))
-                    {
-                        orders = await _orderRepository.GetOrdersByStatusAsync(status);
-                    }
-                    else
-                    {
-                        orders = await _orderRepository.GetAllOrdersAsync();
-                    }
-                }
-                else
-                {
-                    orders = await _orderRepository.GetAllOrdersAsync();
-                }
+                List<Dondathang> orders = await _orderRepository.GetAllOrdersAsync();
 
                 // Apply date range filter - Fixed approach
                 if (dtpStartDate.Value <= dtpEndDate.Value)
@@ -628,17 +550,6 @@ namespace AceCook
                                                        o.NgayDat.Value >= startDateOnly && 
                                                        o.NgayDat.Value <= endDateOnly)
                                            .ToList();
-                }
-
-                // Apply search filter
-                if (!string.IsNullOrWhiteSpace(txtSearch.Text))
-                {
-                    var searchTerm = txtSearch.Text.ToLower();
-                    orders = orders.Where(o => 
-                        (o.MaDdh?.ToLower().Contains(searchTerm) ?? false) ||
-                        (o.MaKhNavigation?.TenKh?.ToLower().Contains(searchTerm) ?? false) ||
-                        (o.TrangThai?.ToLower().Contains(searchTerm) ?? false)
-                    ).ToList();
                 }
 
                 await RefreshReportData(orders);
