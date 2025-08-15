@@ -24,8 +24,6 @@ namespace AceCook
         private DateTimePicker dtpEndDate = null!;
         private Button btnSearch = null!;
         private Button btnReset = null!;
-        private Button btnExportReport = null!;
-        private Button btnRefresh = null!;
         private Label lblTitle = null!;
         private Label lblSearch = null!;
         private Label lblStatusFilter = null!;
@@ -246,38 +244,6 @@ namespace AceCook
                 Location = new Point(30, 290),
                 BackColor = Color.Transparent
             };
-
-            btnExportReport = new Button
-            {
-                Text = "📊 Xuất báo cáo",
-                Size = new Size(200, 60),
-                Location = new Point(0, 0),
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                BackColor = Color.FromArgb(46, 204, 113),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnExportReport.FlatAppearance.BorderSize = 0;
-            btnExportReport.Click += BtnExportReport_Click;
-            btnExportReport.Visible = false; // Ẩn button xuất báo cáo
-
-            btnRefresh = new Button
-            {
-                Text = "🔄 Làm mới dữ liệu",
-                Size = new Size(200, 60),
-                Location = new Point(220, 0),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                BackColor = Color.FromArgb(52, 152, 219),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand
-            };
-            btnRefresh.FlatAppearance.BorderSize = 0;
-            btnRefresh.Click += BtnRefresh_Click;
-            btnRefresh.Visible = false; // Ẩn button làm mới
-
-            pnlActions.Controls.AddRange(new Control[] { btnExportReport, btnRefresh });
 
             // Main DataGridView for detailed report
             dataGridViewOrderReport = new DataGridView
@@ -605,26 +571,6 @@ namespace AceCook
             dtpStartDate.Value = DateTime.Now.AddDays(-30);
             dtpEndDate.Value = DateTime.Now;
             await ApplyFilters();
-        }
-
-        private void BtnRefresh_Click(object? sender, EventArgs e)
-        {
-            LoadReportData();
-        }
-
-        private void BtnExportReport_Click(object? sender, EventArgs e)
-        {
-            try
-            {
-                // This would be implemented to export to Excel or PDF
-                MessageBox.Show("Chức năng xuất báo cáo sẽ được triển khai trong phiên bản tiếp theo!", 
-                    "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi xuất báo cáo: {ex.Message}", "Lỗi",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         private async Task ApplyFilters()
