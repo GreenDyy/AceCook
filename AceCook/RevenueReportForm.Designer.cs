@@ -257,7 +257,7 @@ namespace AceCook
             this.colDate.MinimumWidth = 6;
             this.colDate.Name = "colDate";
             this.colDate.ReadOnly = true;
-            this.colDate.Width = 180;
+            this.colDate.Width = 300;
             this.colDate.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             // 
             // colInvoices
@@ -275,7 +275,7 @@ namespace AceCook
             this.colRevenue.MinimumWidth = 6;
             this.colRevenue.Name = "colRevenue";
             this.colRevenue.ReadOnly = true;
-            this.colRevenue.Width = 200;
+            this.colRevenue.Width = 300;
             this.colRevenue.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
             this.colRevenue.DefaultCellStyle.Format = "N0";
             // 
