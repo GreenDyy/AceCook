@@ -77,81 +77,96 @@ namespace AceCook
 
         private void SetupHeaderButtons()
         {
-            // Nút Minimize
-            btnMinimize.FlatAppearance.BorderSize = 0;
-            btnMinimize.FlatStyle = FlatStyle.Flat;
-            btnMinimize.BackColor = Color.FromArgb(52, 73, 94);
-            btnMinimize.ForeColor = Color.White;
-            btnMinimize.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-            btnMinimize.Cursor = Cursors.Hand;
+            SetupHeaderButton(btnMinimize, Color.FromArgb(44, 62, 80), Color.FromArgb(70, 90, 110));
+            SetupHeaderButton(btnMaximize, Color.FromArgb(44, 62, 80), Color.FromArgb(70, 90, 110));
+            SetupHeaderButton(btnClose, Color.FromArgb(44, 62, 80), Color.FromArgb(220, 53, 69));
+        }
 
-            // Nút Maximize
-            btnMaximize.FlatAppearance.BorderSize = 0;
-            btnMaximize.FlatStyle = FlatStyle.Flat;
-            btnMaximize.BackColor = Color.FromArgb(52, 73, 94);
-            btnMaximize.ForeColor = Color.White;
-            btnMaximize.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-            btnMaximize.Cursor = Cursors.Hand;
+        private void SetupHeaderButton(Button btn, Color normalColor, Color hoverColor)
+        {
+            btn.FlatAppearance.BorderSize = 0;
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.BackColor = normalColor;
+            btn.ForeColor = Color.White;
+            btn.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+            btn.Cursor = Cursors.Hand;
 
-            // Nút Close
-            btnClose.FlatAppearance.BorderSize = 0;
-            btnClose.FlatStyle = FlatStyle.Flat;
-            btnClose.BackColor = Color.FromArgb(52, 73, 94);
-            btnClose.ForeColor = Color.White;
-            btnClose.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-            btnClose.Cursor = Cursors.Hand;
-
-            // Hover effects
-            btnMinimize.MouseEnter += (s, e) => btnMinimize.BackColor = Color.FromArgb(70, 90, 110);
-            btnMinimize.MouseLeave += (s, e) => btnMinimize.BackColor = Color.FromArgb(52, 73, 94);
-            btnMaximize.MouseEnter += (s, e) => btnMaximize.BackColor = Color.FromArgb(70, 90, 110);
-            btnMaximize.MouseLeave += (s, e) => btnMaximize.BackColor = Color.FromArgb(52, 73, 94);
-            btnClose.MouseEnter += (s, e) => btnClose.BackColor = Color.FromArgb(220, 53, 69);
-            btnClose.MouseLeave += (s, e) => btnClose.BackColor = Color.FromArgb(52, 73, 94);
+            btn.MouseEnter += (s, e) => btn.BackColor = hoverColor;
+            btn.MouseLeave += (s, e) => btn.BackColor = normalColor;
         }
 
         private void SetupMenuItems()
         {
             treeViewMenu.Nodes.Clear();
+            treeViewMenu.DrawMode = TreeViewDrawMode.OwnerDrawText;
+            treeViewMenu.ItemHeight = 35; // Cao hơn cho thoáng
+            treeViewMenu.Font = new Font("Segoe UI", 10, FontStyle.Regular);
+            treeViewMenu.BackColor = Color.FromArgb(33, 37, 41); // Dark hơn
+            treeViewMenu.ForeColor = Color.White;
+            treeViewMenu.BorderStyle = BorderStyle.None;
+            treeViewMenu.FullRowSelect = true;
+            treeViewMenu.HideSelection = false;
 
-            // Dashboard
-            //var dashboardNode = CreateMenuNode("📊 Dashboard", "dashboard", Color.FromArgb(52, 152, 219));
+            treeViewMenu.DrawNode += (s, e) =>
+{
+    e.DrawDefault = false;
 
-            // 💼 Kinh doanh
+    // Chiều rộng full của TreeView
+    Rectangle nodeBounds = new Rectangle(0, e.Bounds.Top, treeViewMenu.Width, e.Bounds.Height);
+
+    // Màu nền
+    Color backColor;
+    if (e.Node == treeViewMenu.SelectedNode)
+        backColor = Color.FromArgb(52, 152, 219); // Active
+    else if (nodeBounds.Contains(treeViewMenu.PointToClient(Cursor.Position)))
+        backColor = Color.FromArgb(60, 72, 88); // Hover
+    else
+        backColor = treeViewMenu.BackColor;
+
+    // Vẽ nền full chiều rộng
+    using (SolidBrush brush = new SolidBrush(backColor))
+        e.Graphics.FillRectangle(brush, nodeBounds);
+
+    // Vẽ chữ (chừa khoảng trống icon + indent)
+    int textOffset = e.Node.Level * treeViewMenu.Indent + 5;
+    Rectangle textRect = new Rectangle(textOffset, e.Bounds.Top, treeViewMenu.Width - textOffset, e.Bounds.Height);
+
+    TextRenderer.DrawText(
+        e.Graphics,
+        e.Node.Text,
+        e.Node.NodeFont ?? treeViewMenu.Font,
+        textRect,
+        e.Node.ForeColor,
+        TextFormatFlags.VerticalCenter | TextFormatFlags.Left
+    );
+};
+
+            // === Menu items ===
             var businessNode = CreateMenuNode("💼 Kinh doanh", "business", Color.FromArgb(52, 152, 219));
-            businessNode.Nodes.Add(CreateMenuNode("👥 Quản lý khách hàng", "customers", Color.FromArgb(41, 128, 185)));
-            businessNode.Nodes.Add(CreateMenuNode("📋 Quản lý đơn hàng", "orders", Color.FromArgb(41, 128, 185)));
+            businessNode.Nodes.Add(CreateMenuNode("👥 Quản lý khách hàng", "customers", Color.LightGray));
+            businessNode.Nodes.Add(CreateMenuNode("📋 Quản lý đơn hàng", "orders", Color.LightGray));
 
-            // 🏪 Kho hàng
-            var warehouseNode = CreateMenuNode("🏪 Kho hàng", "warehouse", Color.FromArgb(142, 68, 173));
-            warehouseNode.Nodes.Add(CreateMenuNode("📦 Quản lý sản phẩm", "products", Color.FromArgb(136, 84, 208)));
-            warehouseNode.Nodes.Add(CreateMenuNode("📊 Quản lý tồn kho", "inventory", Color.FromArgb(136, 84, 208)));
+            var warehouseNode = CreateMenuNode("🏪 Kho hàng", "warehouse", Color.FromArgb(155, 89, 182));
+            warehouseNode.Nodes.Add(CreateMenuNode("📦 Quản lý sản phẩm", "products", Color.LightGray));
+            warehouseNode.Nodes.Add(CreateMenuNode("📊 Quản lý tồn kho", "inventory", Color.LightGray));
 
-            // 🚚 Nhà cung cấp
             var supplierNode = CreateMenuNode("🚚 Nhà cung cấp", "suppliers", Color.FromArgb(26, 188, 156));
 
-            // 📈 Báo cáo
             var reportNode = CreateMenuNode("📈 Báo cáo", "reports", Color.FromArgb(241, 196, 15));
-            reportNode.Nodes.Add(CreateMenuNode("💰 Báo cáo doanh thu", "revenue_report", Color.FromArgb(243, 156, 18)));
-            reportNode.Nodes.Add(CreateMenuNode("📊 Báo cáo tồn kho", "inventory_report", Color.FromArgb(243, 156, 18)));
-            reportNode.Nodes.Add(CreateMenuNode("📋 Báo cáo đơn hàng", "order_report", Color.FromArgb(243, 156, 18)));
+            reportNode.Nodes.Add(CreateMenuNode("💰 Báo cáo doanh thu", "revenue_report", Color.LightGray));
+            reportNode.Nodes.Add(CreateMenuNode("📊 Báo cáo tồn kho", "inventory_report", Color.LightGray));
+            reportNode.Nodes.Add(CreateMenuNode("📋 Báo cáo đơn hàng", "order_report", Color.LightGray));
 
-            // 🚪 Đăng xuất
             var logoutNode = CreateMenuNode("🚪 Đăng xuất", "logout", Color.FromArgb(231, 76, 60));
 
-
-            // Thêm nodes vào TreeView
-            //treeViewMenu.Nodes.Add(dashboardNode);
+            // Add nodes
             treeViewMenu.Nodes.Add(businessNode);
             treeViewMenu.Nodes.Add(warehouseNode);
             treeViewMenu.Nodes.Add(supplierNode);
             treeViewMenu.Nodes.Add(reportNode);
             treeViewMenu.Nodes.Add(logoutNode);
 
-            // Mở rộng tất cả nodes
             treeViewMenu.ExpandAll();
-
-            // Chọn Dashboard mặc định
             treeViewMenu.SelectedNode = businessNode.LastNode;
         }
 
@@ -161,17 +176,15 @@ namespace AceCook
             {
                 Tag = tag,
                 ForeColor = color,
-                NodeFont = new Font("Segoe UI", 10, FontStyle.Regular)
+                NodeFont = new Font("Segoe UI", 10, FontStyle.Bold)
             };
 
-            // Thêm tooltip cho nút đăng xuất
             if (tag == "logout")
-            {
                 node.ToolTipText = "Đăng xuất khỏi hệ thống và quay về màn hình đăng nhập";
-            }
 
             return node;
         }
+
 
         private void treeViewMenu_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -195,7 +208,7 @@ namespace AceCook
                     LoadCustomerManagement();
                     break;
                 case "orders":
-                    LoadOrderManagement();
+                    LoadOrderManagement(_currentEmployee);
                     break;
                 case "products":
                     LoadProductManagement();
@@ -252,11 +265,11 @@ namespace AceCook
             }
         }
 
-        private void LoadOrderManagement()
+        private void LoadOrderManagement(Nhanvien currentEmployee)
         {
             try
             {
-                var orderForm = new OrderManagementForm(_context);
+                var orderForm = new OrderManagementForm(_context, currentEmployee);
                 orderForm.TopLevel = false;
                 orderForm.FormBorderStyle = FormBorderStyle.None;
                 orderForm.Dock = DockStyle.Fill;

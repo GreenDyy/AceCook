@@ -48,30 +48,27 @@
             // 
             txtUsername.BackColor = SystemColors.Menu;
             txtUsername.Font = new Font("Segoe UI", 12F);
-            txtUsername.Location = new Point(419, 176);
-            txtUsername.Margin = new Padding(5, 6, 5, 6);
+            txtUsername.Location = new Point(226, 82);
             txtUsername.Name = "txtUsername";
-            txtUsername.Size = new Size(553, 50);
+            txtUsername.Size = new Size(300, 29);
             txtUsername.TabIndex = 0;
             // 
             // txtPassword
             // 
             txtPassword.BackColor = SystemColors.Menu;
             txtPassword.Font = new Font("Segoe UI", 12F);
-            txtPassword.Location = new Point(419, 340);
-            txtPassword.Margin = new Padding(5, 6, 5, 6);
+            txtPassword.Location = new Point(226, 159);
             txtPassword.Name = "txtPassword";
-            txtPassword.Size = new Size(553, 50);
+            txtPassword.Size = new Size(300, 29);
             txtPassword.TabIndex = 1;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(419, 110);
-            label1.Margin = new Padding(5, 0, 5, 0);
+            label1.Location = new Point(226, 52);
             label1.Name = "label1";
-            label1.Size = new Size(250, 45);
+            label1.Size = new Size(127, 21);
             label1.TabIndex = 2;
             label1.Text = "Tên đăng nhập:";
             // 
@@ -79,10 +76,9 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(419, 271);
-            label2.Margin = new Padding(5, 0, 5, 0);
+            label2.Location = new Point(226, 127);
             label2.Name = "label2";
-            label2.Size = new Size(171, 45);
+            label2.Size = new Size(86, 21);
             label2.TabIndex = 3;
             label2.Text = "Mật khẩu:";
             // 
@@ -90,10 +86,9 @@
             // 
             btnLogin.BackColor = Color.Gainsboro;
             btnLogin.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            btnLogin.Location = new Point(419, 464);
-            btnLogin.Margin = new Padding(5, 6, 5, 6);
+            btnLogin.Location = new Point(226, 218);
             btnLogin.Name = "btnLogin";
-            btnLogin.Size = new Size(557, 96);
+            btnLogin.Size = new Size(300, 45);
             btnLogin.TabIndex = 4;
             btnLogin.Text = "ĐĂNG NHẬP";
             btnLogin.UseVisualStyleBackColor = false;
@@ -103,10 +98,9 @@
             // 
             checkBoxShowPass.AutoSize = true;
             checkBoxShowPass.Font = new Font("Segoe UI", 10F);
-            checkBoxShowPass.Location = new Point(419, 584);
-            checkBoxShowPass.Margin = new Padding(5, 6, 5, 6);
+            checkBoxShowPass.Location = new Point(226, 274);
             checkBoxShowPass.Name = "checkBoxShowPass";
-            checkBoxShowPass.Size = new Size(259, 41);
+            checkBoxShowPass.Size = new Size(138, 23);
             checkBoxShowPass.TabIndex = 5;
             checkBoxShowPass.Text = "Hiển thị mật khẩu";
             checkBoxShowPass.UseVisualStyleBackColor = true;
@@ -118,12 +112,11 @@
             label3.BackColor = Color.Transparent;
             label3.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             label3.ForeColor = Color.White;
-            label3.Location = new Point(288, 65);
-            label3.Margin = new Padding(5, 0, 5, 0);
+            label3.Location = new Point(155, 30);
             label3.Name = "label3";
-            label3.Size = new Size(1010, 65);
+            label3.Size = new Size(504, 32);
             label3.TabIndex = 6;
-            label3.Text = "HỆ THỐNG QUẢN LÝ NHÀ HÀNG ACECOOK";
+            label3.Text = "HỆ THỐNG QUẢN LÝ BÁN HÀNG ACECOOK";
             label3.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panel1
@@ -133,16 +126,18 @@
             panel1.Controls.Add(pictureBox1);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
+            panel1.Margin = new Padding(2, 1, 2, 1);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1375, 200);
+            panel1.Size = new Size(740, 94);
             panel1.TabIndex = 7;
             // 
             // pictureBox1
             // 
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(0, -15);
+            pictureBox1.Location = new Point(0, -8);
+            pictureBox1.Margin = new Padding(2, 1, 2, 1);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(215, 215);
+            pictureBox1.Size = new Size(116, 101);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 8;
             pictureBox1.TabStop = false;
@@ -156,20 +151,20 @@
             panel2.Controls.Add(checkBoxShowPass);
             panel2.Controls.Add(label1);
             panel2.Controls.Add(label2);
-            panel2.Location = new Point(0, 200);
+            panel2.Location = new Point(0, 94);
+            panel2.Margin = new Padding(2, 1, 2, 1);
             panel2.Name = "panel2";
-            panel2.Size = new Size(1375, 867);
+            panel2.Size = new Size(740, 406);
             panel2.TabIndex = 9;
             // 
             // LoginForm
             // 
-            AutoScaleDimensions = new SizeF(13F, 32F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ControlLightLight;
-            ClientSize = new Size(1375, 1067);
+            ClientSize = new Size(740, 497);
             Controls.Add(panel2);
             Controls.Add(panel1);
-            Margin = new Padding(5, 6, 5, 6);
             Name = "LoginForm";
             Text = "Đăng nhập - AceCook";
             panel1.ResumeLayout(false);

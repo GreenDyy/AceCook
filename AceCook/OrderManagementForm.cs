@@ -30,10 +30,12 @@ namespace AceCook
         private Label lblDateRange;
         private Panel pnlFilters;
         private Panel pnlActions;
+        private Nhanvien _currentEmployee;
 
-        public OrderManagementForm(AppDbContext context)
+         public OrderManagementForm(AppDbContext context, Nhanvien currentEmployee)
         {
             _context = context;
+            _currentEmployee = currentEmployee;
             _orderRepository = new OrderRepository(context);
             InitializeComponent();
             SetupUI();
@@ -212,7 +214,7 @@ namespace AceCook
             pnlActions.Controls.AddRange(new Control[] { btnCreateOrder, btnRefresh, btnEditOrder, btnDeleteOrder });
 
             // DataGridView
-            dataGridViewOrders = new DataGridView
+          dataGridViewOrders = new DataGridView
             {
                 Dock = DockStyle.Fill,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
@@ -229,6 +231,7 @@ namespace AceCook
                 ColumnHeadersHeight = 50,
                 RowTemplate = { Height = 50 }
             };
+
             dataGridViewOrders.DefaultCellStyle.Font = new Font("Segoe UI", 9);
             dataGridViewOrders.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
             dataGridViewOrders.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
@@ -261,7 +264,7 @@ namespace AceCook
         }
 
 
-        private async void LoadOrders()
+        private async Task LoadOrdersAsync()
         {
             try
             {
@@ -283,121 +286,151 @@ namespace AceCook
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error in LoadOrders: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error in LoadOrdersAsync: {ex.Message}");
                 MessageBox.Show($"Lỗi khi tải dữ liệu đơn hàng: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        private async void LoadOrders()
+        {
+            await LoadOrdersAsync();
+        }
+
         private void RefreshDataGridView(List<Dondathang> orders)
         {
-            dataGridViewOrders.DataSource = null;
-            dataGridViewOrders.Columns.Clear();
-
-            // Create custom columns
-            dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
+            try
             {
-                Name = "MaDdh",
-                HeaderText = "Mã đơn hàng",
-                Width = 120
-            });
+                dataGridViewOrders.DataSource = null;
+                dataGridViewOrders.Columns.Clear();
 
-            dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "CustomerInfo",
-                HeaderText = "Thông tin khách hàng",
-                Width = 200
-            });
-
-            dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "NgayDat",
-                HeaderText = "Ngày đặt",
-                Width = 120
-            });
-
-            dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "NgayGiao",
-                HeaderText = "Ngày giao",
-                Width = 120
-            });
-
-            dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "EmployeeInfo",
-                HeaderText = "Nhân viên xử lý",
-                Width = 150
-            });
-
-            dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "TrangThai",
-                HeaderText = "Trạng thái",
-                Width = 120
-            });
-
-            dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "TotalAmount",
-                HeaderText = "Tổng tiền",
-                Width = 120
-            });
-
-            dataGridViewOrders.Columns.Add(new DataGridViewButtonColumn
-            {
-                Name = "ViewDetails",
-                HeaderText = "Hành động",
-                Width = 100,
-                Text = "👁️ Xem",
-                UseColumnTextForButtonValue = true
-            });
-
-            // Populate data
-            foreach (var order in orders)
-            {
-                try
+                // Create custom columns
+                dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    var rowIndex = dataGridViewOrders.Rows.Add();
-                    var row = dataGridViewOrders.Rows[rowIndex];
+                    Name = "MaDdh",
+                    HeaderText = "Mã đơn hàng",
+                    Width = 120
+                });
 
-                    row.Cells["MaDdh"].Value = order.MaDdh ?? "N/A";
-                    
-                    // Xử lý thông tin khách hàng an toàn
-                    var customerName = order.MaKhNavigation?.TenKh ?? "N/A";
-                    var customerPhone = order.MaKhNavigation?.Sdtkh ?? "N/A";
-                    row.Cells["CustomerInfo"].Value = $"{customerName}\n{customerPhone}";
-                    
-                    row.Cells["NgayDat"].Value = order.NgayDat?.ToString("dd/MM/yyyy") ?? "N/A";
-                    row.Cells["NgayGiao"].Value = order.NgayGiao?.ToString("dd/MM/yyyy") ?? "Chưa giao";
-                    
-                    // Xử lý thông tin nhân viên an toàn
-                    row.Cells["EmployeeInfo"].Value = order.MaNvNavigation?.HoTenNv ?? "N/A";
-                    row.Cells["TrangThai"].Value = order.TrangThai ?? "Chờ xử lý";
-                    
-                    // Calculate total amount an toàn
-                    decimal totalAmount = 0;
-                    if (order.CtDhs != null && order.CtDhs.Any())
+                dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "CustomerInfo",
+                    HeaderText = "Thông tin khách hàng",
+                    Width = 200
+                });
+
+                dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "NgayDat",
+                    HeaderText = "Ngày đặt",
+                    Width = 120
+                });
+
+                dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "NgayGiao",
+                    HeaderText = "Ngày giao",
+                    Width = 120
+                });
+
+                dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "EmployeeInfo",
+                    HeaderText = "Nhân viên xử lý",
+                    Width = 150
+                });
+
+                dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "TrangThai",
+                    HeaderText = "Trạng thái",
+                    Width = 120
+                });
+
+                dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "TotalAmount",
+                    HeaderText = "Tổng tiền",
+                    Width = 120
+                });
+
+                dataGridViewOrders.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = "ItemCount",
+                    HeaderText = "Số SP",
+                    Width = 80
+                });
+
+                dataGridViewOrders.Columns.Add(new DataGridViewButtonColumn
+                {
+                    Name = "ViewDetails",
+                    HeaderText = "Hành động",
+                    Width = 100,
+                    Text = "👁️ Xem",
+                    UseColumnTextForButtonValue = true
+                });
+
+                // Populate data
+                foreach (var order in orders)
+                {
+                    try
                     {
-                        totalAmount = order.CtDhs.Sum(ct => (decimal)((ct.SoLuong ?? 0) * (ct.DonGia ?? 0)));
+                        var rowIndex = dataGridViewOrders.Rows.Add();
+                        var row = dataGridViewOrders.Rows[rowIndex];
+
+                        row.Cells["MaDdh"].Value = order.MaDdh ?? "N/A";
+                        
+                        // Xử lý thông tin khách hàng an toàn
+                        var customerName = order.MaKhNavigation?.TenKh ?? "N/A";
+                        var customerPhone = order.MaKhNavigation?.Sdtkh ?? "N/A";
+                        row.Cells["CustomerInfo"].Value = customerName;
+                        
+                        row.Cells["NgayDat"].Value = order.NgayDat?.ToString("dd/MM/yyyy") ?? "N/A";
+                        row.Cells["NgayGiao"].Value = order.NgayGiao?.ToString("dd/MM/yyyy") ?? "Chưa giao";
+                        
+                        // Xử lý thông tin nhân viên an toàn
+                        row.Cells["EmployeeInfo"].Value = order.MaNvNavigation?.HoTenNv ?? "N/A";
+                        row.Cells["TrangThai"].Value = order.TrangThai ?? "Chờ xử lý";
+                        
+                        // Calculate total amount an toàn
+                        decimal totalAmount = 0;
+                        int itemCount = 0;
+                        if (order.CtDhs != null && order.CtDhs.Any())
+                        {
+                            totalAmount = order.CtDhs.Sum(ct => (decimal)((ct.SoLuong ?? 0) * (ct.DonGia ?? 0)));
+                            itemCount = order.CtDhs.Count;
+                        }
+                        row.Cells["TotalAmount"].Value = totalAmount.ToString("N0") + " VNĐ";
+                        row.Cells["ItemCount"].Value = itemCount;
+
+                        // Style status column
+                        StyleStatusCell(row.Cells["TrangThai"], order.TrangThai);
+                        
+                        // Style row dựa trên trạng thái
+                        StyleOrderRow(row, order.TrangThai);
                     }
-                    row.Cells["TotalAmount"].Value = totalAmount.ToString("N0") + " VNĐ";
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error processing order {order.MaDdh}: {ex.Message}");
+                        // Bỏ qua dòng lỗi và tiếp tục
+                    }
+                }
 
-                    // Style status column
-                    StyleStatusCell(row.Cells["TrangThai"], order.TrangThai);
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Error processing order {order.MaDdh}: {ex.Message}");
-                    // Bỏ qua dòng lỗi và tiếp tục
-                }
+                // Handle button clicks
+                dataGridViewOrders.CellClick += DataGridViewOrders_CellClick;
+                
+                // Add double-click to view details
+                dataGridViewOrders.CellDoubleClick += DataGridViewOrders_CellDoubleClick;
+                
+                // Hiển thị thông tin tổng quan
+                UpdateOrderSummary(orders);
             }
-
-            // Handle button clicks
-            dataGridViewOrders.CellClick += DataGridViewOrders_CellClick;
-            
-            // Add double-click to view details
-            dataGridViewOrders.CellDoubleClick += DataGridViewOrders_CellDoubleClick;
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in RefreshDataGridView: {ex.Message}");
+                MessageBox.Show($"Lỗi khi cập nhật bảng dữ liệu: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void StyleStatusCell(DataGridViewCell cell, string status)
@@ -485,7 +518,7 @@ namespace AceCook
                     order.CtDhs = new List<CtDh>();
                 }
 
-                var viewForm = new OrderAddEditForm(order, true); // true = view mode
+                var viewForm = new OrderAddEditForm(order, _currentEmployee, true); // true = view mode
                 viewForm.ShowDialog();
             }
             catch (Exception ex)
@@ -499,7 +532,7 @@ namespace AceCook
         {
             try
             {
-                var editForm = new OrderAddEditForm(order, false); // false = edit mode
+                var editForm = new OrderAddEditForm(order, _currentEmployee, false); // false = edit mode
                 if (editForm.ShowDialog() == DialogResult.OK)
                 {
                     LoadOrders(); // Reload data after edit
@@ -787,20 +820,40 @@ namespace AceCook
             try
             {
                 _isProcessing = true;
-                var addForm = new OrderAddEditForm(); // Sử dụng constructor mặc định để tạo đơn hàng mới
-                if (addForm.ShowDialog() == DialogResult.OK)
+                this.Cursor = Cursors.WaitCursor;
+                
+                // Kiểm tra kết nối database
+                if (_context == null)
                 {
-                    LoadOrders(); // Reload data after adding
+                    MessageBox.Show("Không thể kết nối đến cơ sở dữ liệu!", "Lỗi", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Mở form tạo đơn hàng mới với thông tin nhân viên hiện tại
+                var addForm = new OrderAddEditForm(_currentEmployee);
+                var result = addForm.ShowDialog();
+                
+                if (result == DialogResult.OK)
+                {
+                    // Reload data sau khi tạo thành công
+                    await LoadOrdersAsync();
+                    
+                    // Hiển thị thông báo thành công
+                    MessageBox.Show("Đã tạo đơn hàng mới thành công!", "Thành công", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi mở form thêm đơn hàng: {ex.Message}", "Lỗi",
+                System.Diagnostics.Debug.WriteLine($"Error creating order: {ex.Message}");
+                MessageBox.Show($"Lỗi khi tạo đơn hàng mới: {ex.Message}", "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 _isProcessing = false;
+                this.Cursor = Cursors.Default;
             }
         }
 
@@ -1001,6 +1054,61 @@ namespace AceCook
                 _context?.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private void StyleOrderRow(DataGridViewRow row, string status)
+        {
+            try
+            {
+                if (status == "Hoàn thành" || status == "Đã giao")
+                {
+                    row.DefaultCellStyle.BackColor = Color.LightGreen;
+                }
+                else if (status == "Đang xử lý")
+                {
+                    row.DefaultCellStyle.BackColor = Color.LightYellow;
+                }
+                else if (status == "Đã hủy")
+                {
+                    row.DefaultCellStyle.BackColor = Color.LightCoral;
+                }
+                else
+                {
+                    row.DefaultCellStyle.BackColor = Color.LightBlue;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error styling order row: {ex.Message}");
+            }
+        }
+
+        private void UpdateOrderSummary(List<Dondathang> orders)
+        {
+            try
+            {
+                var totalOrders = orders.Count;
+                var totalRevenue = orders
+                    .Where(o => o.CtDhs != null)
+                    .Sum(o => o.CtDhs.Sum(ct => (decimal)((ct.SoLuong ?? 0) * (ct.DonGia ?? 0))));
+                
+                var pendingOrders = orders.Count(o => o.TrangThai == "Chờ xử lý");
+                var processingOrders = orders.Count(o => o.TrangThai == "Đang xử lý");
+                var completedOrders = orders.Count(o => o.TrangThai == "Đã giao" || o.TrangThai == "Hoàn thành");
+                var cancelledOrders = orders.Count(o => o.TrangThai == "Đã hủy");
+
+                // Cập nhật title với thông tin tổng quan
+                this.Text = $"Quản lý Đơn hàng - Tổng: {totalOrders} | " +
+                           $"Chờ xử lý: {pendingOrders} | " +
+                           $"Đang xử lý: {processingOrders} | " +
+                           $"Hoàn thành: {completedOrders} | " +
+                           $"Đã hủy: {cancelledOrders} | " +
+                           $"Tổng doanh thu: {totalRevenue:N0} VNĐ";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating order summary: {ex.Message}");
+            }
         }
     }
 }

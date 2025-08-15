@@ -1,4 +1,4 @@
-# AceCook - Hệ thống quản lý nhà hàng
+# AceCook - Hệ thống quản lý bán hàng
 
 ## Mô tả
 AceCook là một ứng dụng WinForm được xây dựng bằng C# và .NET 8, sử dụng Entity Framework Core để quản lý cơ sở dữ liệu SQL Server.

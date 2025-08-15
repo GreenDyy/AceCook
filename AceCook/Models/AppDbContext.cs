@@ -52,14 +52,8 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<Taikhoan> Taikhoans { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        // Chỉ cấu hình nếu chưa được cấu hình từ bên ngoài
-        if (!optionsBuilder.IsConfigured)
-        {
-            // Sử dụng connection string từ appsettings.json thay vì hardcode
-            optionsBuilder.UseSqlServer("Server=14.161.21.15,1433;Database=QLBH_ACECOOK;User Id=sa;Password=Ezin@123;TrustServerCertificate=true;MultipleActiveResultSets=true");
-        }
-    }
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=ACECOOK_NEW;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

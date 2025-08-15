@@ -44,7 +44,7 @@ namespace AceCook
             // Cập nhật labels
             label1.Text = "Tên đăng nhập:";
             label2.Text = "Mật khẩu:";
-            label3.Text = "HỆ THỐNG QUẢN LÝ NHÀ HÀNG ACECOOK";
+            label3.Text = "HỆ THỐNG QUẢN LÝ BÁN HÀNG ACECOOK";
             label3.Font = new Font(label3.Font.FontFamily, 18, FontStyle.Bold);
 
             // Cập nhật checkbox
