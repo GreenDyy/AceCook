@@ -34,7 +34,14 @@ namespace AceCook
             _reportRepository = new ReportRepository(context);
             InitializeFormComponents();
             SetupUserInterface();
-            _ = LoadInitialDataAsync();
+            
+            // Defer data loading until form is fully loaded
+            this.Load += InventoryReportForm_Load;
+        }
+        
+        private async void InventoryReportForm_Load(object sender, EventArgs e)
+        {
+            await LoadInitialDataAsync();
         }
 
         private void InitializeFormComponents()
