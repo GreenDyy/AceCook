@@ -249,7 +249,7 @@ namespace AceCook
             dataGridViewOrderReport = new DataGridView
             {
                 Size = new Size(1340, 250), // Giảm từ 300 xuống 250
-                Location = new Point(30, 370),
+                Location = new Point(30, 290), // Thay đổi từ 370 xuống 290 để loại bỏ khoảng trống
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -269,7 +269,7 @@ namespace AceCook
             dataGridViewOrderSummary = new DataGridView
             {
                 Size = new Size(1340, 100), // Giảm từ 120 xuống 100
-                Location = new Point(30, 640), // Điều chỉnh vị trí: 370 + 250 + 20 = 640
+                Location = new Point(30, 560), // Điều chỉnh: 290 + 250 + 20 = 560
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -289,7 +289,7 @@ namespace AceCook
             dataGridViewOrderStatistics = new DataGridView
             {
                 Size = new Size(1340, 150), // Giảm từ 200 xuống 150
-                Location = new Point(30, 760), // Điều chỉnh vị trí: 640 + 100 + 20 = 760
+                Location = new Point(30, 680), // Điều chỉnh: 560 + 100 + 20 = 680
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -317,7 +317,7 @@ namespace AceCook
             });
 
             // Adjust form height to fit screen better
-            this.Size = new Size(1400, 950); // Giảm từ 1080 xuống 950
+            this.Size = new Size(1400, 870); // Điều chỉnh từ 950 xuống 870 do đã loại bỏ khoảng trống
         }
 
         private void StyleDataGridView(DataGridView dgv)
