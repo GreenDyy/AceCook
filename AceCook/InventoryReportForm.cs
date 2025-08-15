@@ -284,7 +284,7 @@ namespace AceCook
                 Height = 80,
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle,
-                Margin = new Padding(20, 0, 20, 0)
+                // Margin = new Padding(20, 0, 20, 0)
             };
 
             var accentLine = new Panel
