@@ -281,7 +281,7 @@ namespace AceCook
             this.colInvoices.MinimumWidth = 6;
             this.colInvoices.Name = "colInvoices";
             this.colInvoices.ReadOnly = true;
-            this.colInvoices.Width = 150;
+            this.colInvoices.Width = 300;
             this.colInvoices.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             // 
             // colRevenue
@@ -300,7 +300,7 @@ namespace AceCook
             this.colAverage.MinimumWidth = 6;
             this.colAverage.Name = "colAverage";
             this.colAverage.ReadOnly = true;
-            this.colAverage.Width = 400;
+            this.colAverage.Width = 300;
             this.colAverage.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
             this.colAverage.DefaultCellStyle.Format = "N0";
             // 
