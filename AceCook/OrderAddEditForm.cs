@@ -100,6 +100,15 @@ namespace AceCook
                 SetupEmployeeInfo();
             }
 
+            // Debug controls trong form
+            DebugFormControls();
+
+            // Kiểm tra và sửa chữa lblTotalAmount
+            ValidateAndFixTotalAmountLabel();
+            
+            // Kiểm tra visibility của lblTotalAmount
+            CheckTotalAmountVisibility();
+
             // Thêm event handler để đảm bảo mã đơn hàng được sinh khi form được hiển thị
             this.Load += OrderAddEditForm_Load;
         }
@@ -118,6 +127,10 @@ namespace AceCook
                         System.Diagnostics.Debug.WriteLine($"Generated new order ID: {_currentOrderId}");
                     }
                 }
+                
+                // Force update tổng tiền sau khi form load
+                System.Diagnostics.Debug.WriteLine("Form loaded, updating total amount...");
+                UpdateTotalAmount();
             }
             catch (Exception ex)
             {
@@ -152,34 +165,29 @@ namespace AceCook
         {
             try
             {
-                // Panel cho tổng tiền và nút hành động
+                // Sử dụng lblTotalAmount đã có sẵn từ Designer
+                if (lblTotalAmount != null)
+                {
+                    // Cập nhật style cho lblTotalAmount
+                    lblTotalAmount.Font = new Font("Segoe UI", 14, FontStyle.Bold);
+                    lblTotalAmount.ForeColor = Color.FromArgb(46, 204, 113);
+                    lblTotalAmount.Text = "Tổng tiền: 0 VNĐ";
+                    
+                    System.Diagnostics.Debug.WriteLine("Using existing lblTotalAmount from Designer");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("ERROR: lblTotalAmount is null in Designer");
+                }
+
+                // Panel cho nút hành động (không cần panel tổng tiền nữa)
                 var pnlActions = new Panel
                 {
                     Dock = DockStyle.Bottom,
-                    Height = 100,
+                    Height = 80,
                     BackColor = Color.FromArgb(248, 249, 250),
                     BorderStyle = BorderStyle.FixedSingle,
                     Padding = new Padding(15)
-                };
-
-                // Label tổng tiền
-                var lblTotal = new Label
-                {
-                    Text = "Tổng tiền:",
-                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                    ForeColor = Color.FromArgb(52, 73, 94),
-                    AutoSize = true,
-                    Location = new Point(15, 25)
-                };
-
-                // Label hiển thị tổng tiền
-                lblTotalAmount = new Label
-                {
-                    Text = "0 VNĐ",
-                    Font = new Font("Segoe UI", 14, FontStyle.Bold),
-                    ForeColor = Color.FromArgb(46, 204, 113),
-                    AutoSize = true,
-                    Location = new Point(120, 22)
                 };
 
                 // Nút Lưu
@@ -213,7 +221,7 @@ namespace AceCook
                 // Thêm controls vào panel
                 pnlActions.Controls.AddRange(new Control[]
                 {
-                    lblTotal, lblTotalAmount, btnSave, btnCancel
+                    btnSave, btnCancel
                 });
 
                 // Thêm panel vào form
@@ -332,7 +340,11 @@ namespace AceCook
                     LoadOrderData();
                     LoadOrderItems();
                     RefreshOrderItemsGrid();
+                    
+                    // Cập nhật tổng tiền ngay lập tức
                     UpdateTotalAmount();
+                    
+                    System.Diagnostics.Debug.WriteLine($"Order loaded successfully. Items: {_orderItems.Count}, Total: {_orderItems.Sum(item => item.TotalPrice):N0}");
                 }
                 // Nếu là edit mode nhưng chưa có editingOrder, load từ database
                 else if (_isEditMode && !string.IsNullOrEmpty(_currentOrderId))
@@ -362,14 +374,11 @@ namespace AceCook
                         LoadOrderData();
                         LoadOrderItems();
                         RefreshOrderItemsGrid();
-                        if (_isViewMode)
-                        {
-                            _ = UpdateTotalAmountFromInvoiceAsync();
-                        }
-                        else
-                        {
-                            UpdateTotalAmount();
-                        }
+                        
+                        // Cập nhật tổng tiền
+                        UpdateTotalAmount();
+                        
+                        System.Diagnostics.Debug.WriteLine($"Order loaded from database. Items: {_orderItems.Count}, Total: {_orderItems.Sum(item => item.TotalPrice):N0}");
                     }
                 }
 
@@ -386,6 +395,8 @@ namespace AceCook
                     
                     // Đảm bảo thông tin nhân viên được hiển thị
                     SetupEmployeeInfo();
+                    
+                    System.Diagnostics.Debug.WriteLine($"New order mode - Generated ID: {_currentOrderId}");
                 }
             }
             catch (Exception ex)
@@ -446,7 +457,7 @@ namespace AceCook
                             };
 
                             _orderItems.Add(orderItem);
-                            System.Diagnostics.Debug.WriteLine($"Added item: {orderItem.ProductName} - Qty: {orderItem.Quantity} - Price: {orderItem.UnitPrice:N0}");
+                            System.Diagnostics.Debug.WriteLine($"Added item: {orderItem.ProductName} - Qty: {orderItem.Quantity} - Price: {orderItem.UnitPrice:N0} - Total: {orderItem.TotalPrice:N0}");
                         }
                         else
                         {
@@ -470,6 +481,7 @@ namespace AceCook
                 }
 
                 System.Diagnostics.Debug.WriteLine($"Successfully loaded {_orderItems.Count} order items");
+                System.Diagnostics.Debug.WriteLine($"Total amount from loaded items: {_orderItems.Sum(item => item.TotalPrice):N0} VNĐ");
 
                 // Hiển thị thông báo nếu load thành công và ở view mode
                 if (_isViewMode && _orderItems.Count > 0)
@@ -547,8 +559,17 @@ namespace AceCook
 
                 // Thêm hoặc cập nhật sản phẩm
                 AddOrUpdateOrderItem(selectedProduct, quantity);
+                
+                System.Diagnostics.Debug.WriteLine($"Product added/updated: {selectedProduct.TenSp}, Quantity: {quantity}, Total items: {_orderItems.Count}");
+                
                 RefreshOrderItemsGrid();
+                
+                // Cập nhật tổng tiền ngay lập tức
                 UpdateTotalAmount();
+                
+                // Force refresh tổng tiền
+                ForceRefreshTotalAmount();
+                
                 ClearProductSelection();
 
                 // Hiển thị thông báo thành công
@@ -588,22 +609,40 @@ namespace AceCook
 
         private void AddOrUpdateOrderItem(Sanpham product, int quantity)
         {
-            var existingItem = _orderItems.FirstOrDefault(item => item.ProductId == product.MaSp);
-            if (existingItem != null)
+            try
             {
-                existingItem.Quantity += quantity;
-                existingItem.TotalPrice = existingItem.Quantity * existingItem.UnitPrice;
-            }
-            else
-            {
-                _orderItems.Add(new OrderItem
+                var existingItem = _orderItems.FirstOrDefault(item => item.ProductId == product.MaSp);
+                if (existingItem != null)
                 {
-                    ProductId = product.MaSp,
-                    ProductName = product.TenSp ?? "",
-                    Quantity = quantity,
-                    UnitPrice = (double)(product.Gia ?? 0),
-                    TotalPrice = quantity * (double)(product.Gia ?? 0)
-                });
+                    // Cập nhật sản phẩm đã có
+                    var oldTotal = existingItem.TotalPrice;
+                    existingItem.Quantity += quantity;
+                    existingItem.TotalPrice = existingItem.Quantity * existingItem.UnitPrice;
+                    
+                    System.Diagnostics.Debug.WriteLine($"Updated existing item: {product.TenSp}, Old total: {oldTotal:N0}, New total: {existingItem.TotalPrice:N0}");
+                }
+                else
+                {
+                    // Thêm sản phẩm mới
+                    var newItem = new OrderItem
+                    {
+                        ProductId = product.MaSp,
+                        ProductName = product.TenSp ?? "",
+                        Quantity = quantity,
+                        UnitPrice = (double)(product.Gia ?? 0),
+                        TotalPrice = quantity * (double)(product.Gia ?? 0)
+                    };
+                    
+                    _orderItems.Add(newItem);
+                    System.Diagnostics.Debug.WriteLine($"Added new item: {product.TenSp}, Quantity: {quantity}, Unit price: {newItem.UnitPrice:N0}, Total: {newItem.TotalPrice:N0}");
+                }
+                
+                System.Diagnostics.Debug.WriteLine($"Total order items: {_orderItems.Count}, Total amount: {_orderItems.Sum(item => item.TotalPrice):N0}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in AddOrUpdateOrderItem: {ex.Message}");
+                throw;
             }
         }
 
@@ -611,15 +650,42 @@ namespace AceCook
         {
             if (_isViewMode) return;
 
-            if (dgvOrderItems.SelectedRows.Count > 0)
+            try
             {
-                var productId = dgvOrderItems.SelectedRows[0].Cells["ProductId"].Value?.ToString();
-                if (!string.IsNullOrEmpty(productId))
+                if (dgvOrderItems.SelectedRows.Count > 0)
                 {
-                    _orderItems.RemoveAll(item => item.ProductId == productId);
-                    RefreshOrderItemsGrid();
-                    UpdateTotalAmount();
+                    var productId = dgvOrderItems.SelectedRows[0].Cells["ProductId"].Value?.ToString();
+                    if (!string.IsNullOrEmpty(productId))
+                    {
+                        var removedItem = _orderItems.FirstOrDefault(item => item.ProductId == productId);
+                        if (removedItem != null)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Removing product: {removedItem.ProductName}, Quantity: {removedItem.Quantity}, Total: {removedItem.TotalPrice:N0}");
+                        }
+                        
+                        _orderItems.RemoveAll(item => item.ProductId == productId);
+                        
+                        System.Diagnostics.Debug.WriteLine($"Product removed. Remaining items: {_orderItems.Count}");
+                        
+                        RefreshOrderItemsGrid();
+                        
+                        // Cập nhật tổng tiền sau khi xóa
+                        UpdateTotalAmount();
+                        
+                        // Force refresh tổng tiền
+                        ForceRefreshTotalAmount();
+                        
+                        MessageBox.Show("Đã xóa sản phẩm khỏi đơn hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
+                else
+                {
+                    MessageBox.Show("Vui lòng chọn sản phẩm cần xóa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi xóa sản phẩm: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -648,6 +714,9 @@ namespace AceCook
 
                 // Cập nhật thông tin tồn kho cho từng sản phẩm
                 UpdateStockInfoInGrid();
+                
+                // Cập nhật tổng tiền sau khi refresh grid
+                UpdateTotalAmount();
             }
             catch (Exception ex)
             {
@@ -700,15 +769,34 @@ namespace AceCook
             try
             {
                 var total = _orderItems.Sum(item => item.TotalPrice);
-                System.Diagnostics.Debug.WriteLine($"Total amount: {total:N0} VNĐ");
+                System.Diagnostics.Debug.WriteLine($"UpdateTotalAmount called - Total: {total:N0} VNĐ, Items count: {_orderItems.Count}");
+                System.Diagnostics.Debug.WriteLine($"Order items: {string.Join(", ", _orderItems.Select(item => $"{item.ProductName}: {item.Quantity}x{item.UnitPrice:N0}={item.TotalPrice:N0}"))}");
 
                 if (lblTotalAmount != null)
                 {
+                    var oldText = lblTotalAmount.Text;
                     lblTotalAmount.Text = $"Tổng tiền: {total:N0} VNĐ";
+                    System.Diagnostics.Debug.WriteLine($"lblTotalAmount updated successfully: '{oldText}' -> '{lblTotalAmount.Text}'");
+                    
+                    // Kiểm tra xem control có hiển thị không
+                    System.Diagnostics.Debug.WriteLine($"lblTotalAmount visible: {lblTotalAmount.Visible}, Enabled: {lblTotalAmount.Enabled}");
+                    System.Diagnostics.Debug.WriteLine($"lblTotalAmount location: {lblTotalAmount.Location}, Size: {lblTotalAmount.Size}");
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("lblTotalAmount is null");
+                    System.Diagnostics.Debug.WriteLine("ERROR: lblTotalAmount is null - cannot update total amount");
+                    
+                    // Tìm control trong form
+                    var foundLabel = this.Controls.Find("lblTotalAmount", true).FirstOrDefault() as Label;
+                    if (foundLabel != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Found lblTotalAmount in Controls.Find: {foundLabel.Text}");
+                        foundLabel.Text = $"Tổng tiền: {total:N0} VNĐ";
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("lblTotalAmount not found in Controls.Find");
+                    }
                 }
             }
             catch (Exception ex)
@@ -778,27 +866,46 @@ namespace AceCook
         {
             if (_isViewMode || e.ColumnIndex != dgvOrderItems.Columns["Quantity"].Index || e.RowIndex < 0) return;
 
-            var row = dgvOrderItems.Rows[e.RowIndex];
-            var productId = row.Cells["ProductId"].Value?.ToString();
-            var newQuantity = Convert.ToInt32(row.Cells["Quantity"].Value ?? 0);
-
-            if (!string.IsNullOrEmpty(productId) && newQuantity > 0)
+            try
             {
-                if (!await ValidateStock(productId, newQuantity))
-                {
-                    var availableStock = await GetAvailableStock(productId);
-                    row.Cells["Quantity"].Value = availableStock;
-                    newQuantity = availableStock;
-                }
+                var row = dgvOrderItems.Rows[e.RowIndex];
+                var productId = row.Cells["ProductId"].Value?.ToString();
+                var newQuantity = Convert.ToInt32(row.Cells["Quantity"].Value ?? 0);
 
-                var item = _orderItems.FirstOrDefault(i => i.ProductId == productId);
-                if (item != null)
+                if (!string.IsNullOrEmpty(productId) && newQuantity > 0)
                 {
-                    item.Quantity = newQuantity;
-                    item.TotalPrice = item.Quantity * item.UnitPrice;
-                    row.Cells["TotalPrice"].Value = item.TotalPrice;
-                    UpdateTotalAmount();
+                    System.Diagnostics.Debug.WriteLine($"Editing quantity for product {productId}: {newQuantity}");
+                    
+                    if (!await ValidateStock(productId, newQuantity))
+                    {
+                        var availableStock = await GetAvailableStock(productId);
+                        row.Cells["Quantity"].Value = availableStock;
+                        newQuantity = availableStock;
+                    }
+
+                    var item = _orderItems.FirstOrDefault(i => i.ProductId == productId);
+                    if (item != null)
+                    {
+                        var oldTotal = item.TotalPrice;
+                        item.Quantity = newQuantity;
+                        item.TotalPrice = item.Quantity * item.UnitPrice;
+                        
+                        System.Diagnostics.Debug.WriteLine($"Updated item: {item.ProductName}, Old total: {oldTotal:N0}, New total: {item.TotalPrice:N0}");
+                        
+                        row.Cells["TotalPrice"].Value = item.TotalPrice;
+                        
+                        // Cập nhật tổng tiền
+                        UpdateTotalAmount();
+                        
+                        // Force refresh tổng tiền
+                        ForceRefreshTotalAmount();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in DgvOrderItems_CellEndEdit: {ex.Message}");
+                MessageBox.Show($"Lỗi khi cập nhật số lượng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -1127,6 +1234,182 @@ namespace AceCook
         private void txtTenNv_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void ValidateAndFixTotalAmountLabel()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("=== Validating lblTotalAmount ===");
+                
+                // Kiểm tra lblTotalAmount từ Designer
+                if (lblTotalAmount != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Designer lblTotalAmount: Text='{lblTotalAmount.Text}', Visible={lblTotalAmount.Visible}, Location={lblTotalAmount.Location}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Designer lblTotalAmount is NULL");
+                }
+                
+                // Tìm tất cả Label có chứa "Tổng tiền" trong form
+                var allLabels = this.Controls.Find("", true).OfType<Label>().ToList();
+                var totalLabels = allLabels.Where(l => l.Text.Contains("Tổng tiền")).ToList();
+                
+                System.Diagnostics.Debug.WriteLine($"Found {totalLabels.Count} labels with 'Tổng tiền':");
+                foreach (var label in totalLabels)
+                {
+                    System.Diagnostics.Debug.WriteLine($"  - Name: {label.Name}, Text: '{label.Text}', Location: {label.Location}");
+                }
+                
+                // Nếu không tìm thấy lblTotalAmount, tạo mới
+                if (lblTotalAmount == null || !lblTotalAmount.IsHandleCreated)
+                {
+                    System.Diagnostics.Debug.WriteLine("Creating new lblTotalAmount...");
+                    
+                    // Tìm grpOrderItems để đặt label vào
+                    var grpOrderItems = this.Controls.OfType<GroupBox>().FirstOrDefault(g => g.Name == "grpOrderItems");
+                    if (grpOrderItems != null)
+                    {
+                        lblTotalAmount = new Label
+                        {
+                            Name = "lblTotalAmount",
+                            Text = "Tổng tiền: 0 VNĐ",
+                            Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                            ForeColor = Color.FromArgb(46, 204, 113),
+                            AutoSize = true,
+                            Location = new Point(37, 533)
+                        };
+                        
+                        grpOrderItems.Controls.Add(lblTotalAmount);
+                        System.Diagnostics.Debug.WriteLine("New lblTotalAmount created and added to grpOrderItems");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("ERROR: grpOrderItems not found");
+                    }
+                }
+                
+                System.Diagnostics.Debug.WriteLine("=== End Validation ===");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in ValidateAndFixTotalAmountLabel: {ex.Message}");
+            }
+        }
+
+        private void DebugFormControls()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("=== DEBUG FORM CONTROLS ===");
+                System.Diagnostics.Debug.WriteLine($"Form name: {this.Name}, Text: {this.Text}");
+                System.Diagnostics.Debug.WriteLine($"Total controls: {this.Controls.Count}");
+                
+                foreach (Control control in this.Controls)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Control: {control.GetType().Name} - Name: {control.Name}, Text: {control.Text}");
+                    
+                    if (control is GroupBox grp)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"  GroupBox '{grp.Name}' has {grp.Controls.Count} controls:");
+                        foreach (Control subControl in grp.Controls)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"    - {subControl.GetType().Name}: {subControl.Name} = '{subControl.Text}'");
+                        }
+                    }
+                }
+                
+                // Tìm lblTotalAmount cụ thể
+                var totalAmountLabel = this.Controls.Find("lblTotalAmount", true).FirstOrDefault();
+                if (totalAmountLabel != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Found lblTotalAmount: {totalAmountLabel.GetType().Name} - Name: {totalAmountLabel.Name}, Text: '{totalAmountLabel.Text}'");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("lblTotalAmount NOT found in Controls.Find");
+                }
+                
+                System.Diagnostics.Debug.WriteLine("=== END DEBUG ===");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in DebugFormControls: {ex.Message}");
+            }
+        }
+
+        private void ForceRefreshTotalAmount()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("ForceRefreshTotalAmount called");
+                
+                // Cập nhật tổng tiền từ order items
+                UpdateTotalAmount();
+                
+                // Force refresh UI
+                if (lblTotalAmount != null)
+                {
+                    lblTotalAmount.Refresh();
+                    System.Diagnostics.Debug.WriteLine($"Force refreshed lblTotalAmount: {lblTotalAmount.Text}");
+                }
+                
+                // Cũng refresh form
+                this.Refresh();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in ForceRefreshTotalAmount: {ex.Message}");
+            }
+        }
+
+        private void CheckTotalAmountVisibility()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("=== Checking Total Amount Visibility ===");
+                
+                if (lblTotalAmount != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"lblTotalAmount properties:");
+                    System.Diagnostics.Debug.WriteLine($"  - Text: '{lblTotalAmount.Text}'");
+                    System.Diagnostics.Debug.WriteLine($"  - Visible: {lblTotalAmount.Visible}");
+                    System.Diagnostics.Debug.WriteLine($"  - Enabled: {lblTotalAmount.Enabled}");
+                    System.Diagnostics.Debug.WriteLine($"  - Location: {lblTotalAmount.Location}");
+                    System.Diagnostics.Debug.WriteLine($"  - Size: {lblTotalAmount.Size}");
+                    System.Diagnostics.Debug.WriteLine($"  - Parent: {lblTotalAmount.Parent?.Name ?? "NULL"}");
+                    System.Diagnostics.Debug.WriteLine($"  - Handle: {lblTotalAmount.IsHandleCreated}");
+                    
+                    // Kiểm tra xem có bị ẩn bởi parent control không
+                    var parent = lblTotalAmount.Parent;
+                    while (parent != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"  - Parent {parent.GetType().Name}: Visible={parent.Visible}, Enabled={parent.Enabled}");
+                        parent = parent.Parent;
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("lblTotalAmount is NULL");
+                }
+                
+                // Kiểm tra tất cả controls có chứa "Tổng tiền"
+                var allControls = this.Controls.Find("", true);
+                var totalLabels = allControls.OfType<Label>().Where(l => l.Text.Contains("Tổng tiền")).ToList();
+                
+                System.Diagnostics.Debug.WriteLine($"Found {totalLabels.Count} labels with 'Tổng tiền':");
+                foreach (var label in totalLabels)
+                {
+                    System.Diagnostics.Debug.WriteLine($"  - {label.Name}: '{label.Text}' at {label.Location}, Visible={label.Visible}");
+                }
+                
+                System.Diagnostics.Debug.WriteLine("=== End Check ===");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in CheckTotalAmountVisibility: {ex.Message}");
+            }
         }
     }
 
