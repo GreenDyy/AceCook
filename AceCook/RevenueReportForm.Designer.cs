@@ -30,7 +30,6 @@ namespace AceCook
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panelHeader = new System.Windows.Forms.Panel();
             this.panelHeaderActions = new System.Windows.Forms.Panel();
             this.btnPrint = new System.Windows.Forms.Button();
@@ -68,7 +67,7 @@ namespace AceCook
             this.panelHeader.Location = new System.Drawing.Point(0, 0);
             this.panelHeader.Name = "panelHeader";
             this.panelHeader.Padding = new System.Windows.Forms.Padding(40, 30, 40, 30);
-            this.panelHeader.Size = new System.Drawing.Size(1200, 160); // Tăng lên 160px để chứa date filter
+            this.panelHeader.Size = new System.Drawing.Size(1200, 180); // Sửa từ 160 thành 180 để khớp với panelDetails.Location
             this.panelHeader.TabIndex = 0;
             // 
             // panelHeaderActions
@@ -79,7 +78,7 @@ namespace AceCook
             this.panelHeaderActions.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelHeaderActions.Location = new System.Drawing.Point(600, 30);
             this.panelHeaderActions.Name = "panelHeaderActions";
-            this.panelHeaderActions.Size = new System.Drawing.Size(570, 100); // Điều chỉnh chiều cao
+            this.panelHeaderActions.Size = new System.Drawing.Size(570, 120); // Sửa từ 100 thành 120 để khớp với chiều cao mới
             this.panelHeaderActions.TabIndex = 2;
             // 
             // btnPrint
