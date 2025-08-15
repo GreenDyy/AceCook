@@ -300,6 +300,7 @@ namespace AceCook
             this.panelDetailsHeader.Padding = new System.Windows.Forms.Padding(20);
             this.panelDetailsHeader.Size = new System.Drawing.Size(1200, 80);
             this.panelDetailsHeader.TabIndex = 0;
+            this.panelDetailsHeader.Visible = false; // Ẩn phần header chi tiết
             // 
             // lblPeriod
             // 
